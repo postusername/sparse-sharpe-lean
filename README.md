@@ -1,0 +1,1 @@
+# sparse-sharpe-lean
