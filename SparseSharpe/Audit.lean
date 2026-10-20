@@ -50,6 +50,12 @@ import SparseSharpe.Factor.GridFilter
 import SparseSharpe.Factor.KeyRounding
 import SparseSharpe.Factor.DPRun
 import SparseSharpe.Factor.NormalExists
+import SparseSharpe.Factor.AdditiveKey
+import SparseSharpe.Factor.ClippedNode
+import SparseSharpe.Factor.ClippedDP
+import SparseSharpe.Factor.ClippedTrading
+import SparseSharpe.Factor.Relaxation
+import SparseSharpe.Factor.CapDuality
 
 set_option linter.style.header false
 
@@ -662,3 +668,111 @@ open SparseSharpe SparseSharpe.OneFactor
 #print axioms SparseSharpe.Factor.card_candidatesAnchor_poly
 #print axioms SparseSharpe.Factor.main_theorem_simple
 #print axioms SparseSharpe.Factor.practical_instance
+
+/-! ### Knapsack with an additive key (`Factor/AdditiveKey.lean`, task L1) -/
+
+#print axioms SparseSharpe.Factor.kRep_spec
+#print axioms SparseSharpe.Factor.kPrune_subset
+#print axioms SparseSharpe.Factor.mem_kPrune
+#print axioms SparseSharpe.Factor.key_injOn_kPrune
+#print axioms SparseSharpe.Factor.knap_cons
+#print axioms SparseSharpe.Factor.knap_mem
+#print axioms SparseSharpe.Factor.knap_key_mem
+#print axioms SparseSharpe.Factor.key_injOn_knap
+#print axioms SparseSharpe.Factor.knap_card_le
+#print axioms SparseSharpe.Factor.knap_spec
+
+/-! ### Primal-dual defect identity and node estimates (`Factor/ClippedNode.lean`, task L2) -/
+
+#print axioms SparseSharpe.Factor.cross_P_tw
+#print axioms SparseSharpe.Factor.quadf_P_tw
+#print axioms SparseSharpe.Factor.quadf_tw_sub
+#print axioms SparseSharpe.Factor.objLO_wclip_deficit
+#print axioms SparseSharpe.Factor.defect_nonneg
+#print axioms SparseSharpe.Factor.dotp_G_tw
+#print axioms SparseSharpe.Factor.dotp_sub'
+#print axioms SparseSharpe.Factor.defect_eq_sum_sq
+#print axioms SparseSharpe.Factor.sum_sq_vcoord
+#print axioms SparseSharpe.Factor.vcoord_sq_le
+#print axioms SparseSharpe.Factor.sq_dotp_le_sysVar
+#print axioms SparseSharpe.Factor.levSum_nonneg
+#print axioms SparseSharpe.Factor.sum_sq_dotp_le
+#print axioms SparseSharpe.Factor.pos_sq_le
+#print axioms SparseSharpe.Factor.quadf_add
+#print axioms SparseSharpe.Factor.quadf_smul
+#print axioms SparseSharpe.Factor.QLO_smooth
+#print axioms SparseSharpe.Factor.QLO_sub_le_of_min
+#print axioms SparseSharpe.Factor.defect_le
+#print axioms SparseSharpe.Factor.objLO_wclip_ge_of_node
+
+/-! ### The dynamic program without the Gram matrix: one node, box, grid, one guess (`Factor/ClippedDP.lean`, task L5) -/
+
+#print axioms SparseSharpe.Factor.card_clipBox
+#print axioms SparseSharpe.Factor.card_clipTable_le
+#print axioms SparseSharpe.Factor.sum_clipKeyItem_fst
+#print axioms SparseSharpe.Factor.sum_clipKeyItem_snd
+#print axioms SparseSharpe.Factor.clip_key_card
+#print axioms SparseSharpe.Factor.clip_key_close
+#print axioms SparseSharpe.Factor.sum_sq_add_le
+#print axioms SparseSharpe.Factor.clip_node_step
+#print axioms SparseSharpe.Factor.clipScore_nonneg
+#print axioms SparseSharpe.Factor.d_mul_wclip_sq
+#print axioms SparseSharpe.Factor.abs_vcoord_le
+#print axioms SparseSharpe.Factor.abs_floor_le
+#print axioms SparseSharpe.Factor.clip_box_bound
+#print axioms SparseSharpe.Factor.det_G_ne_zero
+#print axioms SparseSharpe.Factor.dotp_G_nodeOf
+#print axioms SparseSharpe.Factor.exists_node_near
+#print axioms SparseSharpe.Factor.card_clipFamily_le
+#print axioms SparseSharpe.Factor.card_le_of_mem_clipTable
+#print axioms SparseSharpe.Factor.arith_defect
+#print axioms SparseSharpe.Factor.arith_score
+#print axioms SparseSharpe.Factor.arith_final
+#print axioms SparseSharpe.Factor.clip_one_guess
+
+/-! ### Main Theorem without the Gram matrix, polynomial size bound, nonvacuity (`Factor/ClippedTrading.lean`) -/
+
+#print axioms SparseSharpe.Factor.card_clipCandidates_le
+#print axioms SparseSharpe.Factor.card_le_of_mem_clipCandidates
+#print axioms SparseSharpe.Factor.exists_good_clipCandidate
+#print axioms SparseSharpe.Factor.exists_best_set_of_family
+#print axioms SparseSharpe.Factor.main_theorem_clipped
+#print axioms SparseSharpe.Factor.trading_theorem_clipped
+#print axioms SparseSharpe.Factor.card_clipCandidates_poly_of_J
+#print axioms SparseSharpe.Factor.trading_theorem_clipped_adaptive
+#print axioms SparseSharpe.Factor.exists_good_clipCandidate_bracket
+#print axioms SparseSharpe.Factor.clipped_instance
+#print axioms SparseSharpe.Factor.two_Z_le
+#print axioms SparseSharpe.Factor.two_Q_le
+#print axioms SparseSharpe.Factor.card_clipCandidates_poly
+
+/-! ### Relaxation gap, bicriteria certificate, mixed signs, simplex, scaled NP-hardness (`Factor/Relaxation.lean`, tasks L3, L4) -/
+
+#print axioms SparseSharpe.Factor.P_pos_of_root
+#print axioms SparseSharpe.Factor.dualBound_le_two_opt_nonneg
+#print axioms SparseSharpe.Factor.dualBound_le_QLO_of_threshold
+#print axioms SparseSharpe.Factor.pos_sq_ge
+#print axioms SparseSharpe.Factor.bicriteria_certificate
+#print axioms SparseSharpe.Factor.card_support_le_of_frac
+#print axioms SparseSharpe.Factor.mixed_sign_dual_ge_one
+#print axioms SparseSharpe.Factor.mixed_sign_opt_le
+#print axioms SparseSharpe.Factor.mixed_sign_ratio
+#print axioms SparseSharpe.Factor.sysVar_ssB
+#print axioms SparseSharpe.Factor.ssB_lev_le
+#print axioms SparseSharpe.Factor.subsetSum_obj_lt_of_ne
+#print axioms SparseSharpe.Factor.subsetSum_reduction_scaled
+#print axioms SparseSharpe.Factor.quadf_idMat
+#print axioms SparseSharpe.Factor.simplex_dual_ge_one
+#print axioms SparseSharpe.Factor.idMat_root
+#print axioms SparseSharpe.Factor.idMat_PS
+#print axioms SparseSharpe.Factor.simplex_opt_le
+
+/-! ### Concentration caps: identity, weak duality, certificate (`Factor/CapDuality.lean`, task L6) -/
+
+#print axioms SparseSharpe.Factor.objLO_eq_defect_general
+#print axioms SparseSharpe.Factor.capw_mem
+#print axioms SparseSharpe.Factor.hub_ge
+#print axioms SparseSharpe.Factor.cap_weak_duality
+#print axioms SparseSharpe.Factor.objLO_cap_identity
+#print axioms SparseSharpe.Factor.cap_smul
+#print axioms SparseSharpe.Factor.cap_exists_scaled

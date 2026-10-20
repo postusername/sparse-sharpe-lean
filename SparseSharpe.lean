@@ -56,3 +56,9 @@ import SparseSharpe.Factor.Trading
 import SparseSharpe.Factor.TradingAnchor
 import SparseSharpe.Factor.Practical
 import SparseSharpe.Factor.Padding
+import SparseSharpe.Factor.AdditiveKey
+import SparseSharpe.Factor.ClippedNode
+import SparseSharpe.Factor.ClippedDP
+import SparseSharpe.Factor.ClippedTrading
+import SparseSharpe.Factor.Relaxation
+import SparseSharpe.Factor.CapDuality

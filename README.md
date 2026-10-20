@@ -19,6 +19,26 @@ numbered result has a superscript **L** that links to its Lean statement in this
 Appendix B of the paper lists all results with their declarations, and also the declarations
 that their proofs use.
 
+## Version 0.23: scheme without the Gram matrix
+
+The newest development (files `Factor/AdditiveKey`, `ClippedNode`, `ClippedDP`, `ClippedTrading`,
+`Relaxation`, `CapDuality`) replaces the moment/Gram key of the earlier scheme by an exactly additive key built
+from the clipped weights `w(τ)`; it is the one used by the current version of the paper.
+
+| Paper (v0.23) | Declaration | File |
+|---|---|---|
+| Main Theorem | `main_theorem_clipped` | [Factor/ClippedTrading.lean](SparseSharpe/Factor/ClippedTrading.lean) |
+| Defect identity | `objLO_wclip_deficit` | [Factor/ClippedNode.lean](SparseSharpe/Factor/ClippedNode.lean) |
+| Estimates at a node | `objLO_wclip_ge_of_node` | [Factor/ClippedNode.lean](SparseSharpe/Factor/ClippedNode.lean) |
+| Knapsack with an additive key | `knap_spec` | [Factor/AdditiveKey.lean](SparseSharpe/Factor/AdditiveKey.lean) |
+| One guess | `clip_one_guess` | [Factor/ClippedDP.lean](SparseSharpe/Factor/ClippedDP.lean) |
+| Trading form | `trading_theorem_clipped`, `trading_theorem_clipped_adaptive` | [Factor/ClippedTrading.lean](SparseSharpe/Factor/ClippedTrading.lean) |
+| Polynomial size `8(60K)^K ε^{-K}(k(1+ω))^{3K+2}` | `card_clipCandidates_poly_of_J` | [Factor/ClippedTrading.lean](SparseSharpe/Factor/ClippedTrading.lean) |
+| Gap of the relaxation, certificate with `k+K` names | `dualBound_le_two_opt_nonneg`, `bicriteria_certificate` | [Factor/Relaxation.lean](SparseSharpe/Factor/Relaxation.lean) |
+| Position limits (weak duality) | `cap_weak_duality` | [Factor/CapDuality.lean](SparseSharpe/Factor/CapDuality.lean) |
+
+The audit file prints the axioms of 608 statements (no `sorry`).
+
 ## Main statements
 
 All declarations are in the namespace `SparseSharpe.Factor`.
@@ -57,10 +77,10 @@ pinned to the tag `v4.35.0-rc2` in `lake-manifest.json`. With [elan](https://git
 ```
 lake exe cache get                       # download the prebuilt Mathlib (several GB)
 lake build                               # build the formalization
-lake env lean SparseSharpe/Audit.lean    # print the axioms of 518 statements
+lake env lean SparseSharpe/Audit.lean    # print the axioms of 608 statements
 ```
 
-Each of the 518 statements depends only on `propext`, `Classical.choice` and `Quot.sound`
+Each of the 608 statements depends only on `propext`, `Classical.choice` and `Quot.sound`
 (some on a subset), and none on `sorryAx`. The sources contain no `sorry`, no `axiom`
 declarations and no `native_decide`. The development has 60 files and about 20 300 lines.
 
