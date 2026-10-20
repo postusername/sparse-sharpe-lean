@@ -14,7 +14,7 @@ set_option linter.unusedSectionVars false
 * `t` minimizes `g_k` (`SaddleData.isMin`), so `g_k(t) = G*_k`;
 * for `T ⊆ I' = {0 < λ < 1}` with `|T| = Σ_{I'} λ`, the loss of the clipped portfolio on `H ∪ T` against `G*_k`
   is the squared norm `‖Σ_{T} v_i − Σ_{I'} λ_i v_i‖²` (`SaddleData.loss_eq`, the defect identity);
-* some `T` has loss at most `min(s, f−s)·ωσ ≤ K·ωσ ≤ (Kω/k)·G*_k` (`saddle_rounding`, `saddle_rounding_min`,
+* some `T` has loss at most `min(s, f−s)·ωσ ≤ ⌊(K+1)/2⌋·ωσ ≤ (⌊(K+1)/2⌋ω/k)·G*_k` (`saddle_rounding`, `saddle_rounding_min`,
   `saddle_rounding_K`, `saddle_rounding_one`), by the rounding lemma of `PairRounding`;
 * for any representation of `λ|_{I'}` as a convex combination of `s`-subsets, the average loss is at most
   `f·σ·Σ_{I'} λ_i(1−λ_i)ω_i ≤ f²ωσ/4` (`saddle_rounding_avg`), and a representation exists (`exists_isRep`).
@@ -453,24 +453,25 @@ theorem saddle_rounding_min [Nonempty κ] (hd : ∀ i, 0 < d i) (hG : ∀ j j', 
       simp only [hF, Finset.card_empty, Nat.cast_zero, zero_sub, neg_zero, hs0, min_self, zero_mul] at hA ⊢
       exact hA
 
-/-- The chain `min(s, f−s) ≤ K` for `f ≤ K+1`. -/
-lemma min_le_card {s f K : ℕ} (hK : 1 ≤ K) (hf : f ≤ K + 1) (hsf : s ≤ f) :
-    min (s : ℝ) ((f : ℝ) - s) ≤ K := by
-  rcases le_total (s : ℝ) ((f : ℝ) - s) with h | h
-  · rw [min_eq_left h]
-    have : (2 * s : ℝ) ≤ f := by linarith
-    have hf' : (f : ℝ) ≤ K + 1 := by exact_mod_cast hf
-    have hK' : (1 : ℝ) ≤ K := by exact_mod_cast hK
+/-- The chain `min(s, f−s) ≤ ⌊(K+1)/2⌋` for `f ≤ K+1`: `2·min(s, f−s) ≤ f ≤ K+1`, and the minimum is an
+integer. -/
+lemma min_le_half {s f K : ℕ} (hf : f ≤ K + 1) (hsf : s ≤ f) :
+    min (s : ℝ) ((f : ℝ) - s) ≤ (((K + 1) / 2 : ℕ) : ℝ) := by
+  have hcast : min (s : ℝ) ((f : ℝ) - s) = ((min s (f - s) : ℕ) : ℝ) := by
+    rw [Nat.cast_min, Nat.cast_sub hsf]
+  rw [hcast]
+  have h2 : 2 * min s (f - s) ≤ K + 1 := by
+    have := min_le_left s (f - s)
+    have := min_le_right s (f - s)
+    omega
+  have : min s (f - s) ≤ (K + 1) / 2 := by
+    rw [Nat.le_div_iff_mul_le (by norm_num)]
     linarith
-  · rw [min_eq_right h]
-    have : (2 * ((f : ℝ) - s)) ≤ f := by linarith
-    have hf' : (f : ℝ) ≤ K + 1 := by exact_mod_cast hf
-    have hK' : (1 : ℝ) ≤ K := by exact_mod_cast hK
-    linarith
+  exact_mod_cast this
 
 
-/-- **Theorem 3.2(a), the chain with `K`.** If there are at most `K+1` fractional multipliers (a vertex),
-`G*_k − obj(R°) ≤ K·ωσ ≤ (Kω/k)·G*_k`. -/
+/-- **Theorem 3.2(a), the chain with `⌊(K+1)/2⌋`.** If there are at most `K+1` fractional multipliers (a vertex),
+`G*_k − obj(R°) ≤ min(s, f−s)·ωσ ≤ ⌊(K+1)/2⌋·ωσ ≤ (⌊(K+1)/2⌋ω/k)·G*_k`. -/
 theorem saddle_rounding_K [Nonempty κ] (hd : ∀ i, 0 < d i) (hG : ∀ j j', ∑ l, G l j * G l j' = P j j')
     (hPS : ∀ j j', ∑ l, P j l * Sf l j' = if j = j' then 1 else 0)
     (hS : SaddleData m d B P k t lam σ) (hσ0 : 0 ≤ σ) {ω : ℝ} (hω0 : 0 ≤ ω)
@@ -479,8 +480,8 @@ theorem saddle_rounding_K [Nonempty κ] (hd : ∀ i, 0 < d i) (hG : ∀ j j', �
     ∃ T : Finset ι, T ⊆ fracSet lam ∧ T.card = s ∧ (oneSet lam ∪ T).card = k ∧
       dualBound m d B P k t - objLO m d B Sf (oneSet lam ∪ T) (wclip m d B t)
           ≤ min (s : ℝ) ((fracSet lam).card - s) * (σ * ω) ∧
-      min (s : ℝ) ((fracSet lam).card - s) * (σ * ω) ≤ (Fintype.card κ : ℝ) * (σ * ω) ∧
-      (Fintype.card κ : ℝ) * (σ * ω) ≤ ((Fintype.card κ : ℝ) * ω / k) * dualBound m d B P k t := by
+      min (s : ℝ) ((fracSet lam).card - s) * (σ * ω) ≤ (((Fintype.card κ + 1) / 2 : ℕ) : ℝ) * (σ * ω) ∧
+      (((Fintype.card κ + 1) / 2 : ℕ) : ℝ) * (σ * ω) ≤ ((((Fintype.card κ + 1) / 2 : ℕ) : ℝ) * ω / k) * dualBound m d B P k t := by
   classical
   have hmin := saddle_rounding_min hd hG hPS hS hω hs (Fopt := dualBound m d B P k t)
     (fun S _ w hw => by
@@ -489,21 +490,20 @@ theorem saddle_rounding_K [Nonempty κ] (hd : ∀ i, 0 < d i) (hG : ∀ j j', �
       exact this)
   obtain ⟨-, T, hTF, hTc, hcard, -, hmain⟩ := hmin
   refine ⟨T, hTF, hTc, hcard, hmain, ?_, ?_⟩
-  · have hKpos : 1 ≤ Fintype.card κ := Fintype.card_pos
-    have hsf : s ≤ (fracSet lam).card := by
+  · have hsf : s ≤ (fracSet lam).card := by
       have : (s : ℝ) ≤ (fracSet lam).card := by
         rw [← hs]
         calc ∑ i ∈ fracSet lam, lam i ≤ ∑ _i ∈ fracSet lam, (1 : ℝ) :=
               Finset.sum_le_sum fun i hi => (mem_fracSet.mp hi).2.le
           _ = (fracSet lam).card := by simp
       exact_mod_cast this
-    exact mul_le_mul_of_nonneg_right (min_le_card hKpos hf hsf) (mul_nonneg hσ0 hω0)
+    exact mul_le_mul_of_nonneg_right (min_le_half hf hsf) (mul_nonneg hσ0 hω0)
   · have hks := hS.sigma_mul_le hd hG hs
     have hkpos : (0 : ℝ) < k := by exact_mod_cast hk
     have hσ' : σ ≤ dualBound m d B P k t / k := by rw [le_div_iff₀ hkpos]; linarith
-    have hK0 : (0 : ℝ) ≤ Fintype.card κ * ω := mul_nonneg (Nat.cast_nonneg _) hω0
-    calc (Fintype.card κ : ℝ) * (σ * ω) = ((Fintype.card κ : ℝ) * ω) * σ := by ring
-      _ ≤ ((Fintype.card κ : ℝ) * ω) * (dualBound m d B P k t / k) := mul_le_mul_of_nonneg_left hσ' hK0
+    have hK0 : (0 : ℝ) ≤ (((Fintype.card κ + 1) / 2 : ℕ) : ℝ) * ω := mul_nonneg (Nat.cast_nonneg _) hω0
+    calc (((Fintype.card κ + 1) / 2 : ℕ) : ℝ) * (σ * ω) = ((((Fintype.card κ + 1) / 2 : ℕ) : ℝ) * ω) * σ := by ring
+      _ ≤ ((((Fintype.card κ + 1) / 2 : ℕ) : ℝ) * ω) * (dualBound m d B P k t / k) := mul_le_mul_of_nonneg_left hσ' hK0
       _ = _ := by ring
 
 /-- **Theorem 3.2(a), the factor `K` disappears for `s = 1` or `s = f − 1`:**
@@ -734,7 +734,8 @@ theorem exists_isRep {lam : ι → ℝ} (hr : ∀ i, 0 ≤ lam i ∧ lam i ≤ 1
 `K+1` fractional multipliers and `ω ≥ 0`, `ω ≥ B_i'Σ_fB_i/d_i` on the fractional set `I'`.
 (0) `t` minimizes `g_k`. (i) For every `T ⊆ I'` with `|T| = Σ_{I'} λ` the support `H ∪ T` has `k` names and
 `g_k(t) − obj = ‖Σ_T v_i − Σ_{I'} λ_i v_i‖²`. (ii) Some such `T` has loss at most
-`min(s, f−s)·σω ≤ K·σω ≤ (Kω/k)·g_k(t)`, and one has loss at most `σω ≤ (ω/k)·g_k(t)` if `s = 1` or `s = f−1`.
+`min(s, f−s)·σω ≤ ⌊(K+1)/2⌋·σω ≤ (⌊(K+1)/2⌋ω/k)·g_k(t)`, and one has loss at most `σω ≤ (ω/k)·g_k(t)` if
+`s = 1` or `s = f−1`.
 (iii) For every representation of `λ|_{I'}` as a convex combination of `s`-subsets of `I'` the average loss is at most
 `f·σ·Σλ(1−λ)ω_i ≤ f²σω/4`, some `T_a` is at least as good, and a representation exists. -/
 theorem saddle_rounding_theorem [Nonempty κ] (hd : ∀ i, 0 < d i)
@@ -751,8 +752,8 @@ theorem saddle_rounding_theorem [Nonempty κ] (hd : ∀ i, 0 < d i)
     (∃ T : Finset ι, T ⊆ fracSet lam ∧ T.card = s ∧ (oneSet lam ∪ T).card = k ∧
       dualBound m d B P k t - objLO m d B Sf (oneSet lam ∪ T) (wclip m d B t)
           ≤ min (s : ℝ) ((fracSet lam).card - s) * (σ * ω) ∧
-      min (s : ℝ) ((fracSet lam).card - s) * (σ * ω) ≤ (Fintype.card κ : ℝ) * (σ * ω) ∧
-      (Fintype.card κ : ℝ) * (σ * ω) ≤ ((Fintype.card κ : ℝ) * ω / k) * dualBound m d B P k t) ∧
+      min (s : ℝ) ((fracSet lam).card - s) * (σ * ω) ≤ (((Fintype.card κ + 1) / 2 : ℕ) : ℝ) * (σ * ω) ∧
+      (((Fintype.card κ + 1) / 2 : ℕ) : ℝ) * (σ * ω) ≤ ((((Fintype.card κ + 1) / 2 : ℕ) : ℝ) * ω / k) * dualBound m d B P k t) ∧
     ((s = 1 ∨ s + 1 = (fracSet lam).card) →
       ∃ T : Finset ι, T ⊆ fracSet lam ∧ T.card = s ∧ (oneSet lam ∪ T).card = k ∧
         dualBound m d B P k t - objLO m d B Sf (oneSet lam ∪ T) (wclip m d B t) ≤ σ * ω ∧

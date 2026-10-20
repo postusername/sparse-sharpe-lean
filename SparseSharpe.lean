@@ -67,3 +67,7 @@ import SparseSharpe.Factor.RootExists
 import SparseSharpe.Factor.PairRounding
 import SparseSharpe.Factor.SaddleRounding
 import SparseSharpe.Factor.SaddleExistence
+import SparseSharpe.Factor.Localize
+import SparseSharpe.Factor.PrunedDP
+import SparseSharpe.Factor.Perspective
+import SparseSharpe.Factor.NonnegGap

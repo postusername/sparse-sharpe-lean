@@ -61,6 +61,10 @@ import SparseSharpe.Factor.RootExists
 import SparseSharpe.Factor.PairRounding
 import SparseSharpe.Factor.SaddleRounding
 import SparseSharpe.Factor.SaddleExistence
+import SparseSharpe.Factor.Localize
+import SparseSharpe.Factor.PrunedDP
+import SparseSharpe.Factor.Perspective
+import SparseSharpe.Factor.NonnegGap
 
 set_option linter.style.header false
 
@@ -835,7 +839,7 @@ open SparseSharpe SparseSharpe.OneFactor
 #print axioms SparseSharpe.Factor.saddle_rounding
 #print axioms SparseSharpe.Factor.SaddleData.sigma_mul_le
 #print axioms SparseSharpe.Factor.saddle_rounding_min
-#print axioms SparseSharpe.Factor.min_le_card
+#print axioms SparseSharpe.Factor.min_le_half
 #print axioms SparseSharpe.Factor.saddle_rounding_K
 #print axioms SparseSharpe.Factor.saddle_rounding_one
 #print axioms SparseSharpe.Factor.SaddleData.loss_le_card_mul
@@ -887,3 +891,88 @@ open SparseSharpe SparseSharpe.OneFactor
 
 #print axioms SparseSharpe.Factor.exists_root_of_posSemidef
 #print axioms SparseSharpe.Factor.exists_root_of_posDef
+
+/-! ### Strong convexity, localization by the gap, the localized scheme (`Factor/Localize.lean`, session 25) -/
+
+#print axioms SparseSharpe.Factor.quadf_sub_eq_sum_sq
+#print axioms SparseSharpe.Factor.quadf_sub_comm
+#print axioms SparseSharpe.Factor.QLO_sub_ge_of_min
+#print axioms SparseSharpe.Factor.node_estimates
+#print axioms SparseSharpe.Factor.quadf_sub_le_dualBound_sub
+#print axioms SparseSharpe.Factor.localize
+#print axioms SparseSharpe.Factor.certificate_of_lt
+#print axioms SparseSharpe.Factor.locNodes_eq_empty
+#print axioms SparseSharpe.Factor.mem_locNodes
+#print axioms SparseSharpe.Factor.card_Icc_ceil_floor_le
+#print axioms SparseSharpe.Factor.card_locNodes_le
+#print axioms SparseSharpe.Factor.clip_node_step_of_rep
+#print axioms SparseSharpe.Factor.clipTable_rep
+#print axioms SparseSharpe.Factor.one_guess_of_rep
+#print axioms SparseSharpe.Factor.node_mem_locNodes
+#print axioms SparseSharpe.Factor.clip_one_guess_loc
+#print axioms SparseSharpe.Factor.locFamily_subset
+#print axioms SparseSharpe.Factor.locCandidates_subset
+#print axioms SparseSharpe.Factor.locCandidates_eq_empty
+#print axioms SparseSharpe.Factor.card_locFamily_le
+#print axioms SparseSharpe.Factor.trading_theorem_localized
+
+/-! ### Pruning inside the dynamic program (`Factor/PrunedDP.lean`, session 25) -/
+
+#print axioms SparseSharpe.Factor.knapF_cons
+#print axioms SparseSharpe.Factor.knapF_mem
+#print axioms SparseSharpe.Factor.knapF_key_mem
+#print axioms SparseSharpe.Factor.key_injOn_knapF
+#print axioms SparseSharpe.Factor.knapF_card_le
+#print axioms SparseSharpe.Factor.knapF_spec
+#print axioms SparseSharpe.Factor.le_topSum
+#print axioms SparseSharpe.Factor.topSum_eq_sum_top
+#print axioms SparseSharpe.Factor.card_clipTableF_le
+#print axioms SparseSharpe.Factor.card_le_of_mem_clipTableF
+#print axioms SparseSharpe.Factor.clipTableF_rep
+#print axioms SparseSharpe.Factor.clip_one_guess_loc_pruned
+#print axioms SparseSharpe.Factor.card_le_of_mem_locCandidatesF
+#print axioms SparseSharpe.Factor.locCandidatesF_eq_empty
+#print axioms SparseSharpe.Factor.card_locFamilyF_le
+#print axioms SparseSharpe.Factor.trading_theorem_localized_pruned
+#print axioms SparseSharpe.Factor.localized_pruned_instance
+
+/-! ### The perspective relaxation (`Factor/Perspective.lean`, session 25) -/
+
+#print axioms SparseSharpe.Factor.persp_item_le
+#print axioms SparseSharpe.Factor.perspObj_le_dualBound
+#print axioms SparseSharpe.Factor.wclip_item
+#print axioms SparseSharpe.Factor.perspective_relaxation
+
+/-! ### Nonnegative loadings, `K` factors (`Factor/NonnegGap.lean`, session 25) -/
+
+#print axioms SparseSharpe.Factor.coord_sq_le_Sf
+#print axioms SparseSharpe.Factor.dualBound_le_opt_nonneg_K
+#print axioms SparseSharpe.Factor.quadf_sigma_diag
+#print axioms SparseSharpe.Factor.dualBound_le_opt_nonneg_diag
+#print axioms SparseSharpe.Factor.one_dim_bound
+#print axioms SparseSharpe.Factor.nonneg_gap_example
+#print axioms SparseSharpe.Factor.nonneg_gap_example_value
+#print axioms SparseSharpe.Factor.nonneg_gap_example_attained
+
+/-! ### Definitions and lemmas referenced by the paper (v0.25): every declaration that the paper links to is printed here -/
+
+#print axioms SparseSharpe.Factor.saddle_lower
+#print axioms SparseSharpe.Factor.SaddleData
+#print axioms SparseSharpe.Factor.objLO
+#print axioms SparseSharpe.Factor.dualBound
+#print axioms SparseSharpe.Factor.sharpe
+#print axioms SparseSharpe.Factor.clipKeyItem
+#print axioms SparseSharpe.Factor.clipBox
+#print axioms SparseSharpe.Factor.clipEta
+#print axioms SparseSharpe.Factor.clipStep
+#print axioms SparseSharpe.Factor.clipQ
+#print axioms SparseSharpe.Factor.clipZ
+#print axioms SparseSharpe.Factor.clipTable
+#print axioms SparseSharpe.Factor.clipFamily
+#print axioms SparseSharpe.Factor.clipCandidates
+#print axioms SparseSharpe.Factor.locNodes
+#print axioms SparseSharpe.Factor.knapF
+#print axioms SparseSharpe.Factor.topSum
+#print axioms SparseSharpe.Factor.clipTableF
+#print axioms SparseSharpe.Factor.locFamilyF
+#print axioms SparseSharpe.Factor.locCandidatesF

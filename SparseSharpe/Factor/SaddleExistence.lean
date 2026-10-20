@@ -20,7 +20,7 @@ No minimax theorem is used. The proof is direct:
    solution of the `K+1` linear equations has at most `K+1` fractional coordinates
    (`exists_sparse_frac`, `SaddleData.exists_vertex`, `exists_saddle_vertex`).
 
-The end results are `relaxation_rounding` (a support with exactly `k` names and loss `≤ (Kω/k)·G*_k`) and
+The end results are `relaxation_rounding` (a support with exactly `k` names and loss `≤ (⌊(K+1)/2⌋ω/k)·G*_k`) and
 `relaxation_bicriteria` (a support with at most `k+K` names and value `≥ G*_k`).
 -/
 
@@ -717,7 +717,7 @@ theorem exists_saddle_vertex [Nonempty κ] (hd : ∀ i, 0 < d i)
 /-- **The relaxation rounds to a portfolio on exactly `k` names (Theorem 3.2, unconditional form).** If
 `B_i'Σ_fB_i/d_i ≤ ω` for all `i`, there are a minimizer `t` of `g_k` (so `g_k(t) = G*_k ≥ OPT_LO(k)`) and a
 support `R`, `|R| = k`, such that the clipped portfolio `w(t)` on `R` satisfies
-`G*_k − obj(R, w(t)) ≤ (Kω/k)·G*_k`. -/
+`G*_k − obj(R, w(t)) ≤ (⌊(K+1)/2⌋ω/k)·G*_k`. -/
 theorem relaxation_rounding [Nonempty κ] (hd : ∀ i, 0 < d i) (hG : ∀ j j', ∑ l, G l j * G l j' = P j j')
     (hPS : ∀ j j', ∑ l, P j l * Sf l j' = if j = j' then 1 else 0) (hk1 : 1 ≤ k)
     (hk : k ≤ Fintype.card ι) {ω : ℝ} (hω0 : 0 ≤ ω) (hω : ∀ i, sysVar B Sf i / d i ≤ ω) :
@@ -726,7 +726,7 @@ theorem relaxation_rounding [Nonempty κ] (hd : ∀ i, 0 < d i) (hG : ∀ j j', 
         objLO m d B Sf S w ≤ dualBound m d B P k t) ∧
       R.card = k ∧ (∀ i ∈ R, 0 ≤ wclip m d B t i) ∧
       dualBound m d B P k t - objLO m d B Sf R (wclip m d B t)
-        ≤ ((Fintype.card κ : ℝ) * ω / k) * dualBound m d B P k t := by
+        ≤ ((((Fintype.card κ + 1) / 2 : ℕ) : ℝ) * ω / k) * dualBound m d B P k t := by
   obtain ⟨t, lam, σ, hmin, hS, hσ, hf⟩ := exists_saddle_vertex (m := m) (B := B) (Sf := Sf) (G := G) hd hG hPS hk1 hk
   obtain ⟨s, hs, -⟩ := hS.exists_s
   obtain ⟨T, -, -, hcard, hmain, hK, hchain⟩ := saddle_rounding_K hd hG hPS hS hσ hω0
@@ -735,26 +735,26 @@ theorem relaxation_rounding [Nonempty κ] (hd : ∀ i, 0 < d i) (hG : ∀ j j', 
     fun S hS' w hw => objLO_le_dualBound (m := m) (B := B) (Sf := Sf) (P := P) (G := G) hd hG hPS hS' hw t,
     hcard, fun i _ => wclip_nonneg hd t i, hmain.trans (hK.trans hchain)⟩
 
-/-- **The rounding, with the Sharpe-ratio guarantee.** If `Kω < k` and some long-only portfolio with at most `k`
-names has a positive objective (`OPT_LO(k) > 0`), the fully invested portfolio `x = w(t)|_R/Σ_R w(t)` of the
-rounded support `R` has Sharpe ratio at least `√(1 − Kω/k)` times that of every long-only portfolio with at most `k`
-names and positive expected excess return. -/
+/-- **The rounding, with the Sharpe-ratio guarantee.** If `⌊(K+1)/2⌋ω < k` and some long-only portfolio with at most `k`
+names has a positive objective (`OPT_LO(k) > 0`), there are a minimizer `t` of `g_k` and a support `R` with `|R| = k`
+such that the fully invested portfolio `x = w(t)|_R/Σ_R w(t)` has Sharpe ratio at least `√(1 − ⌊(K+1)/2⌋ω/k)` times
+that of every long-only portfolio with at most `k` names and positive expected excess return. -/
 theorem relaxation_rounding_sharpe [Nonempty κ] (hd : ∀ i, 0 < d i)
     (hG : ∀ j j', ∑ l, G l j * G l j' = P j j')
     (hPS : ∀ j j', ∑ l, P j l * Sf l j' = if j = j' then 1 else 0) (hk1 : 1 ≤ k)
     (hk : k ≤ Fintype.card ι) {ω : ℝ} (hω0 : 0 ≤ ω) (hω : ∀ i, sysVar B Sf i / d i ≤ ω)
-    (hKω : (Fintype.card κ : ℝ) * ω < k)
+    (hKω : (((Fintype.card κ + 1) / 2 : ℕ) : ℝ) * ω < k)
     (hopt : ∃ S₀ : Finset ι, S₀.card ≤ k ∧ ∃ w₀ : ι → ℝ, (∀ i ∈ S₀, 0 ≤ w₀ i) ∧ 0 < objLO m d B Sf S₀ w₀) :
-    ∃ (t : κ → ℝ) (R : Finset ι), R.card = k ∧
-      (1 - (Fintype.card κ : ℝ) * ω / k) * dualBound m d B P k t ≤ objLO m d B Sf R (wclip m d B t) ∧
+    ∃ (t : κ → ℝ) (R : Finset ι), (∀ t', dualBound m d B P k t ≤ dualBound m d B P k t') ∧ R.card = k ∧
+      (1 - (((Fintype.card κ + 1) / 2 : ℕ) : ℝ) * ω / k) * dualBound m d B P k t ≤ objLO m d B Sf R (wclip m d B t) ∧
       (∀ i ∈ R, 0 ≤ (∑ j ∈ R, wclip m d B t j)⁻¹ * wclip m d B t i) ∧
       ∑ i ∈ R, (∑ j ∈ R, wclip m d B t j)⁻¹ * wclip m d B t i = 1 ∧
       ∀ S' : Finset ι, S'.card ≤ k → ∀ u : ι → ℝ, (∀ i ∈ S', 0 ≤ u i) → 0 < pRet m S' u →
-        Real.sqrt (1 - (Fintype.card κ : ℝ) * ω / k) * sharpe m d B Sf S' u
+        Real.sqrt (1 - (((Fintype.card κ + 1) / 2 : ℕ) : ℝ) * ω / k) * sharpe m d B Sf S' u
           ≤ sharpe m d B Sf R (fun i => (∑ j ∈ R, wclip m d B t j)⁻¹ * wclip m d B t i) := by
-  obtain ⟨t, R, -, hweak, hRc, hRw, hloss⟩ := relaxation_rounding (m := m) (B := B) (Sf := Sf) (G := G) hd hG hPS
+  obtain ⟨t, R, hmin, hweak, hRc, hRw, hloss⟩ := relaxation_rounding (m := m) (B := B) (Sf := Sf) (G := G) hd hG hPS
     hk1 hk hω0 hω
-  set c : ℝ := (Fintype.card κ : ℝ) * ω / k with hc
+  set c : ℝ := (((Fintype.card κ + 1) / 2 : ℕ) : ℝ) * ω / k with hc
   have hkpos : (0 : ℝ) < k := by exact_mod_cast hk1
   have hc1 : c < 1 := by rw [hc, div_lt_one hkpos]; exact hKω
   have hc0 : 0 ≤ c := div_nonneg (mul_nonneg (Nat.cast_nonneg _) hω0) hkpos.le
@@ -765,7 +765,7 @@ theorem relaxation_rounding_sharpe [Nonempty κ] (hd : ∀ i, 0 < d i)
     lt_of_lt_of_le (mul_pos (by linarith) hgpos) hobj
   obtain ⟨-, hx0, hx1, hsh⟩ := certificate_sharpe (m := m) (B := B) (Sf := Sf) (P := P) (G := G) hd hG hPS
     (Sh := R) hRc.le (wh := wclip m d B t) hRw hFpos t
-  refine ⟨t, R, hRc, hobj, hx0, hx1, fun S' hS' u hu hru => ?_⟩
+  refine ⟨t, R, hmin, hRc, hobj, hx0, hx1, fun S' hS' u hu hru => ?_⟩
   have h1 := hsh S' hS' u hu hru
   have hratio : 1 - c ≤ objLO m d B Sf R (wclip m d B t) / dualBound m d B P k t := by
     rw [le_div_iff₀ hgpos]; exact hobj
