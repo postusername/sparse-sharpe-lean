@@ -4,7 +4,7 @@ set_option linter.style.header false
 set_option linter.unusedSectionVars false
 
 /-!
-# Sharper loss at a node (Remark 4.3 of the paper)
+# Sharper loss at a node (Proposition 4.3 of the paper)
 
 `F − obj(S, w(τ)) ≤ (ν_S − 1)·(Q_S(τ) − F) ≤ ν_S(ν_S − 1)·q`, where `ν_S − 1 = Σ_{i∈S} ω_i` (`levSum`).
 It improves `objLO_wclip_ge_of_node` (which has `ν_S²`) by the factor `(ν_S − 1)/ν_S`; the loss vanishes with

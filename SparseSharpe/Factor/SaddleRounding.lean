@@ -6,7 +6,7 @@ set_option linter.style.header false
 set_option linter.unusedSectionVars false
 
 /-!
-# Theorem 3.2: rounding at the saddle point of the relaxation
+# Theorem 3.2 of the analytic note (Theorem 5.16 of the paper): rounding at the saddle point of the relaxation
 
 `SaddleData` collects the conditions of a saddle point `(t, λ)` of `L(t,λ) = t'Pt + Σ λ_i s_i(t)` over
 `Λ_k × ℝ^K`. At such a point
@@ -194,6 +194,30 @@ lemma exists_set_ge_of_range {s : ℕ} {lam : ι → ℝ} (hr : ∀ i, 0 ≤ lam
     ∃ T : Finset ι, T.card = s ∧ ∑ i, lam i * v i ≤ ∑ i ∈ T, v i := by
   have h := exists_hasRounding (E := ℝ) s _ lam (fun _ => 0) hr hs rfl
   exact h.exists_set_ge v
+
+/-- The Lagrangian `L(t, λ) = t'Pt + Σ λ_i s_i(t)` of any `λ ∈ [0,1]^M` with `Σ λ = k` is at most `g_k(t)`
+(the maximum of a linear function over the hypersimplex is the sum of the `k` largest scores). -/
+lemma lagrangian_le_dualBound (hr : ∀ i, 0 ≤ lam i ∧ lam i ≤ 1) (hs : ∑ i, lam i = k) :
+    quadf P t + ∑ i, lam i * clipScore m d B t i ≤ dualBound m d B P k t := by
+  classical
+  obtain ⟨T', hT'c, hT'⟩ := exists_set_ge_of_range hr hs (fun i => clipScore m d B t i)
+  have hsup : ∑ i ∈ T', clipScore m d B t i ≤ ((Finset.univ : Finset (Finset ι)).filter
+      fun S => S.card ≤ k).sup' (supportsLe_nonempty k)
+      (fun S => ∑ i ∈ S, (max (m i - dotp (B i) t) 0) ^ 2 / d i) :=
+    Finset.le_sup' (fun S : Finset ι => ∑ i ∈ S, (max (m i - dotp (B i) t) 0) ^ 2 / d i)
+      (Finset.mem_filter.mpr ⟨Finset.mem_univ T', by rw [hT'c]⟩)
+  unfold dualBound
+  have : ∑ i, lam i * clipScore m d B t i ≤ ∑ i ∈ T', clipScore m d B t i := hT'
+  linarith
+
+/-- At a saddle point `g_k(t) = L(t, λ)`. -/
+theorem SaddleData.dualBound_eq_lagrangian (hd : ∀ i, 0 < d i) (hS : SaddleData m d B P k t lam σ) :
+    dualBound m d B P k t = quadf P t + ∑ i, lam i * clipScore m d B t i := by
+  classical
+  obtain ⟨s, hs, -⟩ := hS.exists_s
+  obtain ⟨T, hT, hTc⟩ := hS.exists_sub hs
+  have heq' := hS.dualBound_eq hd hT (by rw [hs, hTc])
+  rw [heq'.2.1, heq'.2.2]
 
 /-- **A saddle point minimizes the dual bound**: `G*_k = g_k(t)`. -/
 theorem SaddleData.isMin [Nonempty κ] (hd : ∀ i, 0 < d i)
@@ -705,6 +729,56 @@ theorem exists_isRep {lam : ι → ℝ} (hr : ∀ i, 0 ≤ lam i ∧ lam i ≤ 1
       · intro h; exact ⟨⟨i, hi⟩, h, rfl⟩
     simp only [h2]
     exact h1
+
+/-- **Theorem 3.2 in one statement** (parts (i)–(iii) of the paper): a saddle point `(t, λ, σ)` with `σ ≥ 0`, at most
+`K+1` fractional multipliers and `ω ≥ 0`, `ω ≥ B_i'Σ_fB_i/d_i` on the fractional set `I'`.
+(0) `t` minimizes `g_k`. (i) For every `T ⊆ I'` with `|T| = Σ_{I'} λ` the support `H ∪ T` has `k` names and
+`g_k(t) − obj = ‖Σ_T v_i − Σ_{I'} λ_i v_i‖²`. (ii) Some such `T` has loss at most
+`min(s, f−s)·σω ≤ K·σω ≤ (Kω/k)·g_k(t)`, and one has loss at most `σω ≤ (ω/k)·g_k(t)` if `s = 1` or `s = f−1`.
+(iii) For every representation of `λ|_{I'}` as a convex combination of `s`-subsets of `I'` the average loss is at most
+`f·σ·Σλ(1−λ)ω_i ≤ f²σω/4`, some `T_a` is at least as good, and a representation exists. -/
+theorem saddle_rounding_theorem [Nonempty κ] (hd : ∀ i, 0 < d i)
+    (hG : ∀ j j', ∑ l, G l j * G l j' = P j j')
+    (hPS : ∀ j j', ∑ l, P j l * Sf l j' = if j = j' then 1 else 0)
+    (hS : SaddleData m d B P k t lam σ) (hσ0 : 0 ≤ σ) {ω : ℝ} (hω0 : 0 ≤ ω)
+    (hω : ∀ i ∈ fracSet lam, sysVar B Sf i / d i ≤ ω) {s : ℕ}
+    (hs : ∑ i ∈ fracSet lam, lam i = s) (hk : 1 ≤ k) (hf : (fracSet lam).card ≤ Fintype.card κ + 1) :
+    (∀ t', dualBound m d B P k t ≤ dualBound m d B P k t') ∧
+    (∀ T : Finset ι, T ⊆ fracSet lam → T.card = s → (oneSet lam ∪ T).card = k ∧
+      dualBound m d B P k t - objLO m d B Sf (oneSet lam ∪ T) (wclip m d B t)
+        = ∑ l, (∑ i ∈ T, vcoord G Sf B (wclip m d B t) i l
+            - ∑ i ∈ fracSet lam, lam i * vcoord G Sf B (wclip m d B t) i l) ^ 2) ∧
+    (∃ T : Finset ι, T ⊆ fracSet lam ∧ T.card = s ∧ (oneSet lam ∪ T).card = k ∧
+      dualBound m d B P k t - objLO m d B Sf (oneSet lam ∪ T) (wclip m d B t)
+          ≤ min (s : ℝ) ((fracSet lam).card - s) * (σ * ω) ∧
+      min (s : ℝ) ((fracSet lam).card - s) * (σ * ω) ≤ (Fintype.card κ : ℝ) * (σ * ω) ∧
+      (Fintype.card κ : ℝ) * (σ * ω) ≤ ((Fintype.card κ : ℝ) * ω / k) * dualBound m d B P k t) ∧
+    ((s = 1 ∨ s + 1 = (fracSet lam).card) →
+      ∃ T : Finset ι, T ⊆ fracSet lam ∧ T.card = s ∧ (oneSet lam ∪ T).card = k ∧
+        dualBound m d B P k t - objLO m d B Sf (oneSet lam ∪ T) (wclip m d B t) ≤ σ * ω ∧
+        σ * ω ≤ (ω / k) * dualBound m d B P k t) ∧
+    (∀ (Ω : Type) [Fintype Ω] (p : Ω → ℝ) (T : Ω → Finset ι), IsRep (fracSet lam) s lam p T →
+      ∑ a, p a * (dualBound m d B P k t - objLO m d B Sf (oneSet lam ∪ T a) (wclip m d B t))
+          ≤ (fracSet lam).card * (σ * ∑ i ∈ fracSet lam, lam i * (1 - lam i) * (sysVar B Sf i / d i)) ∧
+        (fracSet lam).card * (σ * ∑ i ∈ fracSet lam, lam i * (1 - lam i) * (sysVar B Sf i / d i))
+          ≤ (fracSet lam).card * (fracSet lam).card / 4 * (σ * ω) ∧
+        ∃ a, p a ≠ 0 ∧ (T a ⊆ fracSet lam ∧ (T a).card = s ∧ (oneSet lam ∪ T a).card = k) ∧
+          dualBound m d B P k t - objLO m d B Sf (oneSet lam ∪ T a) (wclip m d B t)
+            ≤ ∑ a', p a' * (dualBound m d B P k t - objLO m d B Sf (oneSet lam ∪ T a') (wclip m d B t))) ∧
+    (∃ (Ω : Type) (_ : Fintype Ω) (p : Ω → ℝ) (T : Ω → Finset ι), IsRep (fracSet lam) s lam p T) := by
+  classical
+  refine ⟨hS.isMin hd hG, ?_, ?_, ?_, ?_, ?_⟩
+  · intro T hTF hTc
+    have hsT : ∑ i ∈ fracSet lam, lam i = T.card := by rw [hs, hTc]
+    obtain ⟨hcard, -, -⟩ := hS.dualBound_eq hd hTF hsT
+    exact ⟨hcard, hS.loss_eq hd hG hPS hTF hsT⟩
+  · obtain ⟨T, hTF, hTc, hcard, hmain, hK, hchain⟩ := saddle_rounding_K hd hG hPS hS hσ0 hω0 hω hs hk hf
+    exact ⟨T, hTF, hTc, hcard, hmain, hK, hchain⟩
+  · intro h1
+    exact saddle_rounding_one hd hG hPS hS hσ0 hω0 hω hs hk h1
+  · intro Ω _ p T hrep
+    exact saddle_rounding_avg hd hG hPS hS hs hrep |> fun h => ⟨h.1, h.2.1 hω, h.2.2⟩
+  · exact exists_isRep hS.range hs
 
 end Saddle
 

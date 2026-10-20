@@ -33,12 +33,15 @@ basic-solution argument).
 |---|---|---|
 | Rounding lemma (pairwise merges) | `exists_hasRounding`, `exists_set_sq_le_min` | [Factor/PairRounding.lean](SparseSharpe/Factor/PairRounding.lean) |
 | Saddle point: dual bound, minimality, loss = defect | `SaddleData.isMin`, `SaddleData.loss_eq` | [Factor/SaddleRounding.lean](SparseSharpe/Factor/SaddleRounding.lean) |
+| Theorem 3.2 in one statement (parts (i)–(iii) of Theorem 5.16 of the paper) | `saddle_rounding_theorem` | [Factor/SaddleRounding.lean](SparseSharpe/Factor/SaddleRounding.lean) |
 | Theorem 3.2(a): loss `≤ min(s,f−s)·ωσ ≤ K·ωσ ≤ (Kω/k)·G*_k` | `saddle_rounding_min`, `saddle_rounding_K`, `saddle_rounding_one` | [Factor/SaddleRounding.lean](SparseSharpe/Factor/SaddleRounding.lean) |
 | Theorem 3.2(b): average over a representation, `≤ f·σ·Σλ(1−λ)ω_i` | `saddle_rounding_avg`, `exists_isRep` | [Factor/SaddleRounding.lean](SparseSharpe/Factor/SaddleRounding.lean) |
+| `L(t,λ) ≤ g_k(t)` on the hypersimplex, equality at a saddle point | `lagrangian_le_dualBound`, `SaddleData.dualBound_eq_lagrangian` | [Factor/SaddleRounding.lean](SparseSharpe/Factor/SaddleRounding.lean) |
 | Existence of a minimizer of `g_k` | `exists_isMin_dualBound` | [Factor/SaddleExistence.lean](SparseSharpe/Factor/SaddleExistence.lean) |
 | First-order condition (Gordan) | `exists_weights_of_isMin` | [Factor/SaddleExistence.lean](SparseSharpe/Factor/SaddleExistence.lean) |
 | Saddle point, vertex with `≤ K+1` fractional coordinates | `exists_saddle`, `exists_saddle_vertex` | [Factor/SaddleExistence.lean](SparseSharpe/Factor/SaddleExistence.lean) |
-| Rounding and certificate, unconditional | `relaxation_rounding`, `relaxation_bicriteria` | [Factor/SaddleExistence.lean](SparseSharpe/Factor/SaddleExistence.lean) |
+| Rounding and certificate, unconditional (with weak duality `OPT(k) ≤ G*_k`) | `relaxation_rounding`, `relaxation_bicriteria` | [Factor/SaddleExistence.lean](SparseSharpe/Factor/SaddleExistence.lean) |
+| Rounding with the Sharpe-ratio guarantee `√(1−Kω/k)` | `relaxation_rounding_sharpe` | [Factor/SaddleExistence.lean](SparseSharpe/Factor/SaddleExistence.lean) |
 | Sharper loss at a node (Remark 4.3) | `objLO_wclip_ge_of_node_sharp` | [Factor/NodeSharp.lean](SparseSharpe/Factor/NodeSharp.lean) |
 | The root `G` with `GᵀG = P`, `P Σ_f = I` exists for every positive definite `Σ_f` | `exists_root_of_posDef` | [Factor/RootExists.lean](SparseSharpe/Factor/RootExists.lean) |
 
@@ -60,7 +63,7 @@ from the clipped weights `w(τ)`; it is the one used by the current version of t
 | Gap of the relaxation, certificate with `k+K` names | `dualBound_le_two_opt_nonneg`, `bicriteria_certificate` | [Factor/Relaxation.lean](SparseSharpe/Factor/Relaxation.lean) |
 | Position limits (weak duality) | `cap_weak_duality` | [Factor/CapDuality.lean](SparseSharpe/Factor/CapDuality.lean) |
 
-The audit file prints the axioms of 695 statements (no `sorry`).
+The audit file prints the axioms of 699 statements (no `sorry`).
 
 ## Main statements
 
@@ -100,12 +103,12 @@ pinned to the tag `v4.35.0-rc2` in `lake-manifest.json`. With [elan](https://git
 ```
 lake exe cache get                       # download the prebuilt Mathlib (several GB)
 lake build                               # build the formalization
-lake env lean SparseSharpe/Audit.lean    # print the axioms of 695 statements
+lake env lean SparseSharpe/Audit.lean    # print the axioms of 699 statements
 ```
 
-Each of the 695 statements depends only on `propext`, `Classical.choice` and `Quot.sound`
+Each of the 699 statements depends only on `propext`, `Classical.choice` and `Quot.sound`
 (some on a subset), and none on `sorryAx`. The sources contain no `sorry`, no `axiom`
-declarations and no `native_decide`. The development has 70 files and about 25 500 lines.
+declarations and no `native_decide`. The development has 70 files and about 25 700 lines.
 
 ## Layout
 

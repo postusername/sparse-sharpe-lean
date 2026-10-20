@@ -782,7 +782,7 @@ open SparseSharpe SparseSharpe.OneFactor
 #print axioms SparseSharpe.Factor.cap_smul
 #print axioms SparseSharpe.Factor.cap_exists_scaled
 
-/-! ### Rounding lemma for fractional multipliers (`Factor/PairRounding.lean`, Theorem 3.2) -/
+/-! ### Rounding lemma for fractional multipliers (`Factor/PairRounding.lean`, Lemma 5.15) -/
 
 #print axioms SparseSharpe.Factor.two_point_var
 #print axioms SparseSharpe.Factor.convex_two_var
@@ -816,7 +816,7 @@ open SparseSharpe SparseSharpe.OneFactor
 #print axioms SparseSharpe.Factor.exists_set_sq_le_compl
 #print axioms SparseSharpe.Factor.exists_set_sq_le_min
 
-/-! ### Theorem 3.2 at a saddle point (`Factor/SaddleRounding.lean`) -/
+/-! ### Rounding at the saddle point (`Factor/SaddleRounding.lean`, Theorem 5.16) -/
 
 #print axioms SparseSharpe.Factor.mem_oneSet
 #print axioms SparseSharpe.Factor.sum_split
@@ -826,6 +826,8 @@ open SparseSharpe SparseSharpe.OneFactor
 #print axioms SparseSharpe.Factor.SaddleData.exists_s
 #print axioms SparseSharpe.Factor.SaddleData.exists_sub
 #print axioms SparseSharpe.Factor.exists_set_ge_of_range
+#print axioms SparseSharpe.Factor.lagrangian_le_dualBound
+#print axioms SparseSharpe.Factor.SaddleData.dualBound_eq_lagrangian
 #print axioms SparseSharpe.Factor.SaddleData.isMin
 #print axioms SparseSharpe.Factor.SaddleData.sq_norm_v_eq
 #print axioms SparseSharpe.Factor.SaddleData.sq_norm_v_le
@@ -840,8 +842,9 @@ open SparseSharpe SparseSharpe.OneFactor
 #print axioms SparseSharpe.Factor.IsRep.var
 #print axioms SparseSharpe.Factor.saddle_rounding_avg
 #print axioms SparseSharpe.Factor.exists_isRep
+#print axioms SparseSharpe.Factor.saddle_rounding_theorem
 
-/-! ### Existence of the saddle point and of a vertex with at most K+1 fractional multipliers (`Factor/SaddleExistence.lean`) -/
+/-! ### Existence of the saddle point and of a vertex with at most K+1 fractional multipliers (`Factor/SaddleExistence.lean`, Theorems 5.11, 5.13, Corollary 5.17) -/
 
 #print axioms SparseSharpe.Factor.exists_sparse_frac
 #print axioms SparseSharpe.Factor.QLO_le_dualBound
@@ -873,9 +876,10 @@ open SparseSharpe SparseSharpe.OneFactor
 #print axioms SparseSharpe.Factor.SaddleData.exists_vertex
 #print axioms SparseSharpe.Factor.exists_saddle_vertex
 #print axioms SparseSharpe.Factor.relaxation_rounding
+#print axioms SparseSharpe.Factor.relaxation_rounding_sharpe
 #print axioms SparseSharpe.Factor.relaxation_bicriteria
 
-/-! ### Sharper loss at a node (`Factor/NodeSharp.lean`, Remark 4.3) -/
+/-! ### Sharper loss at a node (`Factor/NodeSharp.lean`, Proposition 4.3) -/
 
 #print axioms SparseSharpe.Factor.objLO_wclip_ge_of_node_sharp
 

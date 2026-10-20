@@ -722,6 +722,8 @@ theorem relaxation_rounding [Nonempty κ] (hd : ∀ i, 0 < d i) (hG : ∀ j j', 
     (hPS : ∀ j j', ∑ l, P j l * Sf l j' = if j = j' then 1 else 0) (hk1 : 1 ≤ k)
     (hk : k ≤ Fintype.card ι) {ω : ℝ} (hω0 : 0 ≤ ω) (hω : ∀ i, sysVar B Sf i / d i ≤ ω) :
     ∃ (t : κ → ℝ) (R : Finset ι), (∀ t', dualBound m d B P k t ≤ dualBound m d B P k t') ∧
+      (∀ S : Finset ι, S.card ≤ k → ∀ w : ι → ℝ, (∀ i ∈ S, 0 ≤ w i) →
+        objLO m d B Sf S w ≤ dualBound m d B P k t) ∧
       R.card = k ∧ (∀ i ∈ R, 0 ≤ wclip m d B t i) ∧
       dualBound m d B P k t - objLO m d B Sf R (wclip m d B t)
         ≤ ((Fintype.card κ : ℝ) * ω / k) * dualBound m d B P k t := by
@@ -729,8 +731,49 @@ theorem relaxation_rounding [Nonempty κ] (hd : ∀ i, 0 < d i) (hG : ∀ j j', 
   obtain ⟨s, hs, -⟩ := hS.exists_s
   obtain ⟨T, -, -, hcard, hmain, hK, hchain⟩ := saddle_rounding_K hd hG hPS hS hσ hω0
     (fun i _ => hω i) hs hk1 hf
-  exact ⟨t, oneSet lam ∪ T, hmin, hcard, fun i _ => wclip_nonneg hd t i,
-    hmain.trans (hK.trans hchain)⟩
+  exact ⟨t, oneSet lam ∪ T, hmin,
+    fun S hS' w hw => objLO_le_dualBound (m := m) (B := B) (Sf := Sf) (P := P) (G := G) hd hG hPS hS' hw t,
+    hcard, fun i _ => wclip_nonneg hd t i, hmain.trans (hK.trans hchain)⟩
+
+/-- **The rounding, with the Sharpe-ratio guarantee.** If `Kω < k` and some long-only portfolio with at most `k`
+names has a positive objective (`OPT_LO(k) > 0`), the fully invested portfolio `x = w(t)|_R/Σ_R w(t)` of the
+rounded support `R` has Sharpe ratio at least `√(1 − Kω/k)` times that of every long-only portfolio with at most `k`
+names and positive expected excess return. -/
+theorem relaxation_rounding_sharpe [Nonempty κ] (hd : ∀ i, 0 < d i)
+    (hG : ∀ j j', ∑ l, G l j * G l j' = P j j')
+    (hPS : ∀ j j', ∑ l, P j l * Sf l j' = if j = j' then 1 else 0) (hk1 : 1 ≤ k)
+    (hk : k ≤ Fintype.card ι) {ω : ℝ} (hω0 : 0 ≤ ω) (hω : ∀ i, sysVar B Sf i / d i ≤ ω)
+    (hKω : (Fintype.card κ : ℝ) * ω < k)
+    (hopt : ∃ S₀ : Finset ι, S₀.card ≤ k ∧ ∃ w₀ : ι → ℝ, (∀ i ∈ S₀, 0 ≤ w₀ i) ∧ 0 < objLO m d B Sf S₀ w₀) :
+    ∃ (t : κ → ℝ) (R : Finset ι), R.card = k ∧
+      (1 - (Fintype.card κ : ℝ) * ω / k) * dualBound m d B P k t ≤ objLO m d B Sf R (wclip m d B t) ∧
+      (∀ i ∈ R, 0 ≤ (∑ j ∈ R, wclip m d B t j)⁻¹ * wclip m d B t i) ∧
+      ∑ i ∈ R, (∑ j ∈ R, wclip m d B t j)⁻¹ * wclip m d B t i = 1 ∧
+      ∀ S' : Finset ι, S'.card ≤ k → ∀ u : ι → ℝ, (∀ i ∈ S', 0 ≤ u i) → 0 < pRet m S' u →
+        Real.sqrt (1 - (Fintype.card κ : ℝ) * ω / k) * sharpe m d B Sf S' u
+          ≤ sharpe m d B Sf R (fun i => (∑ j ∈ R, wclip m d B t j)⁻¹ * wclip m d B t i) := by
+  obtain ⟨t, R, -, hweak, hRc, hRw, hloss⟩ := relaxation_rounding (m := m) (B := B) (Sf := Sf) (G := G) hd hG hPS
+    hk1 hk hω0 hω
+  set c : ℝ := (Fintype.card κ : ℝ) * ω / k with hc
+  have hkpos : (0 : ℝ) < k := by exact_mod_cast hk1
+  have hc1 : c < 1 := by rw [hc, div_lt_one hkpos]; exact hKω
+  have hc0 : 0 ≤ c := div_nonneg (mul_nonneg (Nat.cast_nonneg _) hω0) hkpos.le
+  obtain ⟨S₀, hS₀, w₀, hw₀, hpos₀⟩ := hopt
+  have hgpos : 0 < dualBound m d B P k t := lt_of_lt_of_le hpos₀ (hweak S₀ hS₀ w₀ hw₀)
+  have hobj : (1 - c) * dualBound m d B P k t ≤ objLO m d B Sf R (wclip m d B t) := by linarith
+  have hFpos : 0 < objLO m d B Sf R (wclip m d B t) :=
+    lt_of_lt_of_le (mul_pos (by linarith) hgpos) hobj
+  obtain ⟨-, hx0, hx1, hsh⟩ := certificate_sharpe (m := m) (B := B) (Sf := Sf) (P := P) (G := G) hd hG hPS
+    (Sh := R) hRc.le (wh := wclip m d B t) hRw hFpos t
+  refine ⟨t, R, hRc, hobj, hx0, hx1, fun S' hS' u hu hru => ?_⟩
+  have h1 := hsh S' hS' u hu hru
+  have hratio : 1 - c ≤ objLO m d B Sf R (wclip m d B t) / dualBound m d B P k t := by
+    rw [le_div_iff₀ hgpos]; exact hobj
+  have hsq : Real.sqrt (1 - c) ≤ Real.sqrt (objLO m d B Sf R (wclip m d B t) / dualBound m d B P k t) :=
+    Real.sqrt_le_sqrt hratio
+  have hsh0 : 0 ≤ sharpe m d B Sf S' u := by
+    unfold sharpe; exact div_nonneg hru.le (Real.sqrt_nonneg _)
+  exact le_trans (mul_le_mul_of_nonneg_right hsq hsh0) h1
 
 /-- **The relaxation certificate (bicriteria), unconditional.** There is a minimizer `t` of `g_k` and a support
 `T` with `|T| ≤ k + K` carrying a long-only portfolio of value at least `G*_k` (so
@@ -740,6 +783,8 @@ theorem relaxation_bicriteria [Nonempty κ] (hd : ∀ i, 0 < d i)
     (hPS : ∀ j j', ∑ l, P j l * Sf l j' = if j = j' then 1 else 0) (hk1 : 1 ≤ k)
     (hk : k ≤ Fintype.card ι) :
     ∃ (t : κ → ℝ) (T : Finset ι), (∀ t', dualBound m d B P k t ≤ dualBound m d B P k t') ∧
+      (∀ S : Finset ι, S.card ≤ k → ∀ w : ι → ℝ, (∀ i ∈ S, 0 ≤ w i) →
+        objLO m d B Sf S w ≤ dualBound m d B P k t) ∧
       T.card ≤ k + Fintype.card κ ∧
       ∃ w : ι → ℝ, (∀ i ∈ T, 0 ≤ w i) ∧ dualBound m d B P k t ≤ objLO m d B Sf T w := by
   classical
@@ -747,7 +792,7 @@ theorem relaxation_bicriteria [Nonempty κ] (hd : ∀ i, 0 < d i)
   set T : Finset ι := Finset.univ.filter fun i => 0 < lam i with hT
   have hTcard : T.card ≤ k + Fintype.card κ :=
     card_support_le_of_frac hS.range hS.sum hf
-  refine ⟨t, T, hmin, hTcard, ?_⟩
+  refine ⟨t, T, hmin, fun S hS' w hw => objLO_le_dualBound (m := m) (B := B) (Sf := Sf) (P := P) (G := G) hd hG hPS hS' hw t, hTcard, ?_⟩
   have hzero : ∀ i, i ∉ T → lam i = 0 := by
     intro i hi
     have : ¬ 0 < lam i := fun h => hi (Finset.mem_filter.mpr ⟨Finset.mem_univ _, h⟩)
