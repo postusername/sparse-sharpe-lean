@@ -57,6 +57,7 @@ import SparseSharpe.Factor.ClippedTrading
 import SparseSharpe.Factor.Relaxation
 import SparseSharpe.Factor.CapDuality
 import SparseSharpe.Factor.NodeSharp
+import SparseSharpe.Factor.RootExists
 import SparseSharpe.Factor.PairRounding
 import SparseSharpe.Factor.SaddleRounding
 import SparseSharpe.Factor.SaddleExistence
@@ -877,3 +878,8 @@ open SparseSharpe SparseSharpe.OneFactor
 /-! ### Sharper loss at a node (`Factor/NodeSharp.lean`, Remark 4.3) -/
 
 #print axioms SparseSharpe.Factor.objLO_wclip_ge_of_node_sharp
+
+/-! ### The root `G` exists for every positive definite `Σ_f` (`Factor/RootExists.lean`) -/
+
+#print axioms SparseSharpe.Factor.exists_root_of_posSemidef
+#print axioms SparseSharpe.Factor.exists_root_of_posDef

@@ -63,6 +63,7 @@ import SparseSharpe.Factor.ClippedTrading
 import SparseSharpe.Factor.Relaxation
 import SparseSharpe.Factor.CapDuality
 import SparseSharpe.Factor.NodeSharp
+import SparseSharpe.Factor.RootExists
 import SparseSharpe.Factor.PairRounding
 import SparseSharpe.Factor.SaddleRounding
 import SparseSharpe.Factor.SaddleExistence

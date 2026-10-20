@@ -21,7 +21,7 @@ that their proofs use.
 
 ## Version 0.24: rounding at the saddle point, existence of the saddle point, no minimax theorem
 
-New files `Factor/PairRounding`, `SaddleRounding`, `SaddleExistence`, `NodeSharp` prove, without any
+New files `Factor/PairRounding`, `SaddleRounding`, `SaddleExistence`, `NodeSharp`, `RootExists` prove, without any
 assumption beyond the data, that the relaxation `G*_k = min_t g_k(t)` has a minimizer `t*` at which the clipped
 portfolio `w(t*)` on a suitable support of exactly `k` names loses at most `(Kω/k)·G*_k` against `G*_k`
 (Theorem 3.2 of the analytic note), and that a support with at most `k+K` names has long-only value at least
@@ -40,6 +40,7 @@ basic-solution argument).
 | Saddle point, vertex with `≤ K+1` fractional coordinates | `exists_saddle`, `exists_saddle_vertex` | [Factor/SaddleExistence.lean](SparseSharpe/Factor/SaddleExistence.lean) |
 | Rounding and certificate, unconditional | `relaxation_rounding`, `relaxation_bicriteria` | [Factor/SaddleExistence.lean](SparseSharpe/Factor/SaddleExistence.lean) |
 | Sharper loss at a node (Remark 4.3) | `objLO_wclip_ge_of_node_sharp` | [Factor/NodeSharp.lean](SparseSharpe/Factor/NodeSharp.lean) |
+| The root `G` with `GᵀG = P`, `P Σ_f = I` exists for every positive definite `Σ_f` | `exists_root_of_posDef` | [Factor/RootExists.lean](SparseSharpe/Factor/RootExists.lean) |
 
 ## Version 0.23: scheme without the Gram matrix
 
@@ -59,7 +60,7 @@ from the clipped weights `w(τ)`; it is the one used by the current version of t
 | Gap of the relaxation, certificate with `k+K` names | `dualBound_le_two_opt_nonneg`, `bicriteria_certificate` | [Factor/Relaxation.lean](SparseSharpe/Factor/Relaxation.lean) |
 | Position limits (weak duality) | `cap_weak_duality` | [Factor/CapDuality.lean](SparseSharpe/Factor/CapDuality.lean) |
 
-The audit file prints the axioms of 693 statements (no `sorry`).
+The audit file prints the axioms of 695 statements (no `sorry`).
 
 ## Main statements
 
@@ -99,12 +100,12 @@ pinned to the tag `v4.35.0-rc2` in `lake-manifest.json`. With [elan](https://git
 ```
 lake exe cache get                       # download the prebuilt Mathlib (several GB)
 lake build                               # build the formalization
-lake env lean SparseSharpe/Audit.lean    # print the axioms of 693 statements
+lake env lean SparseSharpe/Audit.lean    # print the axioms of 695 statements
 ```
 
-Each of the 693 statements depends only on `propext`, `Classical.choice` and `Quot.sound`
+Each of the 695 statements depends only on `propext`, `Classical.choice` and `Quot.sound`
 (some on a subset), and none on `sorryAx`. The sources contain no `sorry`, no `axiom`
-declarations and no `native_decide`. The development has 69 files and about 25 400 lines.
+declarations and no `native_decide`. The development has 70 files and about 25 500 lines.
 
 ## Layout
 
@@ -128,7 +129,8 @@ declarations and no `native_decide`. The development has 69 files and about 25 4
 
 * Real arithmetic is exact, and assets and factors are indexed by arbitrary finite types.
   No matrix is inverted: `Σ_f⁻¹` enters through a matrix `P` with `P Σ_f = I`, and through a
-  matrix `G` with `Gᵀ G = P`, which is part of the data.
+  matrix `G` with `Gᵀ G = P`, which is part of the data. Such `P` and `G` exist for every positive
+  definite `Σ_f` (`exists_root_of_posDef`).
 * Not formalized: running times (the sizes of all enumerated sets are formalized, a model of
   computation is not), floating-point arithmetic, the search procedures (the numerical minimization of the
   dual bound, greedy selection, branching; the existence of a minimizer and of its multiplier is formalized),
