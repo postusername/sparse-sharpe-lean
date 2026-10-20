@@ -175,6 +175,75 @@ lemma pos_sq_ge (x y : ℝ) : max y 0 ^ 2 + 2 * max y 0 * (x - y) ≤ max x 0 ^ 
   · rw [max_eq_left hx, max_eq_right hy]; nlinarith [sq_nonneg x]
   · rw [max_eq_left hx, max_eq_left hy]; nlinarith [sq_nonneg (x - y)]
 
+/-- **Нижняя граница лагранжиана в стационарной точке.** Если `Σ_f⁻¹t₀ = Σ_{i∈T} λ_i w_i(t₀) B_i`, `λ ≥ 0`, то
+`t₀` минимизирует выпуклую функцию `t ↦ t'Pt + Σ_{i∈T} λ_i s_i(t)`. -/
+lemma saddle_lower [Nonempty κ] (hd : ∀ i, 0 < d i)
+    (hG : ∀ j j', ∑ l, G l j * G l j' = P j j')
+    {T : Finset ι} (t₀ : κ → ℝ) (lam : ι → ℝ) (hlam : ∀ i ∈ T, 0 ≤ lam i)
+    (hstat : ∀ j, ∑ j', P j j' * t₀ j' = ∑ i ∈ T, lam i * wclip m d B t₀ i * B i j) :
+    ∀ t, quadf P t₀ + ∑ i ∈ T, lam i * ((max (m i - dotp (B i) t₀) 0) ^ 2 / d i)
+      ≤ quadf P t + ∑ i ∈ T, lam i * ((max (m i - dotp (B i) t) 0) ^ 2 / d i) := by
+  set s : ι → (κ → ℝ) → ℝ := fun i t => (max (m i - dotp (B i) t) 0) ^ 2 / d i with hs
+  have hPsymm := P_symm_of_root (P := P) (G := G) hG
+  show ∀ t, quadf P t₀ + ∑ i ∈ T, lam i * s i t₀ ≤ quadf P t + ∑ i ∈ T, lam i * s i t
+  intro t
+  set h : κ → ℝ := t - t₀ with hh
+  have htt : t = t₀ + h := by funext j; simp [hh]
+  have hadd := quadf_add hG t₀ h
+  -- линейный член квадратичной части
+  have hlin : ∑ j, ∑ j', P j j' * (t₀ j * h j')
+      = ∑ i ∈ T, lam i * wclip m d B t₀ i * dotp (B i) h := by
+    have h1 : ∑ j, ∑ j', P j j' * (t₀ j * h j') = ∑ j', (∑ j, P j' j * t₀ j) * h j' := by
+      rw [Finset.sum_comm]
+      refine Finset.sum_congr rfl fun j' _ => ?_
+      rw [Finset.sum_mul]
+      exact Finset.sum_congr rfl fun j _ => by rw [hPsymm j j']; ring
+    rw [h1]
+    have h2 : ∀ j', (∑ j, P j' j * t₀ j) = ∑ i ∈ T, lam i * wclip m d B t₀ i * B i j' :=
+      fun j' => by
+        have := hstat j'
+        simpa using this
+    simp only [h2, Finset.sum_mul, dotp, Finset.mul_sum]
+    rw [Finset.sum_comm]
+    exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by ring
+  -- касательная для каждого актива
+  have hitem : ∀ i ∈ T, lam i * s i t₀ - lam i * wclip m d B t₀ i * dotp (B i) h * 2
+      ≤ lam i * s i t := by
+    intro i hi
+    have hdi := hd i
+    have hxy : (m i - dotp (B i) t) - (m i - dotp (B i) t₀) = - dotp (B i) h := by
+      rw [htt]; simp only [dotp, Pi.add_apply, mul_add, Finset.sum_add_distrib]; ring
+    have hp := pos_sq_ge (m i - dotp (B i) t) (m i - dotp (B i) t₀)
+    rw [hxy] at hp
+    have hdiv : (max (m i - dotp (B i) t₀) 0 ^ 2 + 2 * max (m i - dotp (B i) t₀) 0 * (- dotp (B i) h))
+          / d i ≤ max (m i - dotp (B i) t) 0 ^ 2 / d i :=
+      div_le_div_of_nonneg_right hp hdi.le
+    have hl0 := hlam i hi
+    have hw : wclip m d B t₀ i = max (m i - dotp (B i) t₀) 0 / d i := rfl
+    have h3 : s i t₀ - 2 * wclip m d B t₀ i * dotp (B i) h ≤ s i t := by
+      rw [hw]
+      have : (max (m i - dotp (B i) t₀) 0 ^ 2 + 2 * max (m i - dotp (B i) t₀) 0 * (- dotp (B i) h))
+          / d i = s i t₀ - 2 * (max (m i - dotp (B i) t₀) 0 / d i) * dotp (B i) h := by
+        simp only [hs]; field_simp; ring
+      rw [this] at hdiv
+      exact hdiv
+    nlinarith [mul_le_mul_of_nonneg_left h3 hl0]
+  have hsum := Finset.sum_le_sum hitem
+  rw [Finset.sum_sub_distrib] at hsum
+  have hcomm : ∑ i ∈ T, lam i * wclip m d B t₀ i * dotp (B i) h * 2
+      = 2 * ∑ i ∈ T, lam i * wclip m d B t₀ i * dotp (B i) h := by
+    rw [Finset.mul_sum]; exact Finset.sum_congr rfl fun i _ => by ring
+  have hq0 : 0 ≤ quadf P h := quadf_nonneg_of_root hG h
+  rw [htt]
+  have hsplit : quadf P (t₀ + h) = quadf P t₀ + 2 * ∑ i ∈ T, lam i * wclip m d B t₀ i * dotp (B i) h
+      + quadf P h := by rw [hadd, hlin]
+  -- `s i (t₀ + h)` совпадает с `s i t`
+  have hsame : ∀ i, s i (t₀ + h) = s i t := fun i => by rw [← htt]
+  simp only [hsame]
+  rw [← htt] at hsplit ⊢
+  nlinarith [hsum, hcomm, hq0, hsplit]
+
+
 /-- **Сертификат бикритериальной гарантии.** Пусть в точке `t₀` задан вес `λ ∈ [0,1]^T`
 (`T` — предполагаемый носитель размера `k+K`), стационарный:
 `Σ_f⁻¹t₀ = Σ_{i∈T} λ_i w_i(t₀) B_i`, и такой, что `Σ_T λ_i s_i(t₀)` не меньше верхней суммы
@@ -195,65 +264,9 @@ theorem bicriteria_certificate [Nonempty κ] (hd : ∀ i, 0 < d i)
   rw [← hwz]
   -- `QLO(T,t) ≥ L(t) := t'Pt + Σ λ_i s_i(t) ≥ L(t₀)` при любом `t`
   set s : ι → (κ → ℝ) → ℝ := fun i t => (max (m i - dotp (B i) t) 0) ^ 2 / d i with hs
-  have hPsymm := P_symm_of_root (P := P) (G := G) hG
   have hL : ∀ t, quadf P t₀ + ∑ i ∈ T, lam i * s i t₀
-      ≤ quadf P t + ∑ i ∈ T, lam i * s i t := by
-    intro t
-    set h : κ → ℝ := t - t₀ with hh
-    have htt : t = t₀ + h := by funext j; simp [hh]
-    have hadd := quadf_add hG t₀ h
-    -- линейный член квадратичной части
-    have hlin : ∑ j, ∑ j', P j j' * (t₀ j * h j')
-        = ∑ i ∈ T, lam i * wclip m d B t₀ i * dotp (B i) h := by
-      have h1 : ∑ j, ∑ j', P j j' * (t₀ j * h j') = ∑ j', (∑ j, P j' j * t₀ j) * h j' := by
-        rw [Finset.sum_comm]
-        refine Finset.sum_congr rfl fun j' _ => ?_
-        rw [Finset.sum_mul]
-        exact Finset.sum_congr rfl fun j _ => by rw [hPsymm j j']; ring
-      rw [h1]
-      have h2 : ∀ j', (∑ j, P j' j * t₀ j) = ∑ i ∈ T, lam i * wclip m d B t₀ i * B i j' :=
-        fun j' => by
-          have := hstat j'
-          simpa using this
-      simp only [h2, Finset.sum_mul, dotp, Finset.mul_sum]
-      rw [Finset.sum_comm]
-      exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by ring
-    -- касательная для каждого актива
-    have hitem : ∀ i ∈ T, lam i * s i t₀ - lam i * wclip m d B t₀ i * dotp (B i) h * 2
-        ≤ lam i * s i t := by
-      intro i hi
-      have hdi := hd i
-      have hxy : (m i - dotp (B i) t) - (m i - dotp (B i) t₀) = - dotp (B i) h := by
-        rw [htt]; simp only [dotp, Pi.add_apply, mul_add, Finset.sum_add_distrib]; ring
-      have hp := pos_sq_ge (m i - dotp (B i) t) (m i - dotp (B i) t₀)
-      rw [hxy] at hp
-      have hdiv : (max (m i - dotp (B i) t₀) 0 ^ 2 + 2 * max (m i - dotp (B i) t₀) 0 * (- dotp (B i) h))
-            / d i ≤ max (m i - dotp (B i) t) 0 ^ 2 / d i :=
-        div_le_div_of_nonneg_right hp hdi.le
-      have hl0 := (hlam i hi).1
-      have hw : wclip m d B t₀ i = max (m i - dotp (B i) t₀) 0 / d i := rfl
-      have h3 : s i t₀ - 2 * wclip m d B t₀ i * dotp (B i) h ≤ s i t := by
-        rw [hw]
-        have : (max (m i - dotp (B i) t₀) 0 ^ 2 + 2 * max (m i - dotp (B i) t₀) 0 * (- dotp (B i) h))
-            / d i = s i t₀ - 2 * (max (m i - dotp (B i) t₀) 0 / d i) * dotp (B i) h := by
-          simp only [hs]; field_simp; ring
-        rw [this] at hdiv
-        exact hdiv
-      nlinarith [mul_le_mul_of_nonneg_left h3 hl0]
-    have hsum := Finset.sum_le_sum hitem
-    rw [Finset.sum_sub_distrib] at hsum
-    have hcomm : ∑ i ∈ T, lam i * wclip m d B t₀ i * dotp (B i) h * 2
-        = 2 * ∑ i ∈ T, lam i * wclip m d B t₀ i * dotp (B i) h := by
-      rw [Finset.mul_sum]; exact Finset.sum_congr rfl fun i _ => by ring
-    have hq0 : 0 ≤ quadf P h := quadf_nonneg_of_root hG h
-    rw [htt]
-    have hsplit : quadf P (t₀ + h) = quadf P t₀ + 2 * ∑ i ∈ T, lam i * wclip m d B t₀ i * dotp (B i) h
-        + quadf P h := by rw [hadd, hlin]
-    -- `s i (t₀ + h)` совпадает с `s i t`
-    have hsame : ∀ i, s i (t₀ + h) = s i t := fun i => by rw [← htt]
-    simp only [hsame]
-    rw [← htt] at hsplit ⊢
-    nlinarith [hsum, hcomm, hq0, hsplit]
+      ≤ quadf P t + ∑ i ∈ T, lam i * s i t :=
+    saddle_lower hd hG t₀ lam (fun i hi => (hlam i hi).1) hstat
   -- `QLO(T,t) ≥ L(t)`, поскольку `λ_i ≤ 1`
   have hQ : ∀ t, quadf P t + ∑ i ∈ T, lam i * s i t ≤ QLO m d B P T t := by
     intro t

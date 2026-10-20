@@ -19,6 +19,28 @@ numbered result has a superscript **L** that links to its Lean statement in this
 Appendix B of the paper lists all results with their declarations, and also the declarations
 that their proofs use.
 
+## Version 0.24: rounding at the saddle point, existence of the saddle point, no minimax theorem
+
+New files `Factor/PairRounding`, `SaddleRounding`, `SaddleExistence`, `NodeSharp` prove, without any
+assumption beyond the data, that the relaxation `G*_k = min_t g_k(t)` has a minimizer `t*` at which the clipped
+portfolio `w(t*)` on a suitable support of exactly `k` names loses at most `(Kω/k)·G*_k` against `G*_k`
+(Theorem 3.2 of the analytic note), and that a support with at most `k+K` names has long-only value at least
+`G*_k`. The multiplier `λ*` of the saddle point and its vertex with at most `K+1` fractional coordinates, which
+the paper used to take from the minimax theorem of Sion, are now constructed in Lean (Gordan's alternative and a
+basic-solution argument).
+
+| Paper (v0.24) | Declaration | File |
+|---|---|---|
+| Rounding lemma (pairwise merges) | `exists_hasRounding`, `exists_set_sq_le_min` | [Factor/PairRounding.lean](SparseSharpe/Factor/PairRounding.lean) |
+| Saddle point: dual bound, minimality, loss = defect | `SaddleData.isMin`, `SaddleData.loss_eq` | [Factor/SaddleRounding.lean](SparseSharpe/Factor/SaddleRounding.lean) |
+| Theorem 3.2(a): loss `≤ min(s,f−s)·ωσ ≤ K·ωσ ≤ (Kω/k)·G*_k` | `saddle_rounding_min`, `saddle_rounding_K`, `saddle_rounding_one` | [Factor/SaddleRounding.lean](SparseSharpe/Factor/SaddleRounding.lean) |
+| Theorem 3.2(b): average over a representation, `≤ f·σ·Σλ(1−λ)ω_i` | `saddle_rounding_avg`, `exists_isRep` | [Factor/SaddleRounding.lean](SparseSharpe/Factor/SaddleRounding.lean) |
+| Existence of a minimizer of `g_k` | `exists_isMin_dualBound` | [Factor/SaddleExistence.lean](SparseSharpe/Factor/SaddleExistence.lean) |
+| First-order condition (Gordan) | `exists_weights_of_isMin` | [Factor/SaddleExistence.lean](SparseSharpe/Factor/SaddleExistence.lean) |
+| Saddle point, vertex with `≤ K+1` fractional coordinates | `exists_saddle`, `exists_saddle_vertex` | [Factor/SaddleExistence.lean](SparseSharpe/Factor/SaddleExistence.lean) |
+| Rounding and certificate, unconditional | `relaxation_rounding`, `relaxation_bicriteria` | [Factor/SaddleExistence.lean](SparseSharpe/Factor/SaddleExistence.lean) |
+| Sharper loss at a node (Remark 4.3) | `objLO_wclip_ge_of_node_sharp` | [Factor/NodeSharp.lean](SparseSharpe/Factor/NodeSharp.lean) |
+
 ## Version 0.23: scheme without the Gram matrix
 
 The newest development (files `Factor/AdditiveKey`, `ClippedNode`, `ClippedDP`, `ClippedTrading`,
@@ -37,7 +59,7 @@ from the clipped weights `w(τ)`; it is the one used by the current version of t
 | Gap of the relaxation, certificate with `k+K` names | `dualBound_le_two_opt_nonneg`, `bicriteria_certificate` | [Factor/Relaxation.lean](SparseSharpe/Factor/Relaxation.lean) |
 | Position limits (weak duality) | `cap_weak_duality` | [Factor/CapDuality.lean](SparseSharpe/Factor/CapDuality.lean) |
 
-The audit file prints the axioms of 608 statements (no `sorry`).
+The audit file prints the axioms of 693 statements (no `sorry`).
 
 ## Main statements
 
@@ -77,12 +99,12 @@ pinned to the tag `v4.35.0-rc2` in `lake-manifest.json`. With [elan](https://git
 ```
 lake exe cache get                       # download the prebuilt Mathlib (several GB)
 lake build                               # build the formalization
-lake env lean SparseSharpe/Audit.lean    # print the axioms of 608 statements
+lake env lean SparseSharpe/Audit.lean    # print the axioms of 693 statements
 ```
 
-Each of the 608 statements depends only on `propext`, `Classical.choice` and `Quot.sound`
+Each of the 693 statements depends only on `propext`, `Classical.choice` and `Quot.sound`
 (some on a subset), and none on `sorryAx`. The sources contain no `sorry`, no `axiom`
-declarations and no `native_decide`. The development has 60 files and about 20 300 lines.
+declarations and no `native_decide`. The development has 69 files and about 25 400 lines.
 
 ## Layout
 
@@ -108,9 +130,10 @@ declarations and no `native_decide`. The development has 60 files and about 20 3
   No matrix is inverted: `Σ_f⁻¹` enters through a matrix `P` with `P Σ_f = I`, and through a
   matrix `G` with `Gᵀ G = P`, which is part of the data.
 * Not formalized: running times (the sizes of all enumerated sets are formalized, a model of
-  computation is not), floating-point arithmetic, the search procedures (minimization of the
-  dual bound, greedy selection, branching), and the NP-completeness of SUBSET SUM, which the
-  hardness argument cites.
+  computation is not), floating-point arithmetic, the search procedures (the numerical minimization of the
+  dual bound, greedy selection, branching; the existence of a minimizer and of its multiplier is formalized),
+  strong duality with position limits (only weak duality and the certificate are proved), and the
+  NP-completeness of SUBSET SUM, which the hardness argument cites.
 * Many comments and docstrings are in Russian. The formal statements are
   language-independent.
 

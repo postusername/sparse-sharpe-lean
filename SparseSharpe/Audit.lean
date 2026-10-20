@@ -56,6 +56,10 @@ import SparseSharpe.Factor.ClippedDP
 import SparseSharpe.Factor.ClippedTrading
 import SparseSharpe.Factor.Relaxation
 import SparseSharpe.Factor.CapDuality
+import SparseSharpe.Factor.NodeSharp
+import SparseSharpe.Factor.PairRounding
+import SparseSharpe.Factor.SaddleRounding
+import SparseSharpe.Factor.SaddleExistence
 
 set_option linter.style.header false
 
@@ -776,3 +780,100 @@ open SparseSharpe SparseSharpe.OneFactor
 #print axioms SparseSharpe.Factor.objLO_cap_identity
 #print axioms SparseSharpe.Factor.cap_smul
 #print axioms SparseSharpe.Factor.cap_exists_scaled
+
+/-! ### Rounding lemma for fractional multipliers (`Factor/PairRounding.lean`, Theorem 3.2) -/
+
+#print axioms SparseSharpe.Factor.two_point_var
+#print axioms SparseSharpe.Factor.convex_two_var
+#print axioms SparseSharpe.Factor.HasRounding.mono
+#print axioms SparseSharpe.Factor.HasRounding.exists_set
+#print axioms SparseSharpe.Factor.HasRounding.exists_set_ge
+#print axioms SparseSharpe.Factor.not_mem_of_marg_zero
+#print axioms SparseSharpe.Factor.mem_of_marg_one
+#print axioms SparseSharpe.Factor.hasRounding_base
+#print axioms SparseSharpe.Factor.sum_two_diff
+#print axioms SparseSharpe.Factor.sum_update_update
+#print axioms SparseSharpe.Factor.mergeSetA_card
+#print axioms SparseSharpe.Factor.mem_mergeSetA_of_ne
+#print axioms SparseSharpe.Factor.mem_mergeSetA_i
+#print axioms SparseSharpe.Factor.mem_mergeSetA_j
+#print axioms SparseSharpe.Factor.sum_mergeSetA
+#print axioms SparseSharpe.Factor.HasRounding.stepA
+#print axioms SparseSharpe.Factor.sum_update_update_of_mem
+#print axioms SparseSharpe.Factor.mergeSetB_card
+#print axioms SparseSharpe.Factor.mem_mergeSetB_of_ne
+#print axioms SparseSharpe.Factor.mem_mergeSetB_i
+#print axioms SparseSharpe.Factor.mem_mergeSetB_j
+#print axioms SparseSharpe.Factor.sum_mergeSetB
+#print axioms SparseSharpe.Factor.HasRounding.stepB
+#print axioms SparseSharpe.Factor.potential_A
+#print axioms SparseSharpe.Factor.potential_B
+#print axioms SparseSharpe.Factor.mem_fracSet
+#print axioms SparseSharpe.Factor.frac_sum_int
+#print axioms SparseSharpe.Factor.exists_hasRounding
+#print axioms SparseSharpe.Factor.exists_set_sq_le
+#print axioms SparseSharpe.Factor.exists_set_sq_le_compl
+#print axioms SparseSharpe.Factor.exists_set_sq_le_min
+
+/-! ### Theorem 3.2 at a saddle point (`Factor/SaddleRounding.lean`) -/
+
+#print axioms SparseSharpe.Factor.mem_oneSet
+#print axioms SparseSharpe.Factor.sum_split
+#print axioms SparseSharpe.Factor.dotp_G_eq_sum_lam
+#print axioms SparseSharpe.Factor.SaddleData.top
+#print axioms SparseSharpe.Factor.SaddleData.dualBound_eq
+#print axioms SparseSharpe.Factor.SaddleData.exists_s
+#print axioms SparseSharpe.Factor.SaddleData.exists_sub
+#print axioms SparseSharpe.Factor.exists_set_ge_of_range
+#print axioms SparseSharpe.Factor.SaddleData.isMin
+#print axioms SparseSharpe.Factor.SaddleData.sq_norm_v_eq
+#print axioms SparseSharpe.Factor.SaddleData.sq_norm_v_le
+#print axioms SparseSharpe.Factor.SaddleData.loss_eq
+#print axioms SparseSharpe.Factor.saddle_rounding
+#print axioms SparseSharpe.Factor.SaddleData.sigma_mul_le
+#print axioms SparseSharpe.Factor.saddle_rounding_min
+#print axioms SparseSharpe.Factor.min_le_card
+#print axioms SparseSharpe.Factor.saddle_rounding_K
+#print axioms SparseSharpe.Factor.saddle_rounding_one
+#print axioms SparseSharpe.Factor.SaddleData.loss_le_card_mul
+#print axioms SparseSharpe.Factor.IsRep.var
+#print axioms SparseSharpe.Factor.saddle_rounding_avg
+#print axioms SparseSharpe.Factor.exists_isRep
+
+/-! ### Existence of the saddle point and of a vertex with at most K+1 fractional multipliers (`Factor/SaddleExistence.lean`) -/
+
+#print axioms SparseSharpe.Factor.exists_sparse_frac
+#print axioms SparseSharpe.Factor.QLO_le_dualBound
+#print axioms SparseSharpe.Factor.exists_card_eq_QLO_eq
+#print axioms SparseSharpe.Factor.continuous_quadf
+#print axioms SparseSharpe.Factor.continuous_dualBound
+#print axioms SparseSharpe.Factor.coord_sq_le
+#print axioms SparseSharpe.Factor.norm_sq_le_quadf
+#print axioms SparseSharpe.Factor.quadf_le_dualBound
+#print axioms SparseSharpe.Factor.exists_isMin_dualBound
+#print axioms SparseSharpe.Factor.mem_activeSets
+#print axioms SparseSharpe.Factor.cross_eq
+#print axioms SparseSharpe.Factor.QLO_step
+#print axioms SparseSharpe.Factor.exists_pos_le_of_pos
+#print axioms SparseSharpe.Factor.exists_weights_of_isMin
+#print axioms SparseSharpe.Factor.swap_le
+#print axioms SparseSharpe.Factor.exists_threshold
+#print axioms SparseSharpe.Factor.lamOf_nonneg
+#print axioms SparseSharpe.Factor.one_sub_lamOf
+#print axioms SparseSharpe.Factor.lamOf_le_one
+#print axioms SparseSharpe.Factor.sum_lamOf
+#print axioms SparseSharpe.Factor.exists_pos_weight
+#print axioms SparseSharpe.Factor.exists_mem_of_lamOf_pos
+#print axioms SparseSharpe.Factor.exists_not_mem_of_lamOf_lt_one
+#print axioms SparseSharpe.Factor.mem_of_lamOf_eq_one
+#print axioms SparseSharpe.Factor.not_mem_of_lamOf_eq_zero
+#print axioms SparseSharpe.Factor.sum_weights_swap
+#print axioms SparseSharpe.Factor.exists_saddle
+#print axioms SparseSharpe.Factor.SaddleData.exists_vertex
+#print axioms SparseSharpe.Factor.exists_saddle_vertex
+#print axioms SparseSharpe.Factor.relaxation_rounding
+#print axioms SparseSharpe.Factor.relaxation_bicriteria
+
+/-! ### Sharper loss at a node (`Factor/NodeSharp.lean`, Remark 4.3) -/
+
+#print axioms SparseSharpe.Factor.objLO_wclip_ge_of_node_sharp
