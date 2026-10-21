@@ -1,0 +1,43 @@
+FF49-K1 k=3 F*=0.13116 (η=0.0156, s_g=0.00841)
+   scale ×1      table     23  merged  93.1%  F_best/F* = 1.000000
+   scale ×3      table     14  merged  94.4%  F_best/F* = 1.000000
+   scale ×10     table      6  merged  96.4%  F_best/F* = 0.993704
+   scale ×30     table      3  merged  97.9%  F_best/F* = 0.987333
+   scale ×100    table      3  merged  97.9%  F_best/F* = 0.951986
+   scale ×300    table      3  merged  97.9%  F_best/F* = 0.951986
+   scale ×1000   table      3  merged  97.9%  F_best/F* = 0.951986
+   scale ×3000   table      3  merged  97.9%  F_best/F* = 0.951986
+FF49-K3 k=3 F*=0.13334 (η=0.00907, s_g=0.00309)
+   scale ×1      table    102  merged  89.5%  F_best/F* = 1.000000
+   scale ×3      table     55  merged  91.4%  F_best/F* = 1.000000
+   scale ×10     table     28  merged  93.8%  F_best/F* = 1.000000
+   scale ×30     table     19  merged  95.3%  F_best/F* = 1.000000
+   scale ×100    table     15  merged  95.1%  F_best/F* = 1.000000
+   scale ×300    table     19  merged  95.7%  F_best/F* = 0.957521
+   scale ×1000   table     19  merged  95.7%  F_best/F* = 0.957521
+   scale ×3000   table     19  merged  95.7%  F_best/F* = 0.957521
+port1-K1 k=5 F*=0.041947 (η=0.00529, s_g=0.00331)
+   scale ×1      table     56  merged  88.6%  F_best/F* = 1.000000
+   scale ×3      table     35  merged  92.0%  F_best/F* = 0.999997
+   scale ×10     table     10  merged  93.5%  F_best/F* = 1.000000
+   scale ×30     table      5  merged  96.6%  F_best/F* = 0.999997
+   scale ×100    table      5  merged  96.6%  F_best/F* = 0.653424
+   scale ×300    table      5  merged  96.6%  F_best/F* = 0.653424
+   scale ×1000   table      5  merged  96.6%  F_best/F* = 0.653424
+   scale ×3000   table      5  merged  96.6%  F_best/F* = 0.653424
+port1-K3 k=3 F*=0.042781 (η=0.00514, s_g=0.000825)
+   scale ×1      table     31  merged  87.0%  F_best/F* = 1.000000
+   scale ×3      table     31  merged  87.0%  F_best/F* = 1.000000
+   scale ×10     table     31  merged  87.0%  F_best/F* = 1.000000
+   scale ×30     table     17  merged  92.4%  F_best/F* = 1.000000
+   scale ×100    table     14  merged  92.2%  F_best/F* = 0.977725
+   scale ×300    table     11  merged  93.0%  F_best/F* = 0.724441
+   scale ×1000   table     28  merged  92.5%  F_best/F* = 0.977725
+   scale ×3000   table     28  merged  92.5%  F_best/F* = 0.977725
+K=1 calibrated n=100: violations 0, min F_best/F* = 1.000000, optimum found in 100%, merged on average 72.9%, table (mean/max) 83/240
+K=1 stress     n=100: violations 0, min F_best/F* = 1.000000, optimum found in 100%, merged on average 72.1%, table (mean/max) 72/272
+K=2 calibrated n=100: violations 0, min F_best/F* = 1.000000, optimum found in 100%, merged on average 39.5%, table (mean/max) 275/675
+K=2 stress     n=100: violations 0, min F_best/F* = 1.000000, optimum found in 100%, merged on average 42.6%, table (mean/max) 238/562
+K=3 calibrated n=100: violations 0, min F_best/F* = 1.000000, optimum found in 100%, merged on average 38.4%, table (mean/max) 269/696
+K=3 stress     n=100: violations 0, min F_best/F* = 1.000000, optimum found in 100%, merged on average 38.0%, table (mean/max) 250/696
+total violations of the guarantee 1 − 2ε on the random examples: 0  [26 s]

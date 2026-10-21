@@ -1,0 +1,6 @@
+instances with fractional multipliers: 29 ; all within min(s,f-s) bound: True
+K * omega * sigma / G*        : min 0.0004996 max 3.873
+floor((K+1)/2) omega sigma / G*: min 0.0004996 max 1.936
+loss / (min(s,f-s) omega sigma): min 0.000629 max 0.308 median 0.0385
+loss / G*                      : min 1.52e-06 max 0.0863; below 0.1%: 16
+informative (floor bound < 1)  : 27 of 29

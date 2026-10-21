@@ -1,0 +1,11 @@
+T1 identity: max abs error 5.820766091346741e-11
+T2 node bounds: a/(ν‖Gδ‖²) <= 1.0000 ; D/(ν²‖Gδ‖²) <= 1.0000 ; (F−obj)/((ν−1)a) <= 1.0000
+  Example A: ω=1 δ=0.01  F−obj = 0.0002  predicted (1+ω)ωδ² = 0.0002
+  Example A: ω=1 δ=0.1  F−obj = 0.02  predicted (1+ω)ωδ² = 0.02
+  Example A: ω=9 δ=0.01  F−obj = 0.009  predicted (1+ω)ωδ² = 0.009
+  Example A: ω=9 δ=0.1  F−obj = 0.1  predicted (1+ω)ωδ² = 0.9
+  Example A: ω=100 δ=0.01  F−obj = 0.00990099  predicted (1+ω)ωδ² = 1.01
+  Example A: ω=100 δ=0.1  F−obj = 0.00990099  predicted (1+ω)ωδ² = 101
+T3 DP guarantee: 299 cases, violations 0, worst loss/(2εF) = 0.000, max table/bound = 0.217
+T3b node at distance exactly sg/2 per coordinate: 200 cases, violations 0, worst loss/(2εF) = 0.013
+OK

@@ -1,0 +1,5 @@
+__pycache__/
+# third-party data files are downloaded by `make data` and checked against data/SHA256SUMS
+data/*
+!data/SHA256SUMS
+tables/make_tables.log

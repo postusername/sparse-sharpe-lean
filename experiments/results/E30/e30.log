@@ -1,0 +1,14 @@
+FF49-K1   M=  49 K=1 k=3 (exact) F*=0.13116  Q=99 Z=51 | table 23 (bound 797), subsets 19649, merged 308 (93.1%), boxed 0, max|key|=21 | F_best/F* = 1.000000 OK  [1s]
+   family (all nodes, K=1): 1315 distinct sets (bound 8.21e+04), F_best/F* = 1.000000
+FF49-K3   M=  49 K=3 k=3 (exact) F*=0.13334  Q=215 Z=137 | table 102 (bound 3.2e+08), subsets 19649, merged 868 (89.5%), boxed 0, max|key|=34 | F_best/F* = 1.000000 OK  [1s]
+port1-K1  M=  31 K=1 k=3 (exact) F*=0.040031  Q=93 Z=46 | table 28 (bound 749), subsets 4991, merged 208 (88.1%), boxed 0, max|key|=17 | F_best/F* = 1.000000 OK  [0s]
+   family (all nodes, K=1): 922 distinct sets (bound 6.97e+04), F_best/F* = 1.000000
+port1-K1  M=  31 K=1 k=5 (exact) F*=0.041947  Q=199 Z=72 | table 56 (bound 2.4e+03), subsets 206367, merged 437 (88.6%), boxed 0, max|key|=29 | F_best/F* = 1.000000 OK  [6s]
+port1-K3  M=  31 K=3 k=3 (exact) F*=0.042781  Q=317 Z=290 | table 31 (bound 1.02e+09), subsets 4991, merged 207 (87.0%), boxed 0, max|key|=53 | F_best/F* = 1.000000 OK  [0s]
+port1-K3  M=  31 K=3 k=5 (exact) F*=0.045247  Q=680 Z=478 | table 63 (bound 1.51e+10), subsets 206367, merged 440 (87.5%), boxed 0, max|key|=55 | F_best/F* = 1.000000 OK  [7s]
+port2-K1  M=  85 K=1 k=3 (heuristic) F*=0.10965  Q=65 Z=24 | table 24 (bound 525), subsets 102425, merged 1022 (97.7%), boxed 0, max|key|=10 | F_best/F* = 1.000000 OK  [0s]
+port5-K1  M= 225 K=1 k=3 (heuristic) F*=0.024943  Q=79 Z=34 | table 29 (bound 637), subsets 1898625, merged 2416 (98.8%), boxed 0, max|key|=14 | F_best/F* = 1.000000 OK  [0s]
+SP500-K1  M= 457 K=1 k=3 (heuristic) F*=0.056515  Q=67 Z=26 | table 50 (bound 541), subsets 15907713, merged 10570 (99.5%), boxed 0, max|key|=20 | F_best/F* = 1.000000 OK  [3s]
+SP500-K3  M= 457 K=3 k=3 (heuristic) F*=0.058534  Q=134 Z=58 | table 16604 (bound 7.79e+07), subsets 15907713, merged 569985 (97.2%), boxed 0, max|key|=40 | F_best/F* = 1.000000 OK  [14s]
+Russell-K1 M=2122 K=1 k=3 (heuristic) F*=0.1048  Q=54 Z=18 | table 44 (bound 437), subsets 1592521743, merged 38234 (99.9%), boxed 0, max|key|=15 | F_best/F* = 1.000000 OK  [348s]
+violations of the guarantee: 0 of 11

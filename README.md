@@ -10,14 +10,38 @@ the Sharpe ratio when the covariance matrix has the factor structure
 `V = diag(d) + B Σ_f Bᵀ` with a fixed number `K` of factors. It gives an approximation scheme
 that returns a fully invested long-only portfolio whose Sharpe ratio is at least `√(1 − 2ε)`
 times the optimum. The scheme picks this portfolio from an explicit family of candidate
-supports whose size is bounded by a polynomial in `M`, `k`, `1/ε` and the leverage bound `ω`
-for fixed `K`. For practice, the paper adds a dual certificate, an optimality test and a bound
-for branch and bound.
+supports whose size is bounded by a polynomial in `k`, `1/ε` and the leverage bound `ω` for
+fixed `K`, independently of `M`. For practice, the paper adds a dual certificate (the dual of
+the perspective relaxation), an optimality test, a bound for branch and bound, and a localized
+scheme whose grid is confined by the gap of the certificate.
 
 Every theorem, proposition, lemma and corollary of the paper is proved here. In the PDF, each
 numbered result has a superscript **L** that links to its Lean statement in this repository.
-Appendix B of the paper lists all results with their declarations, and also the declarations
-that their proofs use.
+Appendix C of the paper lists all results with their declarations, and also the declarations
+that their proofs use. `lake build` checks all proofs; `lake env lean SparseSharpe/Audit.lean`
+prints the axioms of every declaration of the paper (only `propext`, `Classical.choice` and
+`Quot.sound`).
+
+The directory [experiments](experiments/) contains the scripts, the stored results and the data
+checksums of the numerical experiments of Section 6 of the paper; `make all` there recomputes them
+and `make tables` rebuilds every table and figure of that section (see
+[experiments/README.md](experiments/README.md)).
+
+## Version 0.25: localization by the certificate, the perspective relaxation, nonnegative loadings
+
+New files `Factor/Localize`, `PrunedDP`, `Perspective` and `NonnegGap`; `SaddleRounding` and `SaddleExistence`
+now round with `⌊(K+1)/2⌋` fractional names.
+
+| Paper (v0.25) | Declaration | File |
+|---|---|---|
+| Estimates at a node, with strong convexity (Theorem 4.2) | `node_estimates` | [Factor/Localize.lean](SparseSharpe/Factor/Localize.lean) |
+| Localization by the gap of the certificate (Theorem 5.21) | `localize` | [Factor/Localize.lean](SparseSharpe/Factor/Localize.lean) |
+| The localized nodes (Definition 5.22) and their number | `locNodes`, `card_locNodes_le` | [Factor/Localize.lean](SparseSharpe/Factor/Localize.lean) |
+| Pruning keeps the representatives (Lemma 5.23) | `clipTableF_rep` | [Factor/PrunedDP.lean](SparseSharpe/Factor/PrunedDP.lean) |
+| The localized scheme from the data (Theorem 5.24) | `trading_theorem_localized_pruned` | [Factor/PrunedDP.lean](SparseSharpe/Factor/PrunedDP.lean) |
+| The dual bound is the dual of the perspective relaxation (Proposition 5.10) | `perspective_relaxation` | [Factor/Perspective.lean](SparseSharpe/Factor/Perspective.lean) |
+| The gap for nonnegative loadings, `K` factors (Theorem 5.11), and its tight example | `dualBound_le_opt_nonneg_K`, `nonneg_gap_example` | [Factor/NonnegGap.lean](SparseSharpe/Factor/NonnegGap.lean) |
+| Rounding with `⌊(K+1)/2⌋` (Theorem 5.18, Corollary 5.19) | `saddle_rounding_theorem`, `relaxation_rounding_sharpe` | [Factor/SaddleRounding.lean](SparseSharpe/Factor/SaddleRounding.lean), [Factor/SaddleExistence.lean](SparseSharpe/Factor/SaddleExistence.lean) |
 
 ## Version 0.24: rounding at the saddle point, existence of the saddle point, no minimax theorem
 

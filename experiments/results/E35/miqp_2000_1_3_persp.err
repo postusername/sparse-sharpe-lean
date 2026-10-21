@@ -1,0 +1,2 @@
+malloc(): invalid size (unsorted)
+corrupted size vs. prev_size while consolidating

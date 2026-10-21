@@ -1,0 +1,5 @@
+instances with a failing certificate: 185
+instances where g_k(that) differs from the stored G or the count differs: 0
+K=1: median nodes stored 26, recomputed 26; max stored 27, recomputed 27
+K=2: median nodes stored 39204, recomputed 39204; max stored 491781, recomputed 491781
+K=3: median nodes stored 25846720, recomputed 25846720; max stored 2368160333, recomputed 2368160333
