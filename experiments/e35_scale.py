@@ -1,11 +1,11 @@
-"""E35: where the certificate fails, at scale (Section 6.4).
+"""E35: where the certificate fails, at scale (Section 7.4).
 
-Stress regime of Section 6.3 (e34_localized.stress_instance), M in {50, 200, 1000, 2000}, K in {1, 2, 3},
+Stress regime of Section 7.3 (e34_localized.stress_instance), M in {50, 200, 1000, 2000}, K in {1, 2, 3},
 k in {3, 5, 10}. For each instance:
   * greedy selection with exchanges (F_h), the relaxation G*_k = min_t g_k(t) (Clarabel) and the certificate
     F_h >= (1 - 2 eps) G*_k, eps = 0.05;
-  * branch and bound of Section 5.3 (the reference: exact up to the relative tolerance 1e-9; time limit);
-  * the localized scheme with pruning (Theorem 5.24) with the constants of Definition 4.7: the number of
+  * branch and bound of Section 6.3 (the reference: exact up to the relative tolerance 1e-9; time limit);
+  * the localized scheme with pruning (Theorem 6.24) with the constants of Definition 4.7: the number of
     localized nodes over all guesses by the coordinatewise condition (an upper bound), and the run itself when
     the nodes are few.
 The MIQP baseline is e35_miqp.py. (The first version of this script also called an MIQP solver; in the run of
@@ -29,10 +29,10 @@ import e34_localized as E
 EPS = 0.05
 
 
-# ---------------------------------------------------------------------------- branch and bound (Section 5.3)
+# ---------------------------------------------------------------------------- branch and bound (Section 6.3)
 
 def bnb(m, d, B, Sf, k, Fh, Sh, t_h, tol=1e-9, time_limit=600.0):
-    """Depth-first branch and bound with the bound of Proposition 5.8, minimized locally over t from the point
+    """Depth-first branch and bound with the bound of Proposition 6.8, minimized locally over t from the point
     of the parent; branching order: decreasing score at the dual point of the heuristic; include first.
     Returns (value, support, nodes, time, finished)."""
     M, K = B.shape

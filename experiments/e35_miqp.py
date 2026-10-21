@@ -1,4 +1,4 @@
-"""E35b: the MIQP baseline on the instances of E35 (Section 6.4).
+"""E35b: the MIQP baseline on the instances of E35 (Section 7.4).
 
 Replays the first n instances of the configuration (M, K, k) of e35_scale.py (same seed, same generator) and
 solves the cardinality-constrained long-only problem

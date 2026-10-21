@@ -1,4 +1,4 @@
-"""The rounding bound of Section 6.7 of the paper: the bound floor((K+1)/2) omega_I' sigma of Theorem 5.18(ii), which
+"""The rounding bound of Section 7.7 of the paper: the bound floor((K+1)/2) omega_I' sigma of Theorem 6.18(ii), which
 replaces the older K omega_I' sigma, recomputed from the stored results of e29_dual_rounding.py
 (results/E29/results_E29.json; the real data are not needed).  Over the instances with fractional multipliers it
 prints the range of c_K omega_I' sigma / G*_k, c_K = floor((K+1)/2), next to the range of K omega_I' sigma / G*_k,

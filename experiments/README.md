@@ -1,6 +1,6 @@
 # Experiments of the paper
 
-This directory contains the scripts, the stored results and the data checksums of Section 6 of the paper
+This directory contains the scripts, the stored results and the data checksums of Section 7 of the paper
 *Approximation scheme for the sparse long-only tangency portfolio under a factor model*. The Lean formalization is in
 the rest of the repository.
 
@@ -9,11 +9,11 @@ the rest of the repository.
                    # about 5 hours on one core) and rebuild the tables
     make tables    # rebuild the tables, the numbers of the text and the figure data from results/ (seconds)
 
-`make tables` writes `tables/*.tex` (the bodies of the tables of Section 6, which the paper reads with `\tabinput`),
-`tables/random.json` (the data of Figure 6.1, read by `tools/make_figures.py` of the paper source),
-`tables/e35_table.md` and `numbers.md`. `numbers.md` lists the numbers quoted in the text of Section 6 and in the
-Introduction, with their values from the stored results; the per-configuration numbers of Section 6.4 are in
-`tables/e35_table.md`, and the one-step checks of Section 6.4 in `results/E34/e34.log`.
+`make tables` writes `tables/*.tex` (the bodies of the tables of Section 7, which the paper reads with `\tabinput`),
+`tables/random.json` (the data of Figure 7.1, read by `tools/make_figures.py` of the paper source),
+`tables/e35_table.md` and `numbers.md`. `numbers.md` lists the numbers quoted in the text of Sections 5.4 and 7 and in the
+Introduction, with their values from the stored results; the per-configuration numbers of Section 7.4 are in
+`tables/e35_table.md`, and the one-step checks of Section 7.4 in `results/E34/e34.log`.
 
 ## Environment
 
@@ -38,19 +38,21 @@ The data files are not stored in the repository; `make data` downloads them.
 
 | paper | script | results | table body |
 |---|---|---|---|
-| Table 6.1 and the text of Section 6.1 | `e40_realdata.py optima` | `results/E40/optima.json`, `optima.log` | `tables/optima.tex` |
-| Table 6.2, "The certificate at scale", "What the guarantee buys" | `e40_realdata.py instances` | `results/E40/instances.jsonl` | `tables/large.tex` |
-| Table 6.3, Table 6.4, Figure 6.1 (random instances, seven regimes) | `e41_random.py <regime>` | `results/E41/regime_*.jsonl` | `tables/random.tex`, `tables/regimes.tex`, `tables/random.json` |
-| Section 6.4, "One-step checks" | `e34_localized.py` | `results/E34/e34.log` | — |
-| Table 6.5 and the rest of Section 6.4 (stress regime at scale) | `e35_driver.sh` → `e35_scale.py` | `results/E35/<M>_<K>_<k>.jsonl` | `tables/e35_table.tex` (`e35_table.py`) |
-| Section 6.4, mixed-integer solvers | `e35b_driver.sh` → `e35_miqp.py` | `results/E35/miqp_*.jsonl` | `tables/e35_table.md` |
-| Section 6.4, check of the localized nodes | `e35_loccheck.py` | `results/E35/e35_loccheck.log` | — |
-| Table 6.6 and Section 6.5, methods from the literature | `e36_driver.sh` → `e36_baselines.py`; `e36_oscar_signed.py`; `e41_random.py` | `results/E36/`, `results/E41/` | `tables/literature.tex` |
-| Table 6.7 and Section 6.6, the scheme itself | `e30_additive_dp.py` | `results/E30/` | `tables/own.tex` |
-| Section 6.6, coarsening of the constants | `e30b_stress.py` | `results/E30b/` | — |
-| Section 6.6, formal size bounds (Table 6.8, Figure 6.2) | `e31_size_bounds.py` | `results/E31/` | `tables/bounds.tex` |
-| Section 6.6, checks of the estimates, Figure 6.3 | `check_clipped_dp.py`, `e33_node_ratio.py` | `results/CHECK/`, `results/E33/node_ratio.csv` | — |
-| Section 6.7, the relaxation, the certificate with `k+K` names and the rounding | `e29_dual_rounding.py`, `e29_floor_bound.py` | `results/E29/` | — |
+| Table 7.1 and the text of Section 7.1 | `e40_realdata.py optima` | `results/E40/optima.json`, `optima.log` | `tables/optima.tex` |
+| Table 7.2, "The certificate at scale", "What the guarantee buys" | `e40_realdata.py instances` | `results/E40/instances.jsonl` | `tables/large.tex` |
+| Table 7.3, Table 7.4, Figure 7.1 (random instances, seven regimes) | `e41_random.py <regime>` | `results/E41/regime_*.jsonl` | `tables/random.tex`, `tables/regimes.tex`, `tables/random.json` |
+| Section 7.4, "One-step checks" | `e34_localized.py` | `results/E34/e34.log` | — |
+| Table 7.5 and the rest of Section 7.4 (stress regime at scale) | `e35_driver.sh` → `e35_scale.py` | `results/E35/<M>_<K>_<k>.jsonl` | `tables/e35_table.tex` (`e35_table.py`) |
+| Section 7.4, mixed-integer solvers | `e35b_driver.sh` → `e35_miqp.py` | `results/E35/miqp_*.jsonl` | `tables/e35_table.md` |
+| Section 7.4, check of the localized nodes | `e35_loccheck.py` | `results/E35/e35_loccheck.log` | — |
+| Table 7.6 and Section 7.5, methods from the literature | `e36_driver.sh` → `e36_baselines.py`; `e36_oscar_signed.py`; `e41_random.py` | `results/E36/`, `results/E41/` | `tables/literature.tex` |
+| Table 7.7 and Section 7.6, the scheme itself | `e30_additive_dp.py` | `results/E30/` | `tables/own.tex` |
+| Section 7.6, coarsening of the constants | `e30b_stress.py` | `results/E30b/` | — |
+| Section 7.6, formal size bounds (Table 7.8, Figure 7.2) | `e31_size_bounds.py` | `results/E31/` | `tables/bounds.tex` |
+| Section 7.6, checks of the estimates, Figure 7.3 | `check_clipped_dp.py`, `e33_node_ratio.py` | `results/CHECK/`, `results/E33/node_ratio.csv` | — |
+| Section 7.7, the relaxation, the certificate with `k+K` names and the rounding | `e29_dual_rounding.py`, `e29_floor_bound.py` | `results/E29/` | — |
+| Section 5.4, the embedding of two-dimensional knapsack (work plan v0.26, C2): no cliff, the gap between YES and NO instances falls like 4^(−m) | `e43_knap2d.py A`, `e43_knap2d.py B` (`make e43`) | `results/E43/testA.log`, `testB.log` | — |
+| Section 5.4, the scheme without ω (work plan v0.26, C1): the step of Definition 5.10 at the node of the proof of Theorem 5.11 with controls and an adversary (`def510_*`, `advdef_*`); the coarser variant of the plan: one-step checks of its lemmas with controls, the adversary of the step, the whole scheme on small instances | `e44_scalefree.py <part>` (`make e44`) | `results/E44/` | — |
 
 Libraries: `data_real.py` (data and factor models), `e34_localized.py` (the long-only value `F_LO` by nonnegative
 least squares, scores, the dual bound `g_k`, the relaxation `G*_k`, greedy selection with exchanges, the localized

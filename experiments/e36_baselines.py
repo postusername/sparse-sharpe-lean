@@ -1,4 +1,4 @@
-"""E36: methods from the literature (Section 6.5) on the instances of E35 (the stress regime at scale, Section 6.4).
+"""E36: methods from the literature (Section 7.5) on the instances of E35 (the stress regime at scale, Section 7.4).
 
 Replays the instances of the configuration (M, K, k) of e35_scale.py (same seed 1000 M + 10 K + k, same generator)
 and runs, for each instance:

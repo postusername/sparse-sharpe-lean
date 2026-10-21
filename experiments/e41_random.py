@@ -1,4 +1,4 @@
-"""E41: random instances with M = 16 (Section 6.3, Table 6.3, Figure 6.1) in a 2 x 2 design.
+"""E41: random instances with M = 16 (Section 7.3, Table 7.3, Figure 7.1) in a 2 x 2 design.
 
 Structure of the factor model:
   * calibrated -- like monthly industry returns: factor covariance diag(0.045^2, 0.03^2, ..., 0.03^2), loadings on the
@@ -13,12 +13,12 @@ The idiosyncratic variances are d_i = B_i'Sf B_i (1 - R_i^2)/R_i^2.  The paper's
 the leverages omega_i = R_i^2/(1 - R_i^2): (calibrated-highR2, unrelated), the calibrated loadings with
 R_i^2 ~ U(0.5, 0.95), and (stress-lowR2, unrelated), the stress loadings with R_i^2 ~ U(0.2, 0.8); and
 (stress-nonneg, unrelated) is the stress regime with the loadings replaced by their absolute values (an independent
-draw; nonnegative loadings, the hypothesis of Theorem 5.11).  For each regime, K in {1, 2, 3, 5} and
+draw; nonnegative loadings, the hypothesis of Theorem 6.11).  For each regime, K in {1, 2, 3, 5} and
 k in {3, 5}, 100 instances are drawn with the seed 41000 + 1000 r + 10 K + k (r = 0..6, the regime).
 Per instance: OPT(k) by enumeration of the supports with k assets; the relaxation G*_k = min_t g_k(t) (and its time,
 which the outer approximation needs for its first cut); greedy selection
 and greedy selection with exchanges; the certificate F_h >= (1 - 2 eps) G*_k with eps = 0.05; screening by Sharpe
-ratios (the k largest m_i/sqrt(V_ii), long-only optimum on them); branch and bound of Section 5.3; and the methods of
+ratios (the k largest m_i/sqrt(V_ii), long-only optimum on them); branch and bound of Section 6.3; and the methods of
 baselines.py: pga (Lin et al. 2024), oscar (Bae et al. 2025), the SDP bound (P7) of Kim et al. (2016) with and without
 Y >= 0, and the outer approximation of Bertsimas and Cory-Wright (2022).
 Usage:  python3 -I e41_random.py <regime 0..6> [n=100]   -> one JSON line per instance on stdout

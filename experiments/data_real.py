@@ -1,4 +1,4 @@
-"""Real data of Section 6: factor models V = diag(d) + B Sf B' from public data.
+"""Real data of Section 7: factor models V = diag(d) + B Sf B' from public data.
 
 Files (downloaded into data/ on first use and checked against data/SHA256SUMS when that file lists them):
   * K. R. French data library: 49_Industry_Portfolios_CSV.zip, F-F_Research_Data_Factors_CSV.zip,

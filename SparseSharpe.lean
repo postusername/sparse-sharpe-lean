@@ -71,3 +71,7 @@ import SparseSharpe.Factor.Localize
 import SparseSharpe.Factor.PrunedDP
 import SparseSharpe.Factor.Perspective
 import SparseSharpe.Factor.NonnegGap
+import SparseSharpe.Factor.SchemeLS
+import SparseSharpe.SchemeLO1
+import SparseSharpe.Factor.ScaleFreeStep
+import SparseSharpe.Factor.ScaleFreeScheme

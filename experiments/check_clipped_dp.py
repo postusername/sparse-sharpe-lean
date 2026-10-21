@@ -1,4 +1,4 @@
-"""Checks of the estimates of Section 4, for the paragraph "Checks of the estimates" of Section 6.6 of the paper
+"""Checks of the estimates of Section 4, for the paragraph "Checks of the estimates" of Section 7.6 of the paper
 (together with e33_node_ratio.py).  On random factor models with at most 10 assets and at most 3 factors it checks
 (T1) the defect identity of Theorem 4.1 at random nodes and supports (2000 draws); (T2) the estimates at a node of
 Theorem 4.2 for the optimal support, found by enumeration, at nodes displaced from its dual point by Gaussian shifts

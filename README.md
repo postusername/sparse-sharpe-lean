@@ -11,9 +11,12 @@ the Sharpe ratio when the covariance matrix has the factor structure
 that returns a fully invested long-only portfolio whose Sharpe ratio is at least `√(1 − 2ε)`
 times the optimum. The scheme picks this portfolio from an explicit family of candidate
 supports whose size is bounded by a polynomial in `k`, `1/ε` and the leverage bound `ω` for
-fixed `K`, independently of `M`. For practice, the paper adds a dual certificate (the dual of
-the perspective relaxation), an optimality test, a bound for branch and bound, and a localized
-scheme whose grid is confined by the gap of the certificate.
+fixed `K`, independently of `M`. Without the leverage bound, it gives fully polynomial schemes for
+long-short portfolios with any fixed `K` and for long-only portfolios with one factor, and a scheme
+for any `K` on the instances whose optimal portfolio has at most one small position. For practice,
+the paper adds a dual certificate (the dual of the perspective relaxation), an optimality test, a
+bound for branch and bound, and a localized scheme whose grid is confined by the gap of the
+certificate.
 
 Every theorem, proposition, lemma and corollary of the paper is proved here. In the PDF, each
 numbered result has a superscript **L** that links to its Lean statement in this repository.
@@ -23,9 +26,27 @@ prints the axioms of every declaration of the paper (only `propext`, `Classical.
 `Quot.sound`).
 
 The directory [experiments](experiments/) contains the scripts, the stored results and the data
-checksums of the numerical experiments of Section 6 of the paper; `make all` there recomputes them
-and `make tables` rebuilds every table and figure of that section (see
+checksums of the numerical experiments of Sections 5.4 and 7 of the paper; `make all` there recomputes
+them and `make tables` rebuilds every table and figure of Section 7 and the numbers of the text (see
 [experiments/README.md](experiments/README.md)).
+
+## Version 0.26: schemes without the leverage bound
+
+New files `Factor/SchemeLS`, `SchemeLO1`, `Factor/ScaleFreeStep` and `Factor/ScaleFreeScheme`. The three
+schemes of Section 5 of the paper are stated from the data, with explicit instances of their hypotheses.
+
+| Paper (v0.26) | Declaration | File |
+|---|---|---|
+| Long-short duality (Lemma 5.1) | `isGreatest_objLO_free` | [Factor/SchemeLS.lean](SparseSharpe/Factor/SchemeLS.lean) |
+| Clamp of a maximum-volume tuple (Lemma 5.2) | `gram_le_card_mul_gramK`, `abs_cf_le_one` | [Factor/MaxVolume.lean](SparseSharpe/Factor/MaxVolume.lean) |
+| A node in the residual coordinates (Theorem 5.3) | `exists_grid_node` | [Factor/GridK.lean](SparseSharpe/Factor/GridK.lean) |
+| The long-short step (Lemma 5.5) | `fptasK_step` | [Factor/FPTASK.lean](SparseSharpe/Factor/FPTASK.lean) |
+| Short sales, `K` fixed, from the data (Theorem 5.6) | `main_theorem_ls`, `card_lsCandidates_poly`, `ls_instance` | [Factor/SchemeLS.lean](SparseSharpe/Factor/SchemeLS.lean) |
+| The one-factor step (Lemma 5.8) | `OneFactor.lo_step` | [LOFptas.lean](SparseSharpe/LOFptas.lean) |
+| One factor, long-only, from the data (Theorem 5.9) | `main_theorem_lo1`, `card_lo1Candidates_poly`, `lo1_instance` | [SchemeLO1.lean](SparseSharpe/SchemeLO1.lean) |
+| The Cramer witness, the step without `ν`, the signs of the weights | `cramer_witness`, `objLO_cramer`, `sf_step_eps`, `sf_signs_one_tight` | [Factor/ScaleFreeStep.lean](SparseSharpe/Factor/ScaleFreeStep.lean) |
+| `K` factors, long-only, at most one small position (Theorem 5.11) | `main_theorem_sf`, `sf_instance_two` | [Factor/ScaleFreeScheme.lean](SparseSharpe/Factor/ScaleFreeScheme.lean) |
+| The corner needs active rows (Remark 5.12) | `spec7_counterexample`, `spec7_fails` | [Factor/ScaleFreeStep.lean](SparseSharpe/Factor/ScaleFreeStep.lean) |
 
 ## Version 0.25: localization by the certificate, the perspective relaxation, nonnegative loadings
 

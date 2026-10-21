@@ -65,6 +65,10 @@ import SparseSharpe.Factor.Localize
 import SparseSharpe.Factor.PrunedDP
 import SparseSharpe.Factor.Perspective
 import SparseSharpe.Factor.NonnegGap
+import SparseSharpe.Factor.SchemeLS
+import SparseSharpe.SchemeLO1
+import SparseSharpe.Factor.ScaleFreeStep
+import SparseSharpe.Factor.ScaleFreeScheme
 
 set_option linter.style.header false
 
@@ -976,3 +980,183 @@ open SparseSharpe SparseSharpe.OneFactor
 #print axioms SparseSharpe.Factor.clipTableF
 #print axioms SparseSharpe.Factor.locFamilyF
 #print axioms SparseSharpe.Factor.locCandidatesF
+
+/-! ### Theorem I from the data: the long-short scheme for fixed `K`, no `ω` (`Factor/SchemeLS.lean`, session 26) -/
+
+#print axioms SparseSharpe.Factor.objLO_le_phi_free
+#print axioms SparseSharpe.Factor.mom_barK_free
+#print axioms SparseSharpe.Factor.tw_wfree_of_normal
+#print axioms SparseSharpe.Factor.objLO_wfree_of_normal
+#print axioms SparseSharpe.Factor.isGreatest_objLO_free
+#print axioms SparseSharpe.Factor.exists_optimal_support_free
+#print axioms SparseSharpe.Factor.opt_ge_single_free
+#print axioms SparseSharpe.Factor.objLO_le_sum_sq_free
+#print axioms SparseSharpe.Factor.card_lsBox
+#print axioms SparseSharpe.Factor.card_lsTable_le
+#print axioms SparseSharpe.Factor.card_lsCandidates_le
+#print axioms SparseSharpe.Factor.card_lsCandidates_poly
+#print axioms SparseSharpe.Factor.card_le_of_mem_lsCandidates
+#print axioms SparseSharpe.Factor.ls_one_guess
+#print axioms SparseSharpe.Factor.exists_good_lsCandidate
+#print axioms SparseSharpe.Factor.exists_best_free_of_family
+#print axioms SparseSharpe.Factor.best_pair_sharpe_free
+#print axioms SparseSharpe.Factor.main_theorem_ls
+#print axioms SparseSharpe.Factor.ls_instance
+#print axioms SparseSharpe.Factor.lsCandidates
+#print axioms SparseSharpe.Factor.lsFamily
+#print axioms SparseSharpe.Factor.lsTable
+#print axioms SparseSharpe.Factor.lsTableBound
+#print axioms SparseSharpe.Factor.lsZ
+#print axioms SparseSharpe.Factor.lsStep
+
+/-! ### Theorem J from the data: the long-only scheme for one factor, no `ω` (`SchemeLO1.lean`, session 26) -/
+
+#print axioms SparseSharpe.minMTable_mem
+#print axioms SparseSharpe.minMTable_card_le
+#print axioms SparseSharpe.minMTable_spec
+#print axioms SparseSharpe.loKey1_kap
+#print axioms SparseSharpe.loKey1_mt
+#print axioms SparseSharpe.mb1_mem_Icc
+#print axioms SparseSharpe.sf_pos_of_root
+#print axioms SparseSharpe.objLO_eq_obj
+#print axioms SparseSharpe.phi_rowsK_eq
+#print axioms SparseSharpe.normal_eq_that
+#print axioms SparseSharpe.strict_selfconsistent
+#print axioms SparseSharpe.exists_opt_lo1
+#print axioms SparseSharpe.exists_heavy_center
+#print axioms SparseSharpe.card_lo1Candidates_le
+#print axioms SparseSharpe.logb_loXi_le
+#print axioms SparseSharpe.card_lo1Candidates_poly
+#print axioms SparseSharpe.card_le_of_mem_lo1Candidates
+#print axioms SparseSharpe.lo1_one_guess
+#print axioms SparseSharpe.exists_good_lo1Candidate
+#print axioms SparseSharpe.main_theorem_lo1
+#print axioms SparseSharpe.lo1_instance
+#print axioms SparseSharpe.minMTable
+#print axioms SparseSharpe.loKey1
+#print axioms SparseSharpe.loNodes
+#print axioms SparseSharpe.lo1Table
+#print axioms SparseSharpe.lo1Family
+#print axioms SparseSharpe.lo1Candidates
+#print axioms SparseSharpe.lo1TableBound
+#print axioms SparseSharpe.loZ
+
+/-! ### The scheme without `ω` for `K ≥ 2` on the class with at most one tight asset of the optimum: the step
+(lemmas 1–5 and 7, the counterexample to the corner rule) (`Factor/ScaleFreeStep.lean`, session 26) -/
+
+#print axioms SparseSharpe.Factor.mem_rowsT
+#print axioms SparseSharpe.Factor.card_rowsT
+#print axioms SparseSharpe.Factor.cf_self
+#print axioms SparseSharpe.Factor.res_sub_eq_sum_cf
+#print axioms SparseSharpe.Factor.gramK_sub_eq
+#print axioms SparseSharpe.Factor.resC_clOff_of_not_mem
+#print axioms SparseSharpe.Factor.resC_clOff_T
+#print axioms SparseSharpe.Factor.psiC_le_of_clip_imp
+#print axioms SparseSharpe.Factor.psiC_le_psiC_clOff
+#print axioms SparseSharpe.Factor.sum_resC_dotp_eq
+#print axioms SparseSharpe.Factor.kapC_split
+#print axioms SparseSharpe.Factor.sf_node
+#print axioms SparseSharpe.Factor.sf_node_maxvol
+#print axioms SparseSharpe.Factor.psiC_add_le
+#print axioms SparseSharpe.Factor.psiC_rho_taylor
+#print axioms SparseSharpe.Factor.sf_grad
+#print axioms SparseSharpe.Factor.sf_grad'
+#print axioms SparseSharpe.Factor.sf_grad_maxvol
+#print axioms SparseSharpe.Factor.rowObj_eq_of_stat
+#print axioms SparseSharpe.Factor.rowObj_le_psiC
+#print axioms SparseSharpe.Factor.wCr_T
+#print axioms SparseSharpe.Factor.wCr_of_not_mem
+#print axioms SparseSharpe.Factor.isStat_wCr
+#print axioms SparseSharpe.Factor.sq_sub_sq_resC
+#print axioms SparseSharpe.Factor.rowObj_wCr
+#print axioms SparseSharpe.Factor.omegaT_sub_rhoT
+#print axioms SparseSharpe.Factor.omegaT_sub_resC
+#print axioms SparseSharpe.Factor.psiC_clOff_eq_of_active
+#print axioms SparseSharpe.Factor.wCr_nonneg
+#print axioms SparseSharpe.Factor.cramer_witness
+#print axioms SparseSharpe.Factor.rowObj_wCr_active
+#print axioms SparseSharpe.Factor.omegaT_union
+#print axioms SparseSharpe.Factor.floor_rem_mem
+#print axioms SparseSharpe.Factor.abs_sum_sub_lt_of_floor_eq
+#print axioms SparseSharpe.Factor.abs_kap_sub_lt_of_key_eq
+#print axioms SparseSharpe.Factor.abs_kapC_le_sqrt
+#print axioms SparseSharpe.Factor.abs_kapC_le_sqrt_psiC
+#print axioms SparseSharpe.Factor.sqrt_sum_sq_add_le
+#print axioms SparseSharpe.Factor.sf_step_grad
+#print axioms SparseSharpe.Factor.sf_step
+#print axioms SparseSharpe.Factor.sf_step_eps
+#print axioms SparseSharpe.Factor.kapC_clOff_eq_of_active
+#print axioms SparseSharpe.Factor.sf_step_grad_active
+#print axioms SparseSharpe.Factor.sf_step_maxvol
+#print axioms SparseSharpe.Factor.kapC_eq_zero_of_normal
+#print axioms SparseSharpe.Factor.omegaT_opt
+#print axioms SparseSharpe.Factor.omegaT_sub_eq
+#print axioms SparseSharpe.Factor.abs_resC_sub_le
+#print axioms SparseSharpe.Factor.abs_res_sub_le
+#print axioms SparseSharpe.Factor.active_of_margin
+#print axioms SparseSharpe.Factor.abs_omegaT_sub_le
+#print axioms SparseSharpe.Factor.omegaT_sub_eq_Hmat
+#print axioms SparseSharpe.Factor.sf_signs_no_tight
+#print axioms SparseSharpe.Factor.sf_signs_one_tight
+#print axioms SparseSharpe.Factor.exists_corner
+#print axioms SparseSharpe.Factor.rowMat_eq_one_of_unit
+#print axioms SparseSharpe.Factor.cf_eq_of_unit
+#print axioms SparseSharpe.Factor.G_Sf_Gt
+#print axioms SparseSharpe.Factor.anchor_stat
+#print axioms SparseSharpe.Factor.anchor_weight_eq
+#print axioms SparseSharpe.Factor.objLO_eq_rowObj
+#print axioms SparseSharpe.Factor.objLO_cramer
+#print axioms SparseSharpe.Factor.ceT_unit
+#print axioms SparseSharpe.Factor.ce_rowsT
+#print axioms SparseSharpe.Factor.ce_compl
+#print axioms SparseSharpe.Factor.ce_det
+#print axioms SparseSharpe.Factor.ce_cf
+#print axioms SparseSharpe.Factor.ce_cf_le
+#print axioms SparseSharpe.Factor.ce_maxvol
+#print axioms SparseSharpe.Factor.ce_Hmat
+#print axioms SparseSharpe.Factor.spec7_counterexample
+#print axioms SparseSharpe.Factor.spec7_fails
+#print axioms SparseSharpe.Factor.ex_normal
+#print axioms SparseSharpe.Factor.ex_self
+#print axioms SparseSharpe.Factor.ex_drho
+#print axioms SparseSharpe.Factor.ex_univ
+#print axioms SparseSharpe.Factor.ex_signs
+
+/-! ### The same scheme from the data (`Factor/ScaleFreeScheme.lean`, session 26) -/
+
+#print axioms SparseSharpe.Factor.card_sfBox
+#print axioms SparseSharpe.Factor.card_sfTable_le
+#print axioms SparseSharpe.Factor.card_sfFamily_le
+#print axioms SparseSharpe.Factor.card_sfCandidates_le
+#print axioms SparseSharpe.Factor.card_le_of_mem_sfCandidates
+#print axioms SparseSharpe.Factor.barK_union_map
+#print axioms SparseSharpe.Factor.disjoint_barK_map
+#print axioms SparseSharpe.Factor.rowsT_subset_barK_assetsT
+#print axioms SparseSharpe.Factor.assetsT_subset
+#print axioms SparseSharpe.Factor.mem_assetsT
+#print axioms SparseSharpe.Factor.sfNode_rho
+#print axioms SparseSharpe.Factor.sfKey_sum_mem_box
+#print axioms SparseSharpe.Factor.sfC_eq
+#print axioms SparseSharpe.Factor.card_pos_real
+#print axioms SparseSharpe.Factor.one_le_sfC
+#print axioms SparseSharpe.Factor.sfEta_pos
+#print axioms SparseSharpe.Factor.sfZeta_pos
+#print axioms SparseSharpe.Factor.sfStep_pos
+#print axioms SparseSharpe.Factor.k_sfEta
+#print axioms SparseSharpe.Factor.k_sfZeta
+#print axioms SparseSharpe.Factor.sfC_sfStep
+#print axioms SparseSharpe.Factor.sf_threshold
+#print axioms SparseSharpe.Factor.sf_margin
+#print axioms SparseSharpe.Factor.sfC_K_step_sq
+#print axioms SparseSharpe.Factor.sf_node_radius
+#print axioms SparseSharpe.Factor.sf_key_radius
+#print axioms SparseSharpe.Factor.sf_score_radius
+#print axioms SparseSharpe.Factor.sf_rep_exists
+#print axioms SparseSharpe.Factor.sf_value_of_rep
+#print axioms SparseSharpe.Factor.sf_one_guess
+#print axioms SparseSharpe.Factor.exists_portfolio_of_psiC_ge
+#print axioms SparseSharpe.Factor.exists_good_sfCandidate
+#print axioms SparseSharpe.Factor.main_theorem_sf
+#print axioms SparseSharpe.Factor.sf_instance
+#print axioms SparseSharpe.Factor.sf_instance_two
+#print axioms SparseSharpe.Factor.sf_instance_K2

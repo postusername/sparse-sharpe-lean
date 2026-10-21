@@ -1,0 +1,13 @@
+Test A: increments of F_LO(anchors + m identical light items)
+  sgn +1 Lam 1e+00 c 0.5  increments 0.746 0.670 0.591 0.506 0.438 0.382 0.334 0.294  max change of increment 0.085
+  sgn +1 Lam 1e+00 c 2.0  increments 0.286 0.257 0.233 0.211 0.193 0.177 0.162 0.150  max change of increment 0.029
+  sgn +1 Lam 1e+03 c 0.5  increments 0.601 0.601 0.570 0.495 0.434 0.382 0.334 0.294  max change of increment 0.075
+  sgn +1 Lam 1e+03 c 2.0  increments 0.010 0.010 0.010 0.010 0.010 0.010 0.010 0.010  max change of increment 0.000
+  sgn +1 Lam 1e+08 c 0.5  increments 0.601 0.601 0.570 0.495 0.434 0.382 0.334 0.294  max change of increment 0.075
+  sgn +1 Lam 1e+08 c 2.0  increments 0.010 0.010 0.010 0.010 0.010 0.010 0.010 0.010  max change of increment 0.000
+  sgn -1 Lam 1e+00 c 0.5  increments 1.172 1.053 0.952 0.864 0.789 0.722 0.664 0.612  max change of increment 0.118
+  sgn -1 Lam 1e+00 c 2.0  increments 1.991 1.789 1.617 1.469 1.340 1.227 1.128 1.040  max change of increment 0.201
+  sgn -1 Lam 1e+03 c 0.5  increments 1.501 1.501 1.501 1.501 1.501 1.501 1.501 1.501  max change of increment 0.000
+  sgn -1 Lam 1e+03 c 2.0  increments 3.610 3.610 3.610 3.610 3.610 3.610 3.610 3.610  max change of increment 0.000
+  sgn -1 Lam 1e+08 c 0.5  increments 1.501 1.501 1.501 1.501 1.501 1.501 1.501 1.501  max change of increment 0.000
+  sgn -1 Lam 1e+08 c 2.0  increments 3.610 3.610 3.610 3.610 3.610 3.610 3.610 3.610  max change of increment 0.000

@@ -1,15 +1,15 @@
 """E29: the saddle point of the relaxation, the certificate with k+K names and the rounding to exactly k names on the
-real data, for Section 6.7 of the paper ("The relaxation, the certificate with k+K names and the rounding").  For the
+real data, for Section 7.7 of the paper ("The relaxation, the certificate with k+K names and the rounding").  For the
 models of data_real.py in the plan below (the industries FF49, window July 2016 - June 2026, and the Hang Seng data
 port1 with K = 1, 3, 5 and k = 3, 5; the OR-Library data sets port2..port5 with k = 5, 10, 20; the S&P 500 and the
 Russell 3000 with K = 1, 3, 5, 10 and k = 5, 10, 20, 50) it computes: (1) G*_k = min_t g_k(t) and a minimizer t*
 (CVXPY with Clarabel), g_k(t) = t'Sf^{-1}t + (the sum of the k largest scores s_i(t)); (2) the support T of
-Theorem 5.15, the union of H (the multipliers equal to 1) and I' (the f fractional ones): the assets with
+Theorem 6.15, the union of H (the multipliers equal to 1) and I' (the f fractional ones): the assets with
 s_i(t*) > sigma, sigma the k-th largest score, get the multiplier 1, and the multipliers lambda in [0,1]^E of the
 assets E that tie at sigma are a vertex of the linear program sum lambda = k - #{s_i(t*) > sigma},
 sum_E lambda_i w_i B_i = Sf^{-1}t* - (the sum of w_i B_i over the assets with s_i(t*) > sigma), so that at most K+1
 of them are fractional, and T = {lambda > 0}; (3) the checks |T| <= k + K, F_LO(T) >= G*_k (the bicriteria
-guarantee) and, where enumeration is possible, OPT(k) <= G*_k <= OPT(k+K); (4) the rounding of Theorem 5.18: among
+guarantee) and, where enumeration is possible, OPT(k) <= G*_k <= OPT(k+K); (4) the rounding of Theorem 6.18: among
 the C(f, s) sets R that add to H a subset T' of I' with |T'| = s, the best one by objLO(R, w(t*)), its loss
 G*_k - obj and the bound min(s, f-s) omega_I' sigma (sigma = s_i(t*) on I').  Run from this directory:
 python3 -I e29_dual_rounding.py > results/E29/e29.log  (about 4 minutes on one core); writes

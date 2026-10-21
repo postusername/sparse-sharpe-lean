@@ -1,4 +1,4 @@
-"""E31: Table "Formal size bounds" (tab:bounds) of Section 6.6 of the paper, with its complete version
+"""E31: Table "Formal size bounds" (tab:bounds) of Section 7.6 of the paper, with its complete version
 results/E31/e31_table.md (all 62 instances): formal bounds on the size of the family of candidates of the old scheme
 (dynamic program over moments and the Gram matrix, Lean `main_theorem_simple`) and of the scheme without the Gram
 matrix (Lean `main_theorem_clipped`), against the number of supports.  For every model of data_real.py (FF49 with

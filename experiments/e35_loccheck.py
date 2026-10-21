@@ -1,7 +1,7 @@
-"""E35 check: the check of the localized nodes of Section 6.4 of the paper (the paragraph "The localized scheme" and
+"""E35 check: the check of the localized nodes of Section 7.4 of the paper (the paragraph "The localized scheme" and
 the last column of Table "The stress regime at scale", tab:scale).  In e35_scale.py the radius of the localized nodes
 used gval = min(g_k(that), g_k(t_h)) while the centre was always that (the minimizer returned by the conic solver and
-L-BFGS), whereas Definition 5.22 takes radius and centre at the same point.  This script replays every instance of
+L-BFGS), whereas Definition 6.22 takes radius and centre at the same point.  This script replays every instance of
 results/E35/<M>_<K>_<k>.jsonl in which the certificate fails (same seeds and generator), recomputes that and
 g_k(that), and counts the localized nodes with the radius sqrt(g_k(that) - theta) around G that (coordinatewise
 condition, over all guesses, as in e35_scale.py); it prints the instances in which g_k(that) differs from the stored

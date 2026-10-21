@@ -1,4 +1,4 @@
-"""E30: the scheme without the Gram matrix itself on the real data, Table 6.7 ("The scheme itself") of Section 6.6
+"""E30: the scheme without the Gram matrix itself on the real data, Table 7.7 ("The scheme itself") of Section 7.6
 of the paper.  For each instance of the plan below (eps = 0.05) the reference value F* is the optimum OPT(k) by
 enumeration ("exact": the industries FF49, window July 2016 - June 2026, and the Hang Seng data port1, M <= 49 and
 k <= 5) or the value of greedy selection with exchanges ("heuristic", a lower bound: the larger universes), the guess

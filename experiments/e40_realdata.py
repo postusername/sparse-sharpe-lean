@@ -1,14 +1,14 @@
-"""E40: the real data of Sections 6.1 and 6.2 (Tables 6.1 and 6.2, the paragraphs "The certificate at scale" and
+"""E40: the real data of Sections 7.1 and 7.2 (Tables 7.1 and 7.2, the paragraphs "The certificate at scale" and
 "What the guarantee buys").  Data and models: data_real.py (window July 2016 - June 2026 for the industries).
 
-  python3 -I e40_realdata.py optima     -> results/E40/optima.json   (Table 6.1 and the text of Section 6.1)
-  python3 -I e40_realdata.py instances  -> results/E40/instances.jsonl (one line per binding instance, Section 6.2)
+  python3 -I e40_realdata.py optima     -> results/E40/optima.json   (Table 7.1 and the text of Section 7.1)
+  python3 -I e40_realdata.py instances  -> results/E40/instances.jsonl (one line per binding instance, Section 7.2)
 
-Table 6.1: FF49-K1, -K3, -K5 and HS-PCA1 (port1, one factor) with k in {3, 5}: the optimum by enumeration of all
+Table 7.1: FF49-K1, -K3, -K5 and HS-PCA1 (port1, one factor) with k in {3, 5}: the optimum by enumeration of all
 supports with k assets (F_LO is monotone), forward greedy selection, the prefix of the Treynor ranking (one factor),
-the optimality test of Theorem 5.7 at the dual point of the optimum, and for the instances in which it fails the
+the optimality test of Theorem 6.7 at the dual point of the optimum, and for the instances in which it fails the
 certificate with greedy selection with exchanges and branch and bound.
-Section 6.2: the industries (K = 1, 3, 5), the five OR-Library portfolio data sets (K = 1, 3, 5), the S&P 500 and
+Section 7.2: the industries (K = 1, 3, 5), the five OR-Library portfolio data sets (K = 1, 3, 5), the S&P 500 and
 the Russell 3000 (K = 1, 3, 5, 10), k in {5, 10, 20, 50} below n_LO, the number of names of the unconstrained
 long-only tangency portfolio: greedy selection, greedy selection with exchanges (F_h), the optimality test at its
 dual point, the relaxation G*_k, the certificate gap 1 - F_h/G*_k, branch and bound (relative tolerance 1e-9), and the

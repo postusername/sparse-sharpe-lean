@@ -1,9 +1,9 @@
-"""E34: the localized scheme (Theorem 5.24) with pruning inside the dynamic program (Lemma 5.23).
+"""E34: the localized scheme (Theorem 6.24) with pruning inside the dynamic program (Lemma 6.23).
 
-Library (used by e35_scale.py and the later scripts) and the one-step checks of Section 6.4 ("One-step checks"):
+Library (used by e35_scale.py and the later scripts) and the one-step checks of Section 7.4 ("One-step checks"):
 
-  (L4 and P1 below are the names used in the code and in the log: the localized nodes of Definition 5.22 and the
-  pruning of Lemma 5.23.)
+  (L4 and P1 below are the names used in the code and in the log: the localized nodes of Definition 6.22 and the
+  pruning of Lemma 6.23.)
   * L4, one step: for every support S with F_LO(S) >= theta, the node obtained by rounding G t0(S)/s
     coordinatewise lies in the localized set {z : |s z_l - (G that)_l| <= r + s/2, ||s z - G that|| <= r + s sqrt(K)/2},
     r = sqrt(g_k(that) - theta) (no violation allowed);  control: radius r x 0.5 (must break somewhere);
@@ -12,7 +12,7 @@ Library (used by e35_scale.py and the later scripts) and the one-step checks of 
     (must break somewhere);  measured: the share of the records removed by pruning;
   * the whole localized scheme with the constants of Definition 4.7 and pruning: best candidate / optimum.
 
-Instances: the stress regime of Section 6.3 (factor covariance and loadings unstructured Gaussian, R_i^2 ~ U(0.5, 0.95),
+Instances: the stress regime of Section 7.3 (factor covariance and loadings unstructured Gaussian, R_i^2 ~ U(0.5, 0.95),
 expected returns uniform multiples of the volatilities, unrelated to the factors), M = 16 so that every support can
 be enumerated. Run:  python3 -I e34_localized.py > e34.log
 """
@@ -33,7 +33,7 @@ from scipy.optimize import nnls, minimize
 def stress_instance(rng, M, K, regime='stress'):
     """Random factor model. 'stress': loadings and factor covariance unstructured Gaussian, R_i^2 ~ U(0.5, 0.95),
     m_i = u_i * sqrt(V_ii) with u_i ~ U(-0.1, 0.3) (unrelated to the loadings). 'calibrated': m = B lambda + small
-    alpha, as in Section 6.3."""
+    alpha, as in Section 7.3."""
     A = rng.normal(size=(K, K))
     Sf = A @ A.T / K + 0.2 * np.eye(K)
     B = rng.normal(size=(M, K))
@@ -183,7 +183,7 @@ def params(eps, V, k, K, omega):
 
 
 def loc_nodes(Gt, s, Z, gval, theta, K, radius_factor=1.0, count_only=False, cap=None):
-    """The localized nodes of Definition 5.22: none if g <= theta; otherwise the nodes z, |z_l| <= Z, with
+    """The localized nodes of Definition 6.22: none if g <= theta; otherwise the nodes z, |z_l| <= Z, with
     |s z_l - (G that)_l| <= r + s/2 for all l and ||s z - G that|| <= r + s sqrt(K)/2, r = sqrt(g - theta)
     (times radius_factor for the control). Returns (list of z or None, count of the cube, count after the ball)."""
     if gval <= theta:
@@ -224,7 +224,7 @@ def top_suffix(svals, order, k):
 
 
 def pruned_table(m, d, B, Sf, G, P, tau, eta, Q, k, theta=None, order=None, stats=None, keep_sets=True):
-    """Algorithm 4.1 at the node tau, vectorized, with the pruning of Lemma 5.23 (theta=None: no pruning).
+    """Algorithm 4.1 at the node tau, vectorized, with the pruning of Lemma 6.23 (theta=None: no pruning).
 
     After the step for asset order[j], a record U is discarded if tau'P tau + sum_U s + top_{k-|U|}(order[j+1:]) < theta.
     Records: keys (T x (K+1) int64: rounded vector sum and |U|), values (sum of scores), members (T x k, -1 padded).
@@ -291,7 +291,7 @@ def candidates_from_table(mem):
 
 def localized_scheme(m, d, B, Sf, k, eps, Fh, Sh, that, gval, omega, prune=True, radius_factor=1.0,
                      theta_factor=1.0, node_cap=20000, time_cap=None):
-    """The localized scheme of Theorem 5.24 (with the pruning of Lemma 5.23 if prune): candidates = {S_h} and the tables at the localized nodes of the guesses
+    """The localized scheme of Theorem 6.24 (with the pruning of Lemma 6.23 if prune): candidates = {S_h} and the tables at the localized nodes of the guesses
     V_j = F_h 2^j, j <= J, g(that) <= 2^{J+1} F_h; theta = F_h/(1 - 2 eps). Returns a dict with the best value."""
     M, K = B.shape
     P = np.linalg.inv(Sf)

@@ -1,5 +1,5 @@
 #!/bin/bash
-# E35 (Section 6.4): the stress regime at scale, 36 configurations, 3 workers with one thread each;
+# E35 (Section 7.4): the stress regime at scale, 36 configurations, 3 workers with one thread each;
 # one JSON line per instance in results/E35/<M>_<K>_<k>.jsonl.  About 6 minutes with 3 workers.
 cd "$(dirname "$0")"
 export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1

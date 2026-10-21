@@ -1,5 +1,5 @@
 #!/bin/bash
-# E35b (Section 6.4): the MIQP baseline (e35_miqp.py) on the first instances of every configuration of E35
+# E35b (Section 7.4): the MIQP baseline (e35_miqp.py) on the first instances of every configuration of E35
 # (read from results/E35/<M>_<K>_<k>.jsonl, so run e35_driver.sh first); 3 workers, one thread each, 600 s per solve.
 # Output: results/E35/miqp_<M>_<K>_<k>_<tag>.jsonl.  About 40 minutes with 3 workers.
 cd "$(dirname "$0")"

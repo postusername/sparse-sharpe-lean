@@ -1,4 +1,4 @@
-"""E33: the data of Figure "nodedist" (fig:nodedist) of Section 6.6 of the paper, cited in the paragraph "Checks of the
+"""E33: the data of Figure "nodedist" (fig:nodedist) of Section 7.6 of the paper, cited in the paragraph "Checks of the
 estimates": how conservative the estimate at a node of Theorem 4.2(c), F - obj(S, w(tau)) <= nu_S^2 q, is on random
 data.  1500 random instances drawn as in check_clipped_dp.py (T2), with the seed 33: M <= 7 assets, K <= 3 factors,
 k <= 4; the optimal support S with value F and dual point t0 by enumeration, and the nodes tau = t0 + delta with

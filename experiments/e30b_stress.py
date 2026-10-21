@@ -1,4 +1,4 @@
-"""E30b: the scaling sentence of Section 6.6 of the paper ("Multiplying the key width and the grid step by a common
+"""E30b: the scaling sentence of Section 7.6 of the paper ("Multiplying the key width and the grid step by a common
 factor c ..."), i.e. how conservative the constants of Definition 4.7 are.  Part (a), the only one the paper uses: on
 the four real instances with a known optimum (FF49-K1 and FF49-K3 with k = 3, window July 2016 - June 2026; port1-K1
 with k = 5 and port1-K3 with k = 3; eps = 0.05, guess V = OPT(k)/1.5) the key width eta and the grid step s_g of
@@ -6,7 +6,7 @@ clipped_dp.params are multiplied by c in {1, 3, 10, 30, 100, 300, 1000, 3000} (t
 max(1, int(Q/c) + k + 1)), the table is built at the node nearest to the dual point of the optimum, and the size of the
 table, the share of merges and the best F_LO of a set of the table divided by the optimum are printed.  Part (b) is
 an old random study from an earlier version of the paper, kept for the record but not used in the paper (the random
-instances of Section 6.3 are those of e41_random.py): 100 random 'calibrated' and 'stress' models each with M = 16,
+instances of Section 7.3 are those of e41_random.py): 100 random 'calibrated' and 'stress' models each with M = 16,
 K = 1, 2, 3 and k = 3, and the guarantee 1 - 2 eps with the constants of Definition 4.7 at the node nearest to the
 dual point of the optimum.  Run from this directory: python3 -I e30b_stress.py > results/E30b/e30b.log  (about
 half a minute on one core; only the log).

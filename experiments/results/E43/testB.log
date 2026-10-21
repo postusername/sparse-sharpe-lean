@@ -1,0 +1,6 @@
+Test B: equipartition, n = 4 (8 numbers ~ 2^m), NO instance with a near miss by one unit, hedge along the target; relative gap (V_yes - V_no)/V_yes
+  m =  6: largest relative gap 8.168e-04 at s = 4.295e+9 (V_yes 3.999844, V_no 3.996577)
+  m =  8: largest relative gap 4.310e-05 at s = 4.295e+9 (V_yes 3.999845, V_no 3.999672)
+  m = 10: largest relative gap 2.890e-06 at s = 65536.0 (V_yes 4.000000, V_no 3.999988)
+  m = 12: largest relative gap 1.428e-07 at s = 65536.0 (V_yes 4.000000, V_no 3.999999)
+  m = 14: largest relative gap 8.551e-09 at s = 65536.0 (V_yes 4.000000, V_no 4.000000)
