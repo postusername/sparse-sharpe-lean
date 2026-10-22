@@ -76,3 +76,6 @@ import SparseSharpe.SchemeLO1
 import SparseSharpe.Factor.ScaleFreeStep
 import SparseSharpe.Factor.ScaleFreeScheme
 import SparseSharpe.Factor.UniversalScheme
+import SparseSharpe.Factor.OnePassLower
+import SparseSharpe.Factor.Kernel
+import SparseSharpe.Factor.KernelScheme

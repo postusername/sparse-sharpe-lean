@@ -4,9 +4,9 @@
 # from the stored results in results/ (seconds).
 PY = OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 python3 -I
 
-.PHONY: all data tables e29 e30 e30b e31 e33 check e34 e35 e35b e35loc e36 e40 e41 e43 e44 e45 clean-tables
+.PHONY: all data tables e29 e30 e30b e31 e33 check e34 e35 e35b e35loc e36 e40 e41 e43 e44 e45 e46 clean-tables
 
-all: data e40 e41 e34 e35 e35b e35loc e36 e29 e30 e30b e31 e33 check e43 e44 e45 tables
+all: data e40 e41 e34 e35 e35b e35loc e36 e29 e30 e30b e31 e33 check e43 e44 e45 e46 tables
 
 data:
 	$(PY) -c "import sys; sys.path.insert(0, '.'); import data_real as D; D.load_ff_monthly(); [D.load_port(i) for i in range(1, 6)]; D.load_indtrack(6); D.load_indtrack(8); print('data ok')"
@@ -66,6 +66,13 @@ E45PARTS = step_hedge_2 step_rand_2 step_cluster_2 step_ortho_2 step_hedge_3 ste
 e45:
 	mkdir -p results/E45
 	for p in $(E45PARTS); do echo $$p; done | xargs -P 4 -I{} sh -c '$(PY) e45_universal.py {} > results/E45/{}.jsonl'
+
+# Section 5.5: the kernel (top k per cell) on crowded random instances and on the instances of the one-pass lower
+# bound, with controls (e46_kernel.py; about a minute per part)
+E46PARTS = rand_1 rand_2 rand_3 lb_2 lb_3
+e46:
+	mkdir -p results/E46
+	for p in $(E46PARTS); do echo $$p; done | xargs -P 4 -I{} sh -c '$(PY) e46_kernel.py {} > results/E46/{}.jsonl'
 
 # Sections 7.6-7.7: the scheme itself, size bounds, checks of the estimates, the relaxation and the rounding
 e30:

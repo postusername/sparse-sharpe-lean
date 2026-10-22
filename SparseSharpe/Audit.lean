@@ -70,6 +70,9 @@ import SparseSharpe.SchemeLO1
 import SparseSharpe.Factor.ScaleFreeStep
 import SparseSharpe.Factor.ScaleFreeScheme
 import SparseSharpe.Factor.UniversalScheme
+import SparseSharpe.Factor.OnePassLower
+import SparseSharpe.Factor.Kernel
+import SparseSharpe.Factor.KernelScheme
 
 set_option linter.style.header false
 
@@ -1213,3 +1216,85 @@ open SparseSharpe SparseSharpe.OneFactor
 #print axioms SparseSharpe.Factor.main_theorem_univ
 #print axioms SparseSharpe.Factor.univ_instance_two
 #print axioms SparseSharpe.Factor.univ_instance_two_small
+
+/-! ### Ни `M`, ни `ω`: ядро и нижняя оценка для одного прохода (сессия 28, `Factor/OnePassLower`, `Factor/Kernel`, `Factor/KernelScheme`) -/
+
+#print axioms SparseSharpe.Factor.opI
+#print axioms SparseSharpe.Factor.opI_hG
+#print axioms SparseSharpe.Factor.opI_hPS
+#print axioms SparseSharpe.Factor.sum_opI_mul
+#print axioms SparseSharpe.Factor.lbDir
+#print axioms SparseSharpe.Factor.lbB
+#print axioms SparseSharpe.Factor.lbm
+#print axioms SparseSharpe.Factor.lbd
+#print axioms SparseSharpe.Factor.lbd_pos
+#print axioms SparseSharpe.Factor.lb_phi
+#print axioms SparseSharpe.Factor.lbT
+#print axioms SparseSharpe.Factor.dotp_lbDir_lbT
+#print axioms SparseSharpe.Factor.sum_sq_lbT
+#print axioms SparseSharpe.Factor.dotp_lbB_some
+#print axioms SparseSharpe.Factor.dotp_lbB_none
+#print axioms SparseSharpe.Factor.lb_pair_obj
+#print axioms SparseSharpe.Factor.lb_obj_le
+#print axioms SparseSharpe.Factor.lb_mem_of_good
+#print axioms SparseSharpe.Factor.onepass_lower
+#print axioms SparseSharpe.Factor.lb_leverage_le
+#print axioms SparseSharpe.Factor.onepass_instance
+#print axioms SparseSharpe.Factor.aboveK
+#print axioms SparseSharpe.Factor.topK
+#print axioms SparseSharpe.Factor.mem_topK
+#print axioms SparseSharpe.Factor.card_aboveK_lt
+#print axioms SparseSharpe.Factor.card_topK_le
+#print axioms SparseSharpe.Factor.exchange_topK
+#print axioms SparseSharpe.Factor.krow
+#print axioms SparseSharpe.Factor.ky
+#print axioms SparseSharpe.Factor.kl
+#print axioms SparseSharpe.Factor.kl_spec
+#print axioms SparseSharpe.Factor.krho
+#print axioms SparseSharpe.Factor.krho_nonneg
+#print axioms SparseSharpe.Factor.ksgn
+#print axioms SparseSharpe.Factor.kcls
+#print axioms SparseSharpe.Factor.kup
+#print axioms SparseSharpe.Factor.kth
+#print axioms SparseSharpe.Factor.kgrid
+#print axioms SparseSharpe.Factor.kcell
+#print axioms SparseSharpe.Factor.kscore
+#print axioms SparseSharpe.Factor.kkey
+#print axioms SparseSharpe.Factor.kkey_injective
+#print axioms SparseSharpe.Factor.kscore_le_of_key_lt
+#print axioms SparseSharpe.Factor.kerK
+#print axioms SparseSharpe.Factor.kcls_bounds
+#print axioms SparseSharpe.Factor.kup_eq
+#print axioms SparseSharpe.Factor.kup_pos
+#print axioms SparseSharpe.Factor.kcls_ratio
+#print axioms SparseSharpe.Factor.dotp_krow
+#print axioms SparseSharpe.Factor.krow_eq_zero
+#print axioms SparseSharpe.Factor.klead_eq
+#print axioms SparseSharpe.Factor.kth_pos
+#print axioms SparseSharpe.Factor.kdir_close
+#print axioms SparseSharpe.Factor.kdom
+#print axioms SparseSharpe.Factor.quadf_opI
+#print axioms SparseSharpe.Factor.term_krow
+#print axioms SparseSharpe.Factor.QLO_opI_eq
+#print axioms SparseSharpe.Factor.clip_loss_lower
+#print axioms SparseSharpe.Factor.kernel_value
+#print axioms SparseSharpe.Factor.kbox
+#print axioms SparseSharpe.Factor.card_kbox
+#print axioms SparseSharpe.Factor.kcls_mono
+#print axioms SparseSharpe.Factor.kG
+#print axioms SparseSharpe.Factor.kcell_mem_kbox
+#print axioms SparseSharpe.Factor.card_kerK_le
+#print axioms SparseSharpe.Factor.krho_le_sqrt
+#print axioms SparseSharpe.Factor.extW
+#print axioms SparseSharpe.Factor.objLO_subtype
+#print axioms SparseSharpe.Factor.objLO_congr_w
+#print axioms SparseSharpe.Factor.kerCandidates
+#print axioms SparseSharpe.Factor.main_theorem_kernel
+#print axioms SparseSharpe.Factor.kexM
+#print axioms SparseSharpe.Factor.kexD
+#print axioms SparseSharpe.Factor.kexB
+#print axioms SparseSharpe.Factor.krho_ex
+#print axioms SparseSharpe.Factor.kcell_ex
+#print axioms SparseSharpe.Factor.kscore_ex
+#print axioms SparseSharpe.Factor.kerK_ex
+#print axioms SparseSharpe.Factor.kernel_instance
