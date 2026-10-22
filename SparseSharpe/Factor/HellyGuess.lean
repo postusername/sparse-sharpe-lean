@@ -490,12 +490,17 @@ theorem main_theorem_ls_sp [Nonempty κ] [Nonempty ι]
 
 omit [Fintype ι] in
 /-- **Теорема 1.1 с догадками Хелли.** Семейство Теоремы 1.1 (`clipCandidates`) с догадками
-`Φ·2^j`, `j ≤ ⌈log₂(k + 1)⌉`, сохраняет гарантию `1 − 2ε`, и его размер по-прежнему не зависит
-от `M` (догадок меньше). От `M` зависит только время вычисления `Φ`. -/
+`Φ·2^j`, `j ≤ J = ⌈log₂(k + 1)⌉`, где `Φ` — наибольшее значение носителя с не более чем
+`min(k, K + 1)` именами, обладает всеми свойствами `main_theorem_clipped`: размер не больше
+`(J+1)(2Z+1)^K((2Q+1)^K(k+1)+1)` (не зависит от `M`; догадок меньше), у каждого члена не больше
+`k` имён, лучшая пара существует, и для любой лучшей пары значение не меньше `1 − 2ε` от значения
+любого long-only портфеля с не более чем `k` именами, а полностью инвестированный портфель
+`x = w₀/Σw₀` имеет коэффициент Шарпа не меньше `√(1−2ε)` от коэффициента Шарпа любого такого
+портфеля с положительной ожидаемой доходностью. От `M` зависит только время вычисления `Φ`. -/
 theorem main_theorem_clipped_helly [Finite ι] [Nonempty κ] [Nonempty ι] (hd : ∀ i, 0 < d i)
     (hG : ∀ j j', ∑ l, G l j * G l j' = P j j')
     (hPS : ∀ j j', ∑ l, P j l * Sf l j' = if j = j' then 1 else 0)
-    {k : ℕ} (hk1 : 1 ≤ k) {ε ω V : ℝ} (hε : 0 < ε) (hε1 : ε ≤ 1 / 2) (hω : 0 ≤ ω)
+    {k : ℕ} (hk1 : 1 ≤ k) {ε ω V : ℝ} (hε : 0 < ε) (hε1 : ε < 1 / 2) (hω : 0 ≤ ω)
     (hsys : ∀ i, sysVar B Sf i / d i ≤ ω) (hV0 : 0 < V)
     (hVatt : ∃ T : Finset ι, T.card ≤ min k (Fintype.card κ + 1) ∧ ∃ u : ι → ℝ,
       (∀ i ∈ T, 0 ≤ u i) ∧ objLO m d B Sf T u = V)
@@ -506,9 +511,24 @@ theorem main_theorem_clipped_helly [Finite ι] [Nonempty κ] [Nonempty ι] (hd :
     (clipCandidates m d B Sf G ε ω V J k La).card
         ≤ (J + 1) * ((2 * clipZ ε ω k (Fintype.card κ) + 1) ^ Fintype.card κ
           * ((2 * clipQ ε ω k (Fintype.card κ) + 1) ^ Fintype.card κ * (k + 1) + 1))
-    ∧ ∃ R ∈ clipCandidates m d B Sf G ε ω V J k La, R.card ≤ k ∧
-      ∃ w : ι → ℝ, (∀ i, 0 ≤ w i) ∧ ∀ S' : Finset ι, S'.card ≤ k → ∀ u : ι → ℝ,
-        (∀ i ∈ S', 0 ≤ u i) → (1 - 2 * ε) * objLO m d B Sf S' u ≤ objLO m d B Sf R w := by
+    ∧ (∀ R ∈ clipCandidates m d B Sf G ε ω V J k La, R.card ≤ k)
+    ∧ (∃ R₀ ∈ clipCandidates m d B Sf G ε ω V J k La, ∃ w₀ : ι → ℝ,
+        (∀ i ∈ R₀, 0 ≤ w₀ i) ∧
+        ∀ R ∈ clipCandidates m d B Sf G ε ω V J k La, ∀ w : ι → ℝ,
+          (∀ i ∈ R, 0 ≤ w i) → objLO m d B Sf R w ≤ objLO m d B Sf R₀ w₀)
+    ∧ ∀ R₀ ∈ clipCandidates m d B Sf G ε ω V J k La, ∀ w₀ : ι → ℝ,
+        (∀ i ∈ R₀, 0 ≤ w₀ i) →
+        (∀ R ∈ clipCandidates m d B Sf G ε ω V J k La, ∀ w : ι → ℝ,
+          (∀ i ∈ R, 0 ≤ w i) → objLO m d B Sf R w ≤ objLO m d B Sf R₀ w₀) →
+        R₀.card ≤ k
+        ∧ (∀ S' : Finset ι, S'.card ≤ k → ∀ u : ι → ℝ, (∀ i ∈ S', 0 ≤ u i) →
+            (1 - 2 * ε) * objLO m d B Sf S' u ≤ objLO m d B Sf R₀ w₀)
+        ∧ (∀ i ∈ R₀, 0 ≤ (∑ j ∈ R₀, w₀ j)⁻¹ * w₀ i)
+        ∧ ∑ i ∈ R₀, (∑ j ∈ R₀, w₀ j)⁻¹ * w₀ i = 1
+        ∧ ∀ S' : Finset ι, S'.card ≤ k → ∀ u : ι → ℝ, (∀ i ∈ S', 0 ≤ u i) →
+            0 < pRet m S' u →
+            Real.sqrt (1 - 2 * ε) * sharpe m d B Sf S' u
+              ≤ sharpe m d B Sf R₀ (fun i => (∑ j ∈ R₀, w₀ j)⁻¹ * w₀ i) := by
   have : Fintype ι := Fintype.ofFinite ι
   obtain ⟨S, hSk, Fopt, hFoptG, hSopt⟩ := exists_optimal_support (m := m) (d := d) (B := B)
     (Sf := Sf) (P := P) (G := G) hd hG hPS k
@@ -523,12 +543,20 @@ theorem main_theorem_clipped_helly [Finite ι] [Nonempty κ] [Nonempty ι] (hd :
     have h2 : ((k : ℝ) + 1) ≤ 2 ^ J := by rw [hJ]; exact le_two_pow_clog k
     have h3 : (2:ℝ) ^ J ≤ 2 ^ (J + 1) := pow_le_pow_right₀ (by norm_num) (Nat.le_succ J)
     nlinarith
-  obtain ⟨R, hR, hRk, w, hw, hobj⟩ := exists_good_clipCandidate_bracket (Sf := Sf) (P := P)
-    hd hG hPS hk1 hε hε1 hω hsys hV0 hnd hall hSk hFoptG hLF hFJ
-  refine ⟨card_clipCandidates_le m d B Sf G ε ω V J k La, R, hR, hRk, w, hw,
-    fun S' hS' u hu => ?_⟩
+  obtain ⟨R, hR, -, w, hw, hobj⟩ := exists_good_clipCandidate_bracket (Sf := Sf) (P := P)
+    hd hG hPS hk1 hε hε1.le hω hsys hV0 hnd hall hSk hFoptG hLF hFJ
+  refine ⟨card_clipCandidates_le m d B Sf G ε ω V J k La,
+    fun R hR => card_le_of_mem_clipCandidates hR,
+    exists_best_set_of_family (m := m) (d := d) (B := B) (Sf := Sf) (P := P) (G := G) hd hG hPS
+      ⟨R, hR⟩, ?_⟩
+  intro R₀ hR₀ w₀ hw₀ hbest
+  have hval : (1 - 2 * ε) * Fopt ≤ objLO m d B Sf R₀ w₀ :=
+    le_trans hobj (hbest R hR w (fun i _ => hw i))
+  obtain ⟨hx0, hx1, hxs⟩ := best_pair_sharpe_uniform (B := B) hd hG hPS hε1
+    (lt_of_lt_of_le hV0 hLF) hSopt hw₀ hval
+  refine ⟨card_le_of_mem_clipCandidates hR₀, fun S' hS' u hu => ?_, hx0, hx1, hxs⟩
   have hub := hSopt S' hS' u hu
-  have hcoef : (0:ℝ) ≤ 1 - 2 * ε := by linarith
+  have hcoef : (0 : ℝ) ≤ 1 - 2 * ε := by linarith
   linarith [mul_le_mul_of_nonneg_left hub hcoef]
 
 /-! ### Примеры -/
@@ -617,13 +645,15 @@ theorem ls_instance_sp :
   exact hsh
 
 /-- **Пример (Теорема 1.1 с догадками Хелли).** Одноактивный инстанс `clipped_instance`
-(`m = d = 1`, `B = 0`, `k = 1`, `ε = 1/4`, `ω = 0`): `Φ = 1`, `J = ⌈log₂ 2⌉`; в семействе есть
-носитель с неотрицательными весами, цель которого не меньше `(1 − 2ε)·OPT = 1/2`. -/
+(`m = d = 1`, `B = 0`, `Σ_f = G = P = 1`, `k = 1`, `ε = 1/4`, `ω = 0`): `Φ = 1`,
+`J = ⌈log₂ 2⌉`, порядок `[0]`. Все гипотезы `main_theorem_clipped_helly` выполнены, заключение
+даёт полностью инвестированный портфель с коэффициентом Шарпа не меньше `√(1/2)`. -/
 theorem clipped_instance_helly :
     ∃ R₀ ∈ clipCandidates (fun _ : Fin 1 => (1:ℝ)) (fun _ => 1) (fun _ (_ : Unit) => 0)
         (fun _ _ => 1) (fun _ _ => 1) (1/4) 0 1 (Nat.clog 2 (1 + 1)) 1 [0],
-      ∃ w : Fin 1 → ℝ, (∀ i, 0 ≤ w i) ∧ (1 / 2 : ℝ) ≤ objLO (fun _ : Fin 1 => (1:ℝ))
-        (fun _ => 1) (fun _ (_ : Unit) => 0) (fun _ _ => 1) R₀ w := by
+      ∃ x : Fin 1 → ℝ, (∀ i ∈ R₀, 0 ≤ x i) ∧ ∑ i ∈ R₀, x i = 1
+        ∧ Real.sqrt (1 - 2 * (1/4)) ≤ sharpe (fun _ : Fin 1 => (1:ℝ)) (fun _ => 1)
+            (fun _ (_ : Unit) => 0) (fun _ _ => 1) R₀ x := by
   set m : Fin 1 → ℝ := fun _ => 1
   set d : Fin 1 → ℝ := fun _ => 1
   set B : Fin 1 → Unit → ℝ := fun _ _ => 0
@@ -655,14 +685,19 @@ theorem clipped_instance_helly :
   have hnd : ([0] : List (Fin 1)).Nodup := List.nodup_singleton 0
   have hall : ∀ i : Fin 1, i ∈ ([0] : List (Fin 1)) := by
     intro i; rw [List.mem_singleton]; exact Subsingleton.elim _ _
-  obtain ⟨_, R₀, hR₀, _, w, hw, hbest⟩ := main_theorem_clipped_helly (G := G) (P := P)
+  have hsu : sharpe m d B Sf Finset.univ (fun _ => 1) = 1 := by
+    simp [sharpe, pRet, pVar, Vmat, m, d, B]
+  have hcard : (Finset.univ : Finset (Fin 1)).card ≤ 1 := by simp
+  have hw1 : ∀ i ∈ (Finset.univ : Finset (Fin 1)), (0:ℝ) ≤ (fun _ => (1:ℝ)) i :=
+    fun _ _ => zero_le_one
+  obtain ⟨_, _, ⟨R₀, hR₀, w₀, hw₀, hbest⟩, h4⟩ := main_theorem_clipped_helly (G := G) (P := P)
     (Sf := Sf) hd hG hPS le_rfl (by norm_num : (0:ℝ) < 1/4) (by norm_num) le_rfl hsys
     one_pos hVatt hVub rfl hnd hall
-  have h1 : objLO m d B Sf Finset.univ (fun _ => 1) = 1 := by rw [hobj]; norm_num
-  have h := hbest Finset.univ (by simp) (fun _ => 1) (fun _ _ => zero_le_one)
-  rw [h1] at h
-  refine ⟨R₀, hR₀, w, hw, ?_⟩
-  linarith
+  obtain ⟨_, _, hx0, hx1, hxsh⟩ := h4 R₀ hR₀ w₀ hw₀ hbest
+  have hsh := hxsh Finset.univ hcard (fun _ => 1) hw1 (by simp [pRet, m])
+  refine ⟨R₀, hR₀, _, hx0, hx1, ?_⟩
+  rw [hsu, mul_one] at hsh
+  exact hsh
 
 end StronglyPoly
 
