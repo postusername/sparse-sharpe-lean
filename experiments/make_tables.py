@@ -672,6 +672,10 @@ def threesum47():
         '%d..%d; %d..%d; %s; %s' % (min(r['n'] for r in R), max(r['n'] for r in R), min(r['U'] for r in R),
                                     max(r['U'] for r in R), ', '.join(str(m) for m in sorted({r['M'] for r in R})),
                                     sci(max(r['omega'] for r in R))), '5.5')
+    num('E47 3SUM gap, two-factor control on the NO instances: largest value of a triple with one asset of each list; '
+        'instances in which it is above 1; instances in which two numbers of one list add up to a number of LC',
+        '%.5f; %d; %d' % (max(r['twofactor_cross'] for r in N), sum(r['twofactor_cross'] > 1 for r in N),
+                          sum(r['same_sum'] for r in N)), '5.5')
     num('E47 3SUM gap, controls on the NO instances (light A = 1; two factors; k = 4): instances with OPT above 1; '
         'largest OPT',
         '; '.join('%s %d, %.4f' % (c, sum(r[c] > 1 for r in N), max(r[c] for r in N))

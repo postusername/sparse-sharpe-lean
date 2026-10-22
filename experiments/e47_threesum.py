@@ -8,8 +8,11 @@ and k = 3, the M = |LA| + |LB| + |LC| assets with m = 1, d = 1, Sigma_f = I and 
 Proposition 5.20: OPT_LO(3) = OPT_LS(3) = 3 on YES instances; on NO instances every support with at most three
 names, with long-only or long-short weights, has objective at most (2(1+3U)^2 + 9)/A^2 < 1.
 Controls (each must fail, i.e. let a NO instance get close to 3): 'light' (A = 1: no heavy scale), 'twofactor'
-(K = 2 with loadings A(1, a), A(1, b), -A(2, c): the weights of a hedge are not pinned), 'k4' (k = 4 on the
-instances of the proposition: a hedge with fractional weights, e.g. lambda a + (1 - lambda) a' + b = c).
+(K = 2 with loadings A(1, a), A(1, b), -A(2, c): the weights of a hedge are not pinned; 'twofactor_cross' is the best
+triple with one asset of each list, an exact hedge with the weights (1 + x, 1 - x, 1), x = (c - a - b)/(a - b), and the
+value 9/(3 + 2x^2); 'same_sum' records whether two numbers of one list add up to a number of LC, which in this encoding
+gives an exact hedge with unit weights and the value 3), 'k4' (k = 4 on the instances of the proposition: a hedge with
+fractional weights, e.g. lambda a + (1 - lambda) a' + b = c).
 Part 'gap': 200 random instances, n = 2..4 integers per list, U = 2..60; half of them with a planted solution.
 Usage:  python3 -I e47_threesum.py gap > results/E47/gap.jsonl
 """
@@ -71,7 +74,13 @@ def part_gap():
                    lo=opt(b, 3), ls=opt(b, 3, ls=True))
         if not yes:
             rec['light'] = opt(rows(LA, LB, LC, 1.0), 3)
-            rec['twofactor'] = opt(rows(LA, LB, LC, A, K=2), 3)
+            b2 = rows(LA, LB, LC, A, K=2)
+            rec['twofactor'] = opt(b2, 3)
+            y2 = np.ones(len(b2))
+            rec['twofactor_cross'] = max(F_lo(b2, y2, (i, n + j, 2 * n + l))
+                                         for i in range(n) for j in range(n) for l in range(n))
+            rec['same_sum'] = any(L[i] + L[j] == c for L in (LA, LB) for i in range(n) for j in range(i + 1, n)
+                                  for c in LC)
             rec['k4'] = opt(b, 4)
         print(json.dumps(rec), flush=True)
 
