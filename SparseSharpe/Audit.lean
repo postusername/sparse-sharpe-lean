@@ -1339,6 +1339,7 @@ open SparseSharpe SparseSharpe.OneFactor
 #print axioms SparseSharpe.Factor.opt_le_helly_free
 #print axioms SparseSharpe.Factor.main_theorem_clipped_helly
 #print axioms SparseSharpe.Factor.exists_small_best
+#print axioms SparseSharpe.Factor.exists_small_best_free
 #print axioms SparseSharpe.Factor.main_theorem_univ_sp
 #print axioms SparseSharpe.Factor.main_theorem_ls_sp
 #print axioms SparseSharpe.Factor.univ_instance_two_sp

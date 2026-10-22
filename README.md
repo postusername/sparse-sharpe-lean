@@ -46,7 +46,7 @@ on `M`.
 | Main Theorem (long-only, any fixed `K`, size polynomial in `M`, `k`, `1/ε`) | `main_theorem_univ_sp`, `exists_small_best`, `univ_instance_two_sp` | [Factor/HellyGuess.lean](SparseSharpe/Factor/HellyGuess.lean) |
 | Helly's theorem for the value (Lemma 5.21) | `objLO_le_helly`, `objLO_le_helly_free`, `convex_sumsq_le`, `convex_clip_le`, `convex_sq_affine_le` | [Factor/HellyGuess.lean](SparseSharpe/Factor/HellyGuess.lean) |
 | Consequence `Φ ≤ OPT(k) ≤ (k + 1)Φ` (Lemma 5.21) | `opt_le_helly`, `opt_le_helly_free` | [Factor/HellyGuess.lean](SparseSharpe/Factor/HellyGuess.lean) |
-| Short sales, guesses without the data (Theorem 5.22) | `main_theorem_ls_sp`, `ls_instance_sp` | [Factor/HellyGuess.lean](SparseSharpe/Factor/HellyGuess.lean) |
+| Short sales, guesses without the data (Theorem 5.22) | `main_theorem_ls_sp`, `exists_small_best_free`, `ls_instance_sp` | [Factor/HellyGuess.lean](SparseSharpe/Factor/HellyGuess.lean) |
 | Theorem 1.1 (the former Main Theorem: a family independent of `M`) | `main_theorem_clipped` | [Factor/ClippedTrading.lean](SparseSharpe/Factor/ClippedTrading.lean) |
 | Theorem 1.1 with the guesses `Φ·2^j` (remark in Section 5.6) | `main_theorem_clipped_helly`, `clipped_instance_helly` | [Factor/HellyGuess.lean](SparseSharpe/Factor/HellyGuess.lean) |
 
@@ -212,10 +212,10 @@ pinned to the tag `v4.35.0-rc2` in `lake-manifest.json`. With [elan](https://git
 ```
 lake exe cache get                       # download the prebuilt Mathlib (several GB)
 lake build                               # build the formalization
-lake env lean SparseSharpe/Audit.lean    # print the axioms of 1105 statements
+lake env lean SparseSharpe/Audit.lean    # print the axioms of 1106 statements
 ```
 
-Each of the 1105 statements depends only on `propext`, `Classical.choice` and `Quot.sound`
+Each of the 1106 statements depends only on `propext`, `Classical.choice` and `Quot.sound`
 (some on a subset), and none on `sorryAx`. The sources contain no `sorry`, no `axiom`
 declarations and no `native_decide`. The development has 84 files and about 37 400 lines.
 

@@ -320,6 +320,26 @@ theorem exists_small_best [Finite ι] [Nonempty κ] (hd : ∀ i, 0 < d i)
   refine ⟨V, ⟨T, hTk, u, hu, hVu.symm⟩, hVall, fun i => ?_⟩
   exact opt_ge_single_of_opt (B := B) hd hG hPS (le_min hk1 (by omega)) hVall i
 
+omit [Fintype ι] in
+/-- Наибольшее long-short значение носителя с не более чем `min(k, K + 1)` именами (веса любого
+знака) существует и не меньше `m_i²/V_ii` для любого актива `i` (так что оно положительно, если
+какое-то `m_i ≠ 0`). -/
+theorem exists_small_best_free [Finite ι] (hd : ∀ i, 0 < d i)
+    (hG : ∀ j j', ∑ l, G l j * G l j' = P j j')
+    (hPS : ∀ j j', ∑ l, P j l * Sf l j' = if j = j' then 1 else 0) {k : ℕ} (hk1 : 1 ≤ k) :
+    ∃ V : ℝ, (∃ T : Finset ι, T.card ≤ min k (Fintype.card κ + 1) ∧ ∃ u : ι → ℝ,
+        objLO m d B Sf T u = V)
+      ∧ (∀ T : Finset ι, T.card ≤ min k (Fintype.card κ + 1) → ∀ u : ι → ℝ,
+        objLO m d B Sf T u ≤ V)
+      ∧ ∀ i, m i ^ 2 / Vmat d B Sf i i ≤ V := by
+  have : Fintype ι := Fintype.ofFinite ι
+  obtain ⟨T, hTk, th, -, hVG, hVall⟩ := exists_optimal_support_free (m := m) (d := d) (B := B)
+    (Sf := Sf) (P := P) (G := G) hd hG hPS (min k (Fintype.card κ + 1))
+  obtain ⟨u, hVu⟩ := hVG.1
+  refine ⟨phi (rowsK d B G) (targetsK m d) (barK (κ := κ) T) th, ⟨T, hTk, u, hVu.symm⟩, hVall,
+    fun i => ?_⟩
+  exact opt_ge_single_free (B := B) hd hG hPS (le_min hk1 (by omega)) hVall i
+
 /-- **Теорема 5.13, сильно полиномиальная форма.** Как `main_theorem_univ`, но догадки
 `V·2^j`, `j ≤ J = ⌈log₂(k + 1)⌉`, где `V` — наибольшее значение носителя с не более чем
 `min(k, K + 1)` именами. Размер семейства зависит только от `M`, `k`, `1/ε` и `K`. -/
