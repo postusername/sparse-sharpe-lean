@@ -30,10 +30,11 @@ of Lemma 5 of the plan has at most one).  Controls at the same instance: the nod
 Instances: families rand, cluster, ortho (K = 2, M = 9, k = 3, 40 each), rand30 and cluster30 (K = 2, M = 30, k = 3,
 10 each), rand with K = 3 (M = 7, k = 3, 15), adversarial instances found by hill climbing against the controls, and
 for the one-step check the families rand, cluster, ortho with K = 2, 3 and M = 12 (100 instances each).
-The scheme of Definition 5.10 itself (part def510_<family>_<K>, the instances of onestep_<family>_<K>): one guess
+The one-tuple scheme of Remark 5.15 of the paper (Lean sfCandidates, main_theorem_sf; Definition 5.10 and Theorem 5.11
+of version 0.26) itself (part def510_<family>_<K>, the instances of onestep_<family>_<K>): one guess
 F^ = OPT, T of maximal volume among the rows of S-bar*, the lattice step sqrt(eps F^)/(C sqrt K), C = (k + K) K, the
 additive key (floor(r_i c_i / eta), floor(r_i^2 / zeta), 1) with the box of the definition, and a table for every row l
-that keeps the smallest Cramer sum; the node of the proof of Theorem 5.11 ('rule': the corner of the cell given by the
+that keeps the smallest Cramer sum; the node of the proof of main_theorem_sf ('rule': the corner of the cell given by the
 signs of H for the row of the smallest position of the optimum) and the best corner of the cell ('cell'); the class of
 the theorem (at most one position with sqrt(d_i) w*_i < 2 sqrt(eps OPT / K)) is recorded.  Controls: a K-tuple of
 non-maximal volume ('wrongT') and the anchor rows as T without the filter ('anchorT', the grid in G-coordinates without
@@ -415,9 +416,9 @@ def adversary_step(seed, K, iters, restarts, M=8, k=3):
     return worst
 
 
-# ------------------------------------------------------------------------------------------- Definition 5.10 itself
+# ------------------------------------------------------------------------------------------- the one-tuple scheme itself
 def def510_table(b, y, x, k, eps, Fh, Cr, adm, l, keep="minkappa"):
-    """The table of Definition 5.10 at the node x for the row l of T: Algorithm 4.1 over the admitted assets with the
+    """The table of the one-tuple scheme (sfTable) at the node x for the row l of T: Algorithm 4.1 over the admitted assets with the
     exactly additive key (floor(r_i c_i / eta), floor(r_i^2 / zeta), 1), r_i = (y_i - b_i.x)_+, and the value
     -r_i c_il, so that every key keeps a set with the smallest exact sum of r_i c_il ('minkappa'); keep='maxscore'
     keeps the largest sum of r_i^2 instead.  Keys outside the box [-Z_lambda, Z_lambda]^K x [0, Z_q] x [0, k] are
@@ -445,7 +446,7 @@ def def510_table(b, y, x, k, eps, Fh, Cr, adm, l, keep="minkappa"):
 
 
 def def510_best(b, y, k, eps, Fh, T, rho, ls, keep="minkappa", cfilter=True):
-    """The best exact F_LO over the candidates T_A + R of the tables of Definition 5.10 at the node with residuals rho
+    """The best exact F_LO over the candidates T_A + R of the tables of the one-tuple scheme at the node with residuals rho
     of the rows of T, for the rows l in ls, and the smallest such best over l (the proof needs one given l)."""
     M, K = b.shape
     Bbar = np.vstack([b, np.eye(K)])
@@ -467,12 +468,12 @@ def def510_best(b, y, k, eps, Fh, T, rho, ls, keep="minkappa", cfilter=True):
 
 
 def def510_step(b, y, k, eps=EPS):
-    """One-step check of Definition 5.10 and Theorem 5.11, with one guess F^ = OPT: T of maximal volume among the
+    """One-step check of the one-tuple scheme (sfCandidates, main_theorem_sf), with one guess F^ = OPT: T of maximal volume among the
     rows of S-bar* (S* the active assets of the optimum at its dual point x0), the lattice step s = sqrt(eps F^)/(C sqrt K),
     C = (k + K) K.  'rule': the corner of the cell around rho0 with sign(drho_m) = -sign(H_lm) for the row l of the
     smallest position of S* if it lies in T, the table of that row (any corner and the worst row l otherwise);
     'cell': the best over the 2^K corners and all rows l.  'small' counts the positions of S* with
-    r_i(x0) = sqrt(d_i) w*_i < 2 sqrt(eps OPT / K); the class of Theorem 5.11 is small <= 1, where the theorem
+    r_i(x0) = sqrt(d_i) w*_i < 2 sqrt(eps OPT / K); the class of main_theorem_sf is small <= 1, where the theorem
     guarantees 'rule' >= 1 - 5 eps.  Controls: 'wrongT' (a K-tuple of non-maximal volume), 'anchorT' (the anchor rows as
     T and no filter |c_i| <= 1: the grid in G-coordinates without nu), 'maxscore' (the table keeps the largest sum of
     scores instead of the smallest Cramer sum; reported)."""
@@ -529,7 +530,7 @@ def def510_step(b, y, k, eps=EPS):
 
 def adversary_def510(seed, K, iters, restarts, M=8, k=3):
     """Hill climbing that minimizes the ratio at the node of the proof ('rule' of def510_step) over instances with K
-    factors; the instances need not be in the class of Theorem 5.11 (it is recorded)."""
+    factors; the instances need not be in the class of main_theorem_sf (it is recorded)."""
     rng = np.random.default_rng(seed)
     worst = None
     for _ in range(restarts):

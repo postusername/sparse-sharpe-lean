@@ -1,7 +1,7 @@
 # Experiments of the paper
 
 This directory contains the scripts, the stored results and the data checksums of Section 7 of the paper
-*Approximation scheme for the sparse long-only tangency portfolio under a factor model*. The Lean formalization is in
+*Approximability of sparse tangency portfolios under a factor model: a classification*. The Lean formalization is in
 the rest of the repository.
 
     make data      # download the public data into data/ and check them against data/SHA256SUMS
@@ -52,7 +52,8 @@ The data files are not stored in the repository; `make data` downloads them.
 | Section 7.6, checks of the estimates, Figure 7.3 | `check_clipped_dp.py`, `e33_node_ratio.py` | `results/CHECK/`, `results/E33/node_ratio.csv` | — |
 | Section 7.7, the relaxation, the certificate with `k+K` names and the rounding | `e29_dual_rounding.py`, `e29_floor_bound.py` | `results/E29/` | — |
 | Section 5.4, the embedding of two-dimensional knapsack (work plan v0.26, C2): no cliff, the gap between YES and NO instances falls like 4^(−m) | `e43_knap2d.py A`, `e43_knap2d.py B` (`make e43`) | `results/E43/testA.log`, `testB.log` | — |
-| Section 5.4, the scheme without ω (work plan v0.26, C1): the step of Definition 5.10 at the node of the proof of Theorem 5.11 with controls and an adversary (`def510_*`, `advdef_*`); the coarser variant of the plan: one-step checks of its lemmas with controls, the adversary of the step, the whole scheme on small instances | `e44_scalefree.py <part>` (`make e44`) | `results/E44/` | — |
+| Section 5.4, the scheme without ω for K factors (Theorem 5.13): the step at the node of the proof on 800 instances, every set of the bucket of the large positions, the witness of the proof, controls (no forced small positions, key ×30, the node on the lattice of the witness tuple, one tuple of all rows) and an adversary | `e45_universal.py <part>` (`make e45`) | `results/E45/` | — |
+| Remark 5.15, the scheme with one maximum-volume K-tuple on the instances with at most one small position (Lean `main_theorem_sf`, work plan v0.26, C1): its step at the node of the proof with controls and an adversary (`def510_*`, `advdef_*`); a coarser variant: one-step checks of its lemmas with controls, the adversary of the step, the whole scheme on small instances; not quoted in the paper | `e44_scalefree.py <part>` (`make e44`) | `results/E44/` | — |
 
 Libraries: `data_real.py` (data and factor models), `e34_localized.py` (the long-only value `F_LO` by nonnegative
 least squares, scores, the dual bound `g_k`, the relaxation `G*_k`, greedy selection with exchanges, the localized

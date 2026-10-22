@@ -75,3 +75,4 @@ import SparseSharpe.Factor.SchemeLS
 import SparseSharpe.SchemeLO1
 import SparseSharpe.Factor.ScaleFreeStep
 import SparseSharpe.Factor.ScaleFreeScheme
+import SparseSharpe.Factor.UniversalScheme

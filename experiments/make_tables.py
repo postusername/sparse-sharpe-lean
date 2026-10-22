@@ -522,9 +522,10 @@ def e29():
 
 
 
-# ------------------------------------------------------------------------------------------- Section 5.4: E43, E44
+# ------------------------------------------------------------------------------------------- Section 5.4: E43; E44 (Remark 5.15)
 def scalefree():
-    """The knapsack embedding (E43) and the checks of the step of the scheme without omega (E44)."""
+    """The knapsack embedding (E43, quoted in Section 5.4) and the checks of the one-tuple scheme of Remark 5.15
+    (E44, Lean main_theorem_sf; not quoted in the paper)."""
     log = open(os.path.join(RES, 'E43', 'testB.log')).read()
     gaps = [(int(m), float(g)) for m, g in re.findall(r'm = +(\d+): largest relative gap (\S+)', log)]
     num('E43: largest relative gap (V_yes - V_no)/V_yes, m = %d .. %d' % (gaps[0][0], gaps[-1][0]),
@@ -536,46 +537,77 @@ def scalefree():
     one = [r for f in sorted(glob.glob(os.path.join(E, 'onestep_*.jsonl'))) for r in jl(f)]
     num('E44 one step: instances (M, K); the table keeps the optimum in',
         '%d (M = %s, K = %s); %d' % (len(one), sorted({r['M'] for r in one}), sorted({r['K'] for r in one}),
-                                     sum(r['one'] >= 1 - 1e-9 for r in one)), '5.4')
+                                     sum(r['one'] >= 1 - 1e-9 for r in one)), 'not quoted (Rem. 5.15)')
     num('E44 one step: instances with 0 / 1 / >= 2 tight rows of T',
         '%d / %d / %d' % (sum(r['tight'] == 0 for r in one), sum(r['tight'] == 1 for r in one),
-                          sum(r['tight'] >= 2 for r in one)), '5.4')
-    num('E44 one step: largest Cramer coefficient of an active row', '%.6f' % max(r['maxCramer'] for r in one), '5.4')
+                          sum(r['tight'] >= 2 for r in one)), 'not quoted (Rem. 5.15)')
+    num('E44 one step: largest Cramer coefficient of an active row', '%.6f' % max(r['maxCramer'] for r in one), 'not quoted (Rem. 5.15)')
     num('E44 one step: controls below 0.9 (node x10, key x30, G-node, T not of maximal volume)',
-        ', '.join('%d' % sum(r[c] < 0.9 for r in one) for c in ('node10', 'key30', 'gnode', 'wrongT')), '5.4')
+        ', '.join('%d' % sum(r[c] < 0.9 for r in one) for c in ('node10', 'key30', 'gnode', 'wrongT')), 'not quoted (Rem. 5.15)')
     lem = [r for f in sorted(glob.glob(os.path.join(E, 'lemmas_*.jsonl'))) for r in jl(f)]
     num('E44 lemmas: instances; largest ratio of lemma 1, lemma 3; lemma 3 in G-coordinates above 1 in',
         '%d; %.2f, %.2f; %d' % (len(lem), max(r['lemma1'] for r in lem), max(r['lemma3'] for r in lem),
-                                sum(r['lemma3_G'] > 1 for r in lem)), '5.4')
+                                sum(r['lemma3_G'] > 1 for r in lem)), 'not quoted (Rem. 5.15)')
     num('E44 lemmas: smallest slack of the step (instances without a sign failure); sign failures (instances, '
         'tight rows of T)',
         '%.3f; %d (%s)' % (min(r['lemma5_slack'] for r in lem if 'lemma5_slack' in r),
                            sum(r['sign_fail'] > 0 for r in lem),
                            ', '.join('%s t=%d: %d' % (r['part'], r['t'], r['tight']) for r in lem if r['sign_fail'])),
-        '5.4')
+        'not quoted (Rem. 5.15)')
     dd = [r for f in sorted(glob.glob(os.path.join(E, 'def510_*.jsonl'))) for r in jl(f)]
     inc, out = [r for r in dd if r['in_class']], [r for r in dd if not r['in_class']]
-    num('E44 Definition 5.10: instances; in the class of Theorem 5.11 (at most one small position); outside it',
-        '%d; %d; %d' % (len(dd), len(inc), len(out)), '5.4')
-    num('E44 Definition 5.10, node of the proof: optimum found in the class; worst ratio in the class',
-        '%d of %d; %.4f' % (sum(r['rule'] >= 1 - 1e-9 for r in inc), len(inc), min(r['rule'] for r in inc)), '5.4')
-    num('E44 Definition 5.10, node of the proof outside the class: optimum found; worst ratio',
-        '%d of %d; %.4f' % (sum(r['rule'] >= 1 - 1e-9 for r in out), len(out), min(r['rule'] for r in out)), '5.4')
-    num('E44 Definition 5.10, controls below 0.9 (T of non-maximal volume; anchor rows as T without the filter)',
+    num('E44 one-tuple scheme (Remark 5.15): instances; in the class of main_theorem_sf (at most one small position); outside it',
+        '%d; %d; %d' % (len(dd), len(inc), len(out)), 'not quoted (Rem. 5.15)')
+    num('E44 one-tuple scheme, node of the proof: optimum found in the class; worst ratio in the class',
+        '%d of %d; %.4f' % (sum(r['rule'] >= 1 - 1e-9 for r in inc), len(inc), min(r['rule'] for r in inc)), 'not quoted (Rem. 5.15)')
+    num('E44 one-tuple scheme, node of the proof outside the class: optimum found; worst ratio',
+        '%d of %d; %.4f' % (sum(r['rule'] >= 1 - 1e-9 for r in out), len(out), min(r['rule'] for r in out)), 'not quoted (Rem. 5.15)')
+    num('E44 one-tuple scheme, controls below 0.9 (T of non-maximal volume; anchor rows as T without the filter)',
         '%d of %d; %d of %d' % (sum(r['wrongT'] < 0.9 for r in dd if 'wrongT' in r), sum('wrongT' in r for r in dd),
-                                sum(r['anchorT'] < 0.9 for r in dd), len(dd)), '5.4')
-    num('E44 Definition 5.10, the table keeping the largest score sum instead: below the optimum in',
+                                sum(r['anchorT'] < 0.9 for r in dd), len(dd)), 'not quoted (Rem. 5.15)')
+    num('E44 one-tuple scheme, the table keeping the largest score sum instead: below the optimum in',
         '%d of %d' % (sum(r['maxscore'] < 1 - 1e-9 for r in dd if 'maxscore' in r), sum('maxscore' in r for r in dd)),
-        '5.4')
+        'not quoted (Rem. 5.15)')
     ad = [r for f in sorted(glob.glob(os.path.join(E, 'advdef_*.jsonl'))) for r in jl(f)]
-    num('E44 adversary of the node of the proof (Definition 5.10): runs; smallest ratio; smallest in the class; '
+    num('E44 adversary of the node of the proof (one-tuple scheme): runs; smallest ratio; smallest in the class; '
         'largest omega',
         '%d; %.4f; %.4f; %s' % (len(ad), min(r['rule'] for r in ad), min(r['rule'] for r in ad if r['in_class']),
-                                sci(max(r['omega'] for r in ad))), '5.4')
+                                sci(max(r['omega'] for r in ad))), 'not quoted (Rem. 5.15)')
     adv = [r for f in sorted(glob.glob(os.path.join(E, 'advstep_*.jsonl'))) for r in jl(f)]
     num('E44 adversary of the step: runs; smallest best-corner ratio; largest omega; largest number of tight rows',
         '%d; %.4f; %s; %d' % (len(adv), min(r['ratio'] for r in adv), sci(max(r['omega'] for r in adv)),
-                              max(r['tight'] for r in adv)), '5.4')
+                              max(r['tight'] for r in adv)), 'not quoted (Rem. 5.15)')
+
+
+# ------------------------------------------------------------------------------------------- Section 5.4: E45
+def universal():
+    """The step of the scheme without omega for K factors (Theorem 5.13, e45_universal.py)."""
+    E = os.path.join(RES, 'E45')
+    st = [r for f in sorted(glob.glob(os.path.join(E, 'step_*.jsonl'))) for r in jl(f)]
+    num('E45 step: instances (M, k, K); with two or more small positions (outside the class of the one-tuple '
+        'scheme); with a small position in the sense of the proof; |I\'| = 0 / 1 / 2 / 3',
+        '%d (M = %s, k = %s, K = %s); %d; %d; %s' % (
+            len(st), sorted({r['M'] for r in st}), sorted({r['k'] for r in st}), sorted({r['K'] for r in st}),
+            sum(not r['in_class'] for r in st), sum(r['tight'] > 0 for r in st),
+            ' / '.join('%d' % sum(r['Jp'] == j for r in st) for j in range(4))), '5.4')
+    num('E45 step: largest leverage', sci(max(r['omega'] for r in st)), '5.4')
+    num('E45 step, node of the proof: smallest ratio over the bucket of the large positions; smallest witness; '
+        'smallest ratio of the set kept by the table',
+        '%.6f; %.6f; %.6f' % (min(r['worst'] for r in st), min(r['cert'] for r in st),
+                              min(r['dp'] for r in st)), '5.4')
+    num('E45 step, controls below 0.9 (no forced small positions; key x30; node on the lattice of T; one tuple of '
+        'all rows of the optimum)',
+        '%d; %d; %d; %d' % (sum(r['noJ'] < 0.9 for r in st), sum(r['key30'] < 0.9 for r in st),
+                            sum(r['gridT'] < 0.9 for r in st), sum(r['Tall'] < 0.9 for r in st)), '5.4')
+    num('E45 step, one tuple of all rows: a small position of T with a negative weight in; these weights',
+        '%d of %d; %s' % (sum(r['Tall_minT'] < 0 for r in st), len(st),
+                          ', '.join(sci(r['Tall_minT']) for r in st if r['Tall_minT'] < 0)), '5.4')
+    ad = [r for f in sorted(glob.glob(os.path.join(E, 'adv_*.jsonl'))) for r in jl(f)]
+    num('E45 adversary of the node of the proof: runs (M, k, K); smallest ratio over the bucket; smallest witness; '
+        'largest leverage',
+        '%d (M = %s, k = %s, K = %s); %.6f; %.6f; %s' % (
+            len(ad), sorted({r['M'] for r in ad}), sorted({r['k'] for r in ad}), sorted({r['K'] for r in ad}),
+            min(r['worst'] for r in ad), min(r['cert'] for r in ad), sci(max(r['omega'] for r in ad))), '5.4')
 
 
 if __name__ == '__main__':
@@ -591,6 +623,7 @@ if __name__ == '__main__':
     e29()
     signs()
     scalefree()
+    universal()
     with open(os.path.join(HERE, 'numbers.md'), 'w') as f:
         f.write('# Numbers quoted in the text (generated by make_tables.py)\n\n| quantity | value | where |\n|---|---|---|\n')
         for k, v, w in NUM:

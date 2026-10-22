@@ -4,9 +4,9 @@
 # from the stored results in results/ (seconds).
 PY = OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 python3 -I
 
-.PHONY: all data tables e29 e30 e30b e31 e33 check e34 e35 e35b e35loc e36 e40 e41 e43 e44 clean-tables
+.PHONY: all data tables e29 e30 e30b e31 e33 check e34 e35 e35b e35loc e36 e40 e41 e43 e44 e45 clean-tables
 
-all: data e40 e41 e34 e35 e35b e35loc e36 e29 e30 e30b e31 e33 check e43 e44 tables
+all: data e40 e41 e34 e35 e35b e35loc e36 e29 e30 e30b e31 e33 check e43 e44 e45 tables
 
 data:
 	$(PY) -c "import sys; sys.path.insert(0, '.'); import data_real as D; D.load_ff_monthly(); [D.load_port(i) for i in range(1, 6)]; D.load_indtrack(6); D.load_indtrack(8); print('data ok')"
@@ -47,8 +47,8 @@ e43:
 	$(PY) e43_knap2d.py A > results/E43/testA.log
 	$(PY) e43_knap2d.py B > results/E43/testB.log
 
-# The scheme without omega (plan C1): one-step checks of its lemmas with controls, the adversary of the step, and
-# the whole scheme on small instances (e44_scalefree.py; from 20 seconds to 2 minutes per part on one core, rand30
+# The scheme with one maximum-volume K-tuple (Remark 5.15, Lean main_theorem_sf): one-step checks of its lemmas with
+# controls, the adversary of the step, and the whole scheme on small instances (e44_scalefree.py; from 20 seconds to 2 minutes per part on one core, rand30
 # and cluster30 about 7 minutes, k3 about 14 minutes; about 15 minutes on 4 cores)
 E44PARTS = onestep_rand_2 onestep_cluster_2 onestep_ortho_2 onestep_rand_3 onestep_cluster_3 onestep_ortho_3 \
            lemmas_rand_2 lemmas_cluster_2 lemmas_ortho_2 lemmas_rand_3 lemmas_cluster_3 lemmas_ortho_3 \
@@ -57,6 +57,15 @@ E44PARTS = onestep_rand_2 onestep_cluster_2 onestep_ortho_2 onestep_rand_3 onest
 e44:
 	mkdir -p results/E44
 	for p in $(E44PARTS); do echo $$p; done | xargs -P 4 -I{} sh -c '$(PY) e44_scalefree.py {} > results/E44/{}.jsonl'
+
+# The scheme without omega for K factors (Theorem 5.13): the step at the node of the proof on 800 instances with
+# controls, and an adversarial search (e45_universal.py; about 2 minutes per part with K = 2 and 5 with K = 3, the
+# adversaries about 15 minutes; about 30 minutes on 4 cores)
+E45PARTS = step_hedge_2 step_rand_2 step_cluster_2 step_ortho_2 step_hedge_3 step_rand_3 step_cluster_3 step_ortho_3 \
+           adv_2 adv_3
+e45:
+	mkdir -p results/E45
+	for p in $(E45PARTS); do echo $$p; done | xargs -P 4 -I{} sh -c '$(PY) e45_universal.py {} > results/E45/{}.jsonl'
 
 # Sections 7.6-7.7: the scheme itself, size bounds, checks of the estimates, the relaxation and the rounding
 e30:

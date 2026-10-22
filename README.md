@@ -2,8 +2,8 @@
 
 Machine-checked proofs for the paper
 
-> Andrey Pavlov, *A machine-checked approximation scheme for the sparse long-only tangency
-> portfolio under a factor model* (manuscript, 2026).
+> Andrey Pavlov, *Approximability of sparse tangency portfolios under a factor model: a
+> classification* (manuscript, 2026).
 
 The paper studies the choice of at most `k` of `M` assets with long-only weights that maximize
 the Sharpe ratio when the covariance matrix has the factor structure
@@ -12,8 +12,8 @@ that returns a fully invested long-only portfolio whose Sharpe ratio is at least
 times the optimum. The scheme picks this portfolio from an explicit family of candidate
 supports whose size is bounded by a polynomial in `k`, `1/ε` and the leverage bound `ω` for
 fixed `K`, independently of `M`. Without the leverage bound, it gives fully polynomial schemes for
-long-short portfolios with any fixed `K` and for long-only portfolios with one factor, and a scheme
-for any `K` on the instances whose optimal portfolio has at most one small position. For practice,
+long-short and long-only portfolios with any fixed `K` (and a smaller one for long-only portfolios
+with one factor and positive betas): the leverages are not needed. For practice,
 the paper adds a dual certificate (the dual of the perspective relaxation), an optimality test, a
 bound for branch and bound, and a localized scheme whose grid is confined by the gap of the
 certificate.
@@ -29,6 +29,25 @@ The directory [experiments](experiments/) contains the scripts, the stored resul
 checksums of the numerical experiments of Sections 5.4 and 7 of the paper; `make all` there recomputes
 them and `make tables` rebuilds every table and figure of Section 7 and the numbers of the text (see
 [experiments/README.md](experiments/README.md)).
+
+## Version 0.27: the scheme without the leverage bound for long-only portfolios with `K` factors
+
+New file `Factor/UniversalScheme`. The classification of the paper is complete: the long-only problem with any
+fixed number of factors has a scheme without the leverage bound, on all instances (no condition on the optimal
+portfolio), with the guarantee `1 − 2ε`. The witness of a candidate is built in the Cramer coordinates of a
+maximum-volume `K`-tuple of the rows that are not small (no sign problem); the small positions of the optimum are
+reduced to at most `K + 1` by Carathéodory's theorem and keep fixed weights; the node lies on the lattice of the
+residual coordinates of a second maximum-volume `K`-tuple. The class version of v0.26 (`main_theorem_sf`) is kept;
+the paper mentions it in Remark 5.15.
+
+| Paper (v0.27) | Declaration | File |
+|---|---|---|
+| A witness with prescribed weights (Lemma 5.10) | `rowObj_wGen_ge`, `isStat_wGen`, `cramer_stat` | [Factor/UniversalScheme.lean](SparseSharpe/Factor/UniversalScheme.lean) |
+| Few small positions, Carathéodory (Lemma 5.11) | `rowObj_carath`, `exists_carath`, `carath_loss_le` | [Factor/UniversalScheme.lean](SparseSharpe/Factor/UniversalScheme.lean) |
+| The scheme without `ω` for `K` factors (Definition 5.12) | `univCandidates`, `univFamily`, `univTable` | [Factor/UniversalScheme.lean](SparseSharpe/Factor/UniversalScheme.lean) |
+| `K` factors, long-only, from the data (Theorem 5.13) | `main_theorem_univ`, `card_univCandidates_le`, `univ_one_guess`, `univ_cert` | [Factor/UniversalScheme.lean](SparseSharpe/Factor/UniversalScheme.lean) |
+| Two small positions (Example 5.14) | `univ_instance_two`, `univ_instance_two_small` | [Factor/UniversalScheme.lean](SparseSharpe/Factor/UniversalScheme.lean) |
+| One tuple and the corner rule (Remark 5.15) | `main_theorem_sf`, `spec7_counterexample`, `spec7_fails` | [Factor/ScaleFreeScheme.lean](SparseSharpe/Factor/ScaleFreeScheme.lean), [Factor/ScaleFreeStep.lean](SparseSharpe/Factor/ScaleFreeStep.lean) |
 
 ## Version 0.26: schemes without the leverage bound
 
@@ -148,12 +167,12 @@ pinned to the tag `v4.35.0-rc2` in `lake-manifest.json`. With [elan](https://git
 ```
 lake exe cache get                       # download the prebuilt Mathlib (several GB)
 lake build                               # build the formalization
-lake env lean SparseSharpe/Audit.lean    # print the axioms of 699 statements
+lake env lean SparseSharpe/Audit.lean    # print the axioms of 988 statements
 ```
 
-Each of the 699 statements depends only on `propext`, `Classical.choice` and `Quot.sound`
+Each of the 988 statements depends only on `propext`, `Classical.choice` and `Quot.sound`
 (some on a subset), and none on `sorryAx`. The sources contain no `sorry`, no `axiom`
-declarations and no `native_decide`. The development has 70 files and about 25 700 lines.
+declarations and no `native_decide`. The development has 79 files and about 34 800 lines.
 
 ## Layout
 
@@ -169,6 +188,9 @@ declarations and no `native_decide`. The development has 70 files and about 25 7
   * Limits: `GuaranteeBlock`, `Gordan`, `Reachable`.
   * Hardness: `Landscape`, `Padding`.
   * Trading form: `Trading`, `TradingAnchor`.
+  * Schemes without the leverage bound: `SchemeLS` (short sales), `ScaleFreeStep` and
+    `ScaleFreeScheme` (one tuple, at most one small position), `UniversalScheme` (long-only, any
+    fixed `K`); the one-factor scheme is `SparseSharpe/SchemeLO1`.
   * Symmetric key, dual certificate, adaptive guesses and the simple Main Theorem:
     `Practical`.
 * `SparseSharpe/Audit.lean`: `#print axioms` for all main statements.

@@ -121,16 +121,22 @@
 | market-factor instances with loadings of both signs: K>=2; K=1; with a negative market beta | 1800 of 1800; 7 of 600; 18 of 2400 | 7.3 |
 | E43: largest relative gap (V_yes - V_no)/V_yes, m = 6 .. 14 | $8.2\cdot 10^{-4}$, $4.3\cdot 10^{-5}$, $2.9\cdot 10^{-6}$, $1.4\cdot 10^{-7}$, $8.6\cdot 10^{-9}$ | 5.4 |
 | E43: gap ratio per two bits (min..max) | 14.9..20.2 | 5.4 |
-| E44 one step: instances (M, K); the table keeps the optimum in | 600 (M = [12], K = [2, 3]); 600 | 5.4 |
-| E44 one step: instances with 0 / 1 / >= 2 tight rows of T | 336 / 233 / 31 | 5.4 |
-| E44 one step: largest Cramer coefficient of an active row | 1.000000 | 5.4 |
-| E44 one step: controls below 0.9 (node x10, key x30, G-node, T not of maximal volume) | 1, 2, 81, 300 | 5.4 |
-| E44 lemmas: instances; largest ratio of lemma 1, lemma 3; lemma 3 in G-coordinates above 1 in | 600; 0.35, 0.40; 284 | 5.4 |
-| E44 lemmas: smallest slack of the step (instances without a sign failure); sign failures (instances, tight rows of T) | 0.028; 1 (lemmas_rand_3 t=92: 1) | 5.4 |
-| E44 Definition 5.10: instances; in the class of Theorem 5.11 (at most one small position); outside it | 600; 491; 109 | 5.4 |
-| E44 Definition 5.10, node of the proof: optimum found in the class; worst ratio in the class | 491 of 491; 1.0000 | 5.4 |
-| E44 Definition 5.10, node of the proof outside the class: optimum found; worst ratio | 107 of 109; 0.9921 | 5.4 |
-| E44 Definition 5.10, controls below 0.9 (T of non-maximal volume; anchor rows as T without the filter) | 300 of 600; 96 of 600 | 5.4 |
-| E44 Definition 5.10, the table keeping the largest score sum instead: below the optimum in | 0 of 442 | 5.4 |
-| E44 adversary of the node of the proof (Definition 5.10): runs; smallest ratio; smallest in the class; largest omega | 8; 0.9845; 0.9853; $1.6\cdot 10^{8}$ | 5.4 |
-| E44 adversary of the step: runs; smallest best-corner ratio; largest omega; largest number of tight rows | 8; 1.0000; $5.0\cdot 10^{8}$; 2 | 5.4 |
+| E44 one step: instances (M, K); the table keeps the optimum in | 600 (M = [12], K = [2, 3]); 600 | not quoted (Rem. 5.15) |
+| E44 one step: instances with 0 / 1 / >= 2 tight rows of T | 336 / 233 / 31 | not quoted (Rem. 5.15) |
+| E44 one step: largest Cramer coefficient of an active row | 1.000000 | not quoted (Rem. 5.15) |
+| E44 one step: controls below 0.9 (node x10, key x30, G-node, T not of maximal volume) | 1, 2, 81, 300 | not quoted (Rem. 5.15) |
+| E44 lemmas: instances; largest ratio of lemma 1, lemma 3; lemma 3 in G-coordinates above 1 in | 600; 0.35, 0.40; 284 | not quoted (Rem. 5.15) |
+| E44 lemmas: smallest slack of the step (instances without a sign failure); sign failures (instances, tight rows of T) | 0.028; 1 (lemmas_rand_3 t=92: 1) | not quoted (Rem. 5.15) |
+| E44 one-tuple scheme (Remark 5.15): instances; in the class of main_theorem_sf (at most one small position); outside it | 600; 491; 109 | not quoted (Rem. 5.15) |
+| E44 one-tuple scheme, node of the proof: optimum found in the class; worst ratio in the class | 491 of 491; 1.0000 | not quoted (Rem. 5.15) |
+| E44 one-tuple scheme, node of the proof outside the class: optimum found; worst ratio | 107 of 109; 0.9921 | not quoted (Rem. 5.15) |
+| E44 one-tuple scheme, controls below 0.9 (T of non-maximal volume; anchor rows as T without the filter) | 300 of 600; 96 of 600 | not quoted (Rem. 5.15) |
+| E44 one-tuple scheme, the table keeping the largest score sum instead: below the optimum in | 0 of 442 | not quoted (Rem. 5.15) |
+| E44 adversary of the node of the proof (one-tuple scheme): runs; smallest ratio; smallest in the class; largest omega | 8; 0.9845; 0.9853; $1.6\cdot 10^{8}$ | not quoted (Rem. 5.15) |
+| E44 adversary of the step: runs; smallest best-corner ratio; largest omega; largest number of tight rows | 8; 1.0000; $5.0\cdot 10^{8}$; 2 | not quoted (Rem. 5.15) |
+| E45 step: instances (M, k, K); with two or more small positions (outside the class of the one-tuple scheme); with a small position in the sense of the proof; |I'| = 0 / 1 / 2 / 3 | 800 (M = [10], k = [4], K = [2, 3]); 408; 330; 471 / 275 / 51 / 3 | 5.4 |
+| E45 step: largest leverage | $9.9\cdot 10^{9}$ | 5.4 |
+| E45 step, node of the proof: smallest ratio over the bucket of the large positions; smallest witness; smallest ratio of the set kept by the table | 0.982580; 0.960967; 0.982580 | 5.4 |
+| E45 step, controls below 0.9 (no forced small positions; key x30; node on the lattice of T; one tuple of all rows of the optimum) | 280; 18; 0; 2 | 5.4 |
+| E45 step, one tuple of all rows: a small position of T with a negative weight in; these weights | 2 of 800; $-2.6\cdot 10^{-6}$, $-8.3\cdot 10^{-6}$ | 5.4 |
+| E45 adversary of the node of the proof: runs (M, k, K); smallest ratio over the bucket; smallest witness; largest leverage | 8 (M = [8], k = [3], K = [2, 3]); 0.942796; 0.911413; $8.1\cdot 10^{9}$ | 5.4 |
