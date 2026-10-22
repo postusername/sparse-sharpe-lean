@@ -80,7 +80,7 @@ e47:
 	mkdir -p results/E47
 	$(PY) e47_threesum.py gap > results/E47/gap.jsonl
 
-# Section 5.5: the Helly bound V <= OPT(k) <= (k+1)V on random instances, with controls (e48_helly.py; a minute
+# Section 5.6: the Helly bound V <= OPT(k) <= (k+1)V on random instances, with controls (e48_helly.py; a minute
 # per part)
 E48PARTS = rand_1 rand_2 rand_3
 e48:

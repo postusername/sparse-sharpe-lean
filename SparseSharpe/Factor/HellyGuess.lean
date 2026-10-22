@@ -1,5 +1,6 @@
 import SparseSharpe.Factor.UniversalScheme
 import SparseSharpe.Factor.SchemeLS
+import SparseSharpe.Factor.ClippedTrading
 import Mathlib.Analysis.Convex.Radon
 
 set_option linter.style.header false
@@ -244,6 +245,49 @@ theorem objLO_le_helly_free (hd : ∀ i, 0 < d i)
     rw [hsplit] at hwd
     nlinarith
 
+/-- **Следствие Леммы 5.21, long-only:** если `Φ` не меньше значения любого носителя с не более
+чем `min(k, K + 1)` именами, то любой носитель с не более чем `k` именами — не больше `(k + 1)Φ`. -/
+theorem opt_le_helly [Nonempty κ] (hd : ∀ i, 0 < d i)
+    (hG : ∀ j j', ∑ l, G l j * G l j' = P j j')
+    (hPS : ∀ j j', ∑ l, P j l * Sf l j' = if j = j' then 1 else 0) {k : ℕ} {V : ℝ}
+    (hVub : ∀ T : Finset ι, T.card ≤ min k (Fintype.card κ + 1) → ∀ u : ι → ℝ,
+      (∀ i ∈ T, 0 ≤ u i) → objLO m d B Sf T u ≤ V)
+    {S : Finset ι} (hS : S.card ≤ k) (w : ι → ℝ) (hw : ∀ i ∈ S, 0 ≤ w i) :
+    objLO m d B Sf S w ≤ (k + 1) * V := by
+  classical
+  have hV0 : 0 ≤ V := by
+    have h := hVub ∅ (by simp) (fun _ => 0) (by simp)
+    simpa [objLO] using h
+  have hsmall : ∀ T ⊆ S, T.card ≤ Fintype.card κ + 1 → ∀ u : ι → ℝ, (∀ i ∈ T, 0 ≤ u i) →
+      objLO m d B Sf T u ≤ V := fun T hTS hTc u hu =>
+    hVub T (le_min (le_trans (Finset.card_le_card hTS) hS) hTc) u hu
+  have h := objLO_le_helly (m := m) (d := d) (B := B) (Sf := Sf) (P := P) (G := G)
+    hd hG hPS hsmall w hw
+  have hc : ((S.card : ℝ) + 1) ≤ (k : ℝ) + 1 := by
+    have := (Nat.cast_le (α := ℝ)).mpr hS; linarith
+  exact le_trans h (mul_le_mul_of_nonneg_right hc hV0)
+
+/-- **Следствие Леммы 5.21, long-short.** -/
+theorem opt_le_helly_free (hd : ∀ i, 0 < d i)
+    (hG : ∀ j j', ∑ l, G l j * G l j' = P j j')
+    (hPS : ∀ j j', ∑ l, P j l * Sf l j' = if j = j' then 1 else 0) {k : ℕ} {V : ℝ}
+    (hVub : ∀ T : Finset ι, T.card ≤ min k (Fintype.card κ + 1) → ∀ u : ι → ℝ,
+      objLO m d B Sf T u ≤ V)
+    {S : Finset ι} (hS : S.card ≤ k) (w : ι → ℝ) :
+    objLO m d B Sf S w ≤ (k + 1) * V := by
+  classical
+  have hV0 : 0 ≤ V := by
+    have h := hVub ∅ (by simp) (fun _ => 0)
+    simpa [objLO] using h
+  have hsmall : ∀ T ⊆ S, T.card ≤ Fintype.card κ + 1 → ∀ u : ι → ℝ,
+      objLO m d B Sf T u ≤ V := fun T hTS hTc u =>
+    hVub T (le_min (le_trans (Finset.card_le_card hTS) hS) hTc) u
+  have h := objLO_le_helly_free (m := m) (d := d) (B := B) (Sf := Sf) (P := P) (G := G)
+    hd hG hPS hsmall w
+  have hc : ((S.card : ℝ) + 1) ≤ (k : ℝ) + 1 := by
+    have := (Nat.cast_le (α := ℝ)).mpr hS; linarith
+  exact le_trans h (mul_le_mul_of_nonneg_right hc hV0)
+
 /-- `2^{⌈log₂(k+1)⌉} ≥ k + 1`. -/
 lemma le_two_pow_clog (k : ℕ) : ((k : ℝ) + 1) ≤ 2 ^ Nat.clog 2 (k + 1) := by
   have h := Nat.le_pow_clog (by norm_num : 1 < 2) (k + 1)
@@ -424,6 +468,49 @@ theorem main_theorem_ls_sp [Nonempty κ] [Nonempty ι]
   linarith [mul_le_mul_of_nonneg_left hub hcoef]
 
 
+omit [Fintype ι] in
+/-- **Теорема 1.1 с догадками Хелли.** Семейство Теоремы 1.1 (`clipCandidates`) с догадками
+`Φ·2^j`, `j ≤ ⌈log₂(k + 1)⌉`, сохраняет гарантию `1 − 2ε`, и его размер по-прежнему не зависит
+от `M` (догадок меньше). От `M` зависит только время вычисления `Φ`. -/
+theorem main_theorem_clipped_helly [Finite ι] [Nonempty κ] [Nonempty ι] (hd : ∀ i, 0 < d i)
+    (hG : ∀ j j', ∑ l, G l j * G l j' = P j j')
+    (hPS : ∀ j j', ∑ l, P j l * Sf l j' = if j = j' then 1 else 0)
+    {k : ℕ} (hk1 : 1 ≤ k) {ε ω V : ℝ} (hε : 0 < ε) (hε1 : ε ≤ 1 / 2) (hω : 0 ≤ ω)
+    (hsys : ∀ i, sysVar B Sf i / d i ≤ ω) (hV0 : 0 < V)
+    (hVatt : ∃ T : Finset ι, T.card ≤ min k (Fintype.card κ + 1) ∧ ∃ u : ι → ℝ,
+      (∀ i ∈ T, 0 ≤ u i) ∧ objLO m d B Sf T u = V)
+    (hVub : ∀ T : Finset ι, T.card ≤ min k (Fintype.card κ + 1) → ∀ u : ι → ℝ,
+      (∀ i ∈ T, 0 ≤ u i) → objLO m d B Sf T u ≤ V)
+    {J : ℕ} (hJ : J = Nat.clog 2 (k + 1))
+    {La : List ι} (hnd : La.Nodup) (hall : ∀ i, i ∈ La) :
+    (clipCandidates m d B Sf G ε ω V J k La).card
+        ≤ (J + 1) * ((2 * clipZ ε ω k (Fintype.card κ) + 1) ^ Fintype.card κ
+          * ((2 * clipQ ε ω k (Fintype.card κ) + 1) ^ Fintype.card κ * (k + 1) + 1))
+    ∧ ∃ R ∈ clipCandidates m d B Sf G ε ω V J k La, R.card ≤ k ∧
+      ∃ w : ι → ℝ, (∀ i, 0 ≤ w i) ∧ ∀ S' : Finset ι, S'.card ≤ k → ∀ u : ι → ℝ,
+        (∀ i ∈ S', 0 ≤ u i) → (1 - 2 * ε) * objLO m d B Sf S' u ≤ objLO m d B Sf R w := by
+  have : Fintype ι := Fintype.ofFinite ι
+  obtain ⟨S, hSk, Fopt, hFoptG, hSopt⟩ := exists_optimal_support (m := m) (d := d) (B := B)
+    (Sf := Sf) (P := P) (G := G) hd hG hPS k
+  obtain ⟨T, hTc, u, hu, hTu⟩ := hVatt
+  have hLF : V ≤ Fopt := hTu ▸ hSopt T (le_trans hTc (min_le_left _ _)) u hu
+  have hFk : Fopt ≤ (k + 1) * V := by
+    obtain ⟨u', hu', hFu'⟩ := hFoptG.1
+    rw [hFu']
+    exact opt_le_helly (m := m) (d := d) (B := B) (Sf := Sf) (P := P) (G := G)
+      hd hG hPS hVub hSk u' hu'
+  have hFJ : Fopt ≤ 2 ^ (J + 1) * V := by
+    have h2 : ((k : ℝ) + 1) ≤ 2 ^ J := by rw [hJ]; exact le_two_pow_clog k
+    have h3 : (2:ℝ) ^ J ≤ 2 ^ (J + 1) := pow_le_pow_right₀ (by norm_num) (Nat.le_succ J)
+    nlinarith
+  obtain ⟨R, hR, hRk, w, hw, hobj⟩ := exists_good_clipCandidate_bracket (Sf := Sf) (P := P)
+    hd hG hPS hk1 hε hε1 hω hsys hV0 hnd hall hSk hFoptG hLF hFJ
+  refine ⟨card_clipCandidates_le m d B Sf G ε ω V J k La, R, hR, hRk, w, hw,
+    fun S' hS' u hu => ?_⟩
+  have hub := hSopt S' hS' u hu
+  have hcoef : (0:ℝ) ≤ 1 - 2 * ε := by linarith
+  linarith [mul_le_mul_of_nonneg_left hub hcoef]
+
 /-! ### Примеры -/
 
 /-- **Пример (сильно полиномиальная форма Теоремы 5.13).** Данные `univ_instance_two` (`K = 2`,
@@ -508,6 +595,54 @@ theorem ls_instance_sp :
   refine ⟨R₀, hR₀, _, hx1, ?_⟩
   rw [hsu, mul_one] at hsh
   exact hsh
+
+/-- **Пример (Теорема 1.1 с догадками Хелли).** Одноактивный инстанс `clipped_instance`
+(`m = d = 1`, `B = 0`, `k = 1`, `ε = 1/4`, `ω = 0`): `Φ = 1`, `J = ⌈log₂ 2⌉`; в семействе есть
+носитель с неотрицательными весами, цель которого не меньше `(1 − 2ε)·OPT = 1/2`. -/
+theorem clipped_instance_helly :
+    ∃ R₀ ∈ clipCandidates (fun _ : Fin 1 => (1:ℝ)) (fun _ => 1) (fun _ (_ : Unit) => 0)
+        (fun _ _ => 1) (fun _ _ => 1) (1/4) 0 1 (Nat.clog 2 (1 + 1)) 1 [0],
+      ∃ w : Fin 1 → ℝ, (∀ i, 0 ≤ w i) ∧ (1 / 2 : ℝ) ≤ objLO (fun _ : Fin 1 => (1:ℝ))
+        (fun _ => 1) (fun _ (_ : Unit) => 0) (fun _ _ => 1) R₀ w := by
+  set m : Fin 1 → ℝ := fun _ => 1
+  set d : Fin 1 → ℝ := fun _ => 1
+  set B : Fin 1 → Unit → ℝ := fun _ _ => 0
+  set Sf : Unit → Unit → ℝ := fun _ _ => 1
+  set G : Unit → Unit → ℝ := fun _ _ => 1
+  set P : Unit → Unit → ℝ := fun _ _ => 1
+  have hd : ∀ i, 0 < d i := fun _ => one_pos
+  have hG : ∀ j j' : Unit, ∑ l : Unit, G l j * G l j' = P j j' := by intro j j'; simp [G, P]
+  have hPS : ∀ j j' : Unit, ∑ l : Unit, P j l * Sf l j' = if j = j' then 1 else 0 := by
+    intro j j'; simp [P, Sf]
+  have hsys : ∀ i, sysVar B Sf i / d i ≤ 0 := by intro i; simp [sysVar, B]
+  have hobj : ∀ u : Fin 1 → ℝ, objLO m d B Sf Finset.univ u = 2 * u 0 - u 0 * u 0 := by
+    intro u; simp [objLO, Vmat, m, d, B]
+  have hVatt : ∃ T : Finset (Fin 1), T.card ≤ min 1 (Fintype.card Unit + 1) ∧
+      ∃ u : Fin 1 → ℝ, (∀ i ∈ T, 0 ≤ u i) ∧ objLO m d B Sf T u = 1 :=
+    ⟨Finset.univ, by simp, fun _ => 1, fun _ _ => zero_le_one, by rw [hobj]; norm_num⟩
+  have hVub : ∀ T : Finset (Fin 1), T.card ≤ min 1 (Fintype.card Unit + 1) →
+      ∀ u : Fin 1 → ℝ, (∀ i ∈ T, 0 ≤ u i) → objLO m d B Sf T u ≤ 1 := by
+    intro T _ u _
+    rcases T.eq_empty_or_nonempty with hT | hT
+    · subst hT; simp [objLO]
+    · have hTu : T = Finset.univ := Finset.eq_univ_of_card T (by
+        have := Finset.card_pos.mpr hT
+        have h1 : T.card ≤ 1 := by simpa using Finset.card_le_univ T
+        simp; omega)
+      subst hTu
+      rw [hobj]
+      nlinarith [sq_nonneg (u 0 - 1)]
+  have hnd : ([0] : List (Fin 1)).Nodup := List.nodup_singleton 0
+  have hall : ∀ i : Fin 1, i ∈ ([0] : List (Fin 1)) := by
+    intro i; rw [List.mem_singleton]; exact Subsingleton.elim _ _
+  obtain ⟨_, R₀, hR₀, _, w, hw, hbest⟩ := main_theorem_clipped_helly (G := G) (P := P)
+    (Sf := Sf) hd hG hPS le_rfl (by norm_num : (0:ℝ) < 1/4) (by norm_num) le_rfl hsys
+    one_pos hVatt hVub rfl hnd hall
+  have h1 : objLO m d B Sf Finset.univ (fun _ => 1) = 1 := by rw [hobj]; norm_num
+  have h := hbest Finset.univ (by simp) (fun _ => 1) (fun _ _ => zero_le_one)
+  rw [h1] at h
+  refine ⟨R₀, hR₀, w, hw, ?_⟩
+  linarith
 
 end StronglyPoly
 

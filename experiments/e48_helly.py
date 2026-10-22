@@ -1,12 +1,15 @@
-"""E48: the Helly bound of Section 5.5 (Lemma 5.21; Lean `objLO_le_helly`, `objLO_le_helly_free`): with V the best
+"""E48: the Helly bound of Section 5.6 (Lemma 5.21; Lean `objLO_le_helly`, `objLO_le_helly_free`): with V the best
 value of a support with at most min(k, K + 1) names, V <= OPT(k) <= (k + 1) V, long-only and long-short, so that
 ceil(log2(k + 1)) + 1 guesses V 2^j replace the ceil(log2(sum_i (m_i)_+^2/(d_i L))) + 1 guesses L 2^j of Theorems 5.6
 and 5.13 (`main_theorem_univ_sp`, `main_theorem_ls_sp`).
 
 Row form as in e45_universal.py (Sigma_f = I, d = 1): rows b_i, targets y_i; F_LO and F_LS exactly; OPT(k) by
 enumeration.  Families: 'hedge', 'rand', 'cluster', 'ortho' of e45 and 'tri': K + 1 heavy assets (scale 10^2..10^5)
-whose rows add up to zero up to a small turn, each with a target close to that of the common dual point, among light
-random assets: no support with at most K of them hedges, all K + 1 together do.
+whose rows have a vanishing positive combination (an exact hedge: the K + 1 directions add up to zero before each is
+normalized and slightly turned, so the weights of the hedge are the norms, not equal for K >= 2), each with a target
+close to that of the common dual point, among light random assets: no support with at most K of them hedges, all
+K + 1 together do.  k is drawn from K + 1..5; for k = K + 1, V = OPT(k) by definition, so the lemma is tested on the
+instances with k > K + 1.
 Reported per instance: OPT(k), V (best support with <= min(k, K+1) names) for LO and LS, the ratio OPT/V (the lemma:
 <= k + 1), and the number of guesses of Theorem 5.13 with L the best single asset (ceil(log2(sum (m)_+^2/(d L))) + 1)
 against ceil(log2(k + 1)) + 1.
@@ -35,7 +38,7 @@ def best(b, y, kmax, ls=False):
 
 
 def gen_tri(rng, M, K):
-    """K + 1 heavy assets whose rows nearly add up to zero, among M - K - 1 light random assets."""
+    """K + 1 heavy assets whose rows have a vanishing positive combination, among M - K - 1 light random assets."""
     xs = rng.normal(size=K) * rng.uniform(0.3, 2)
     nl = M - K - 1
     bl = rng.normal(size=(nl, K)) * rng.uniform(0.2, 2, size=(nl, 1))

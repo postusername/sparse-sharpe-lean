@@ -683,7 +683,7 @@ def threesum47():
 
 
 def helly48():
-    """The Helly bound of Section 5.5 (Lemma 5.21, Lean objLO_le_helly / objLO_le_helly_free), with controls."""
+    """The Helly bound of Section 5.6 (Lemma 5.21, Lean objLO_le_helly / objLO_le_helly_free), with controls."""
     R = [r for K in (1, 2, 3) for r in jl(os.path.join(RES, 'E48', 'rand_%d.jsonl' % K))]
     num('E48 Helly bound (K = 1, 2, 3): instances; k; largest OPT_LO(k)/V; largest OPT_LS(k)/V_LS; largest '
         'OPT/((k+1)V) (LO; LS); V <= OPT in all instances',
@@ -692,12 +692,19 @@ def helly48():
             max(r['lo_opt'] / r['lo_V'] for r in R), max(r['ls_opt'] / r['ls_V'] for r in R),
             max(r['lo_opt'] / r['lo_V'] / (r['k'] + 1) for r in R),
             max(r['ls_opt'] / r['ls_V'] / (r['k'] + 1) for r in R),
-            all(r['lo_V'] <= r['lo_opt'] + 1e-9 and r['ls_V'] <= r['ls_opt'] + 1e-9 for r in R)), '5.5')
+            all(r['lo_V'] <= r['lo_opt'] + 1e-9 and r['ls_V'] <= r['ls_opt'] + 1e-9 for r in R)), '5.6')
+    # for k = K + 1, V = OPT(k) by definition: the lemma is tested on the instances with k > K + 1
+    N = [r for r in R if r['k'] > r['K'] + 1]
+    num('E48, instances with k > K + 1: number; with OPT > V (LO; LS); largest OPT/V (LO; LS)',
+        '%d; %d; %d; %.3f; %.3f' % (
+            len(N), sum(r['lo_opt'] > r['lo_V'] * (1 + 1e-9) for r in N),
+            sum(r['ls_opt'] > r['ls_V'] * (1 + 1e-9) for r in N),
+            max(r['lo_opt'] / r['lo_V'] for r in N), max(r['ls_opt'] / r['ls_V'] for r in N)), '5.6')
     Jd = sorted(r['J_data'] for r in R if 'J_data' in r)
     num('E48: guesses of Theorem 5.13 with the best single asset (largest; median) and with Lemma 5.21 '
         '(largest); largest leverage',
         '%d; %d; %d; %s' % (Jd[-1], Jd[len(Jd) // 2], max(r['J_helly'] for r in R),
-                            sci(max(r['omega'] for r in R))), '5.5')
+                            sci(max(r['omega'] for r in R))), '5.6')
 
     def ratio(r, tag, c):
         return r[tag + '_opt'] / r[tag + '_' + c] if r[tag + '_' + c] > 0 else float('inf')
@@ -707,7 +714,7 @@ def helly48():
                                          sum(ratio(r, 'ls', c) > r['k'] + 1 for r in R),
                                          sci(max(ratio(r, 'lo', c) for r in R)),
                                          sci(max(ratio(r, 'ls', c) for r in R)))
-                  for c in ('single', 'ksub')), '5.5')
+                  for c in ('single', 'ksub')), '5.6')
 
 
 if __name__ == '__main__':

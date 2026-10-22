@@ -25,7 +25,7 @@ prints the axioms of every declaration of the paper (only `propext`, `Classical.
 `Quot.sound`).
 
 The directory [experiments](experiments/) contains the scripts, the stored results and the data
-checksums of the numerical experiments of Sections 5.4 and 7 of the paper; `make all` there recomputes
+checksums of the numerical experiments of Sections 5.4–5.6 and 7 of the paper; `make all` there recomputes
 them and `make tables` rebuilds every table and figure of Section 7 and the numbers of the text (see
 [experiments/README.md](experiments/README.md)).
 
@@ -37,14 +37,18 @@ New file `Factor/HellyGuess`. With `Φ` the best value of a support with at most
 support). So `⌈log₂(k + 1)⌉ + 1` guesses `Φ·2^j` replace the guesses `L·2^j`, whose number grew with the logarithm of the
 data, and the families of Theorems 5.6 and 5.13 have sizes polynomial in `M`, `k` and `1/ε` alone (fixed `K`): the
 leverages and the magnitudes of the data do not enter at all. The long-only version is the new Main Theorem of the paper;
-the former Main Theorem (a family independent of `M`, polynomial in `ω`) is Theorem 1.1.
+the former Main Theorem (a family independent of `M`, polynomial in `ω`) is Theorem 1.1. Theorem 1.1 can take the guesses
+`Φ·2^j` too (`main_theorem_clipped_helly`): its family stays independent of `M`, and only the time to compute `Φ` depends
+on `M`.
 
 | Paper (v0.29) | Declaration | File |
 |---|---|---|
 | Main Theorem (long-only, any fixed `K`, size polynomial in `M`, `k`, `1/ε`) | `main_theorem_univ_sp`, `exists_small_best`, `univ_instance_two_sp` | [Factor/HellyGuess.lean](SparseSharpe/Factor/HellyGuess.lean) |
 | Helly's theorem for the value (Lemma 5.21) | `objLO_le_helly`, `objLO_le_helly_free`, `convex_sumsq_le`, `convex_clip_le`, `convex_sq_affine_le` | [Factor/HellyGuess.lean](SparseSharpe/Factor/HellyGuess.lean) |
+| Consequence `Φ ≤ OPT(k) ≤ (k + 1)Φ` (Lemma 5.21) | `opt_le_helly`, `opt_le_helly_free` | [Factor/HellyGuess.lean](SparseSharpe/Factor/HellyGuess.lean) |
 | Short sales, guesses without the data (Theorem 5.22) | `main_theorem_ls_sp`, `ls_instance_sp` | [Factor/HellyGuess.lean](SparseSharpe/Factor/HellyGuess.lean) |
 | Theorem 1.1 (the former Main Theorem: a family independent of `M`) | `main_theorem_clipped` | [Factor/ClippedTrading.lean](SparseSharpe/Factor/ClippedTrading.lean) |
+| Theorem 1.1 with the guesses `Φ·2^j` (remark in Section 5.6) | `main_theorem_clipped_helly`, `clipped_instance_helly` | [Factor/HellyGuess.lean](SparseSharpe/Factor/HellyGuess.lean) |
 
 ## Version 0.28: neither `M` nor `ω` — a kernel and two lower bounds
 
@@ -168,13 +172,15 @@ from the clipped weights `w(τ)`; it is the one used by the current version of t
 
 The audit file prints the axioms of 699 statements (no `sorry`).
 
-## Main statements
+## Main statements of the first edition (historical)
 
-All declarations are in the namespace `SparseSharpe.Factor`.
+This table keeps the numbering of the first edition of the paper, whose Main Theorem was `main_theorem_simple`; the
+current numbering is in the version sections above and in Appendix C of the paper. All declarations are in the namespace
+`SparseSharpe.Factor`.
 
 | Paper | Declaration | File |
 |---|---|---|
-| Main Theorem | `main_theorem_simple` | [Factor/Practical.lean](SparseSharpe/Factor/Practical.lean#L1046) |
+| Main Theorem (first edition) | `main_theorem_simple` | [Factor/Practical.lean](SparseSharpe/Factor/Practical.lean#L1046) |
 | Proposition 8.7 (polynomial size) | `NK_le_poly`, `card_candidatesAnchor_poly` | [Factor/Practical.lean](SparseSharpe/Factor/Practical.lean#L843) |
 | Theorem 6.15 (one guess, one node) | `main_theorem_list` | [Factor/TradingAnchor.lean](SparseSharpe/Factor/TradingAnchor.lean#L52) |
 | Theorem 6.17 (anchor basis) | `main_theorem_anchor_list` | [Factor/TradingAnchor.lean](SparseSharpe/Factor/TradingAnchor.lean#L173) |
@@ -206,12 +212,12 @@ pinned to the tag `v4.35.0-rc2` in `lake-manifest.json`. With [elan](https://git
 ```
 lake exe cache get                       # download the prebuilt Mathlib (several GB)
 lake build                               # build the formalization
-lake env lean SparseSharpe/Audit.lean    # print the axioms of 1101 statements
+lake env lean SparseSharpe/Audit.lean    # print the axioms of 1105 statements
 ```
 
-Each of the 1101 statements depends only on `propext`, `Classical.choice` and `Quot.sound`
+Each of the 1105 statements depends only on `propext`, `Classical.choice` and `Quot.sound`
 (some on a subset), and none on `sorryAx`. The sources contain no `sorry`, no `axiom`
-declarations and no `native_decide`. The development has 84 files and about 37 300 lines.
+declarations and no `native_decide`. The development has 84 files and about 37 400 lines.
 
 ## Layout
 
@@ -234,9 +240,9 @@ declarations and no `native_decide`. The development has 84 files and about 37 3
     `KernelScheme` (Theorem 5.13 on the kernel), `OnePassLower` (the lower bound for one pass),
     `ThreeSumGap` (the gap from 3SUM for `K ≥ 3`).
   * No `ω` at all: `HellyGuess` (Helly's theorem for the guesses; the strongly polynomial forms of Theorems 5.6
-    and 5.13).
-  * Symmetric key, dual certificate, adaptive guesses and the simple Main Theorem:
-    `Practical`.
+    and 5.13; Theorem 1.1 with these guesses).
+  * Symmetric key, dual certificate, adaptive guesses and the simple Main Theorem of the first
+    edition: `Practical`.
 * `SparseSharpe/Audit.lean`: `#print axioms` for all main statements.
 
 ## Conventions and scope
