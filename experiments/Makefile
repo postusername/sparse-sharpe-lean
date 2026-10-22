@@ -4,9 +4,9 @@
 # from the stored results in results/ (seconds).
 PY = OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 python3 -I
 
-.PHONY: all data tables e29 e30 e30b e31 e33 check e34 e35 e35b e35loc e36 e40 e41 e43 e44 e45 e46 e47 clean-tables
+.PHONY: all data tables e29 e30 e30b e31 e33 check e34 e35 e35b e35loc e36 e40 e41 e43 e44 e45 e46 e47 e48 clean-tables
 
-all: data e40 e41 e34 e35 e35b e35loc e36 e29 e30 e30b e31 e33 check e43 e44 e45 e46 e47 tables
+all: data e40 e41 e34 e35 e35b e35loc e36 e29 e30 e30b e31 e33 check e43 e44 e45 e46 e47 e48 tables
 
 data:
 	$(PY) -c "import sys; sys.path.insert(0, '.'); import data_real as D; D.load_ff_monthly(); [D.load_port(i) for i in range(1, 6)]; D.load_indtrack(6); D.load_indtrack(8); print('data ok')"
@@ -79,6 +79,13 @@ e46:
 e47:
 	mkdir -p results/E47
 	$(PY) e47_threesum.py gap > results/E47/gap.jsonl
+
+# Section 5.5: the Helly bound V <= OPT(k) <= (k+1)V on random instances, with controls (e48_helly.py; a minute
+# per part)
+E48PARTS = rand_1 rand_2 rand_3
+e48:
+	mkdir -p results/E48
+	for p in $(E48PARTS); do echo $$p; done | xargs -P 3 -I{} sh -c '$(PY) e48_helly.py {} > results/E48/{}.jsonl'
 
 # Sections 7.6-7.7: the scheme itself, size bounds, checks of the estimates, the relaxation and the rounding
 e30:

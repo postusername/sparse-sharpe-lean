@@ -7,13 +7,12 @@ Machine-checked proofs for the paper
 
 The paper studies the choice of at most `k` of `M` assets with long-only weights that maximize
 the Sharpe ratio when the covariance matrix has the factor structure
-`V = diag(d) + B Σ_f Bᵀ` with a fixed number `K` of factors. It gives an approximation scheme
-that returns a fully invested long-only portfolio whose Sharpe ratio is at least `√(1 − 2ε)`
-times the optimum. The scheme picks this portfolio from an explicit family of candidate
-supports whose size is bounded by a polynomial in `k`, `1/ε` and the leverage bound `ω` for
-fixed `K`, independently of `M`. Without the leverage bound, it gives fully polynomial schemes for
-long-short and long-only portfolios with any fixed `K` (and a smaller one for long-only portfolios
-with one factor and positive betas): the leverages are not needed. For practice,
+`V = diag(d) + B Σ_f Bᵀ` with a fixed number `K` of factors. It gives approximation schemes that
+return a fully invested long-only portfolio whose Sharpe ratio is at least `√(1 − 2ε)` times the
+optimum. The main one picks this portfolio from an explicit family of candidate supports whose size
+is bounded by a polynomial in `M`, `k` and `1/ε` for fixed `K`, with no dependence on the leverages
+or on the magnitudes of the data, with and without short sales; another one has a family
+independent of `M` whose size is polynomial in `k`, `1/ε` and the leverage bound `ω`. For practice,
 the paper adds a dual certificate (the dual of the perspective relaxation), an optimality test, a
 bound for branch and bound, and a localized scheme whose grid is confined by the gap of the
 certificate.
@@ -29,6 +28,23 @@ The directory [experiments](experiments/) contains the scripts, the stored resul
 checksums of the numerical experiments of Sections 5.4 and 7 of the paper; `make all` there recomputes
 them and `make tables` rebuilds every table and figure of Section 7 and the numbers of the text (see
 [experiments/README.md](experiments/README.md)).
+
+## Version 0.29: no `ω` at all — Helly's theorem for the guesses
+
+New file `Factor/HellyGuess`. With `Φ` the best value of a support with at most `min(k, K + 1)` names,
+`Φ ≤ OPT(k) ≤ (k + 1)Φ`, with and without short sales (Helly's theorem in `ℝ^K`, from Mathlib: the sets
+`D_i = {t : t'Σ_f⁻¹t ≤ Φ, (m_i − ⟨B_i,t⟩)₊²/d_i ≤ Φ}` are convex and any `K + 1` of them meet at the dual point of a small
+support). So `⌈log₂(k + 1)⌉ + 1` guesses `Φ·2^j` replace the guesses `L·2^j`, whose number grew with the logarithm of the
+data, and the families of Theorems 5.6 and 5.13 have sizes polynomial in `M`, `k` and `1/ε` alone (fixed `K`): the
+leverages and the magnitudes of the data do not enter at all. The long-only version is the new Main Theorem of the paper;
+the former Main Theorem (a family independent of `M`, polynomial in `ω`) is Theorem 1.1.
+
+| Paper (v0.29) | Declaration | File |
+|---|---|---|
+| Main Theorem (long-only, any fixed `K`, size polynomial in `M`, `k`, `1/ε`) | `main_theorem_univ_sp`, `exists_small_best`, `univ_instance_two_sp` | [Factor/HellyGuess.lean](SparseSharpe/Factor/HellyGuess.lean) |
+| Helly's theorem for the value (Lemma 5.21) | `objLO_le_helly`, `objLO_le_helly_free`, `convex_sumsq_le`, `convex_clip_le`, `convex_sq_affine_le` | [Factor/HellyGuess.lean](SparseSharpe/Factor/HellyGuess.lean) |
+| Short sales, guesses without the data (Theorem 5.22) | `main_theorem_ls_sp`, `ls_instance_sp` | [Factor/HellyGuess.lean](SparseSharpe/Factor/HellyGuess.lean) |
+| Theorem 1.1 (the former Main Theorem: a family independent of `M`) | `main_theorem_clipped` | [Factor/ClippedTrading.lean](SparseSharpe/Factor/ClippedTrading.lean) |
 
 ## Version 0.28: neither `M` nor `ω` — a kernel and two lower bounds
 
@@ -190,12 +206,12 @@ pinned to the tag `v4.35.0-rc2` in `lake-manifest.json`. With [elan](https://git
 ```
 lake exe cache get                       # download the prebuilt Mathlib (several GB)
 lake build                               # build the formalization
-lake env lean SparseSharpe/Audit.lean    # print the axioms of 1088 statements
+lake env lean SparseSharpe/Audit.lean    # print the axioms of 1101 statements
 ```
 
-Each of the 1088 statements depends only on `propext`, `Classical.choice` and `Quot.sound`
+Each of the 1101 statements depends only on `propext`, `Classical.choice` and `Quot.sound`
 (some on a subset), and none on `sorryAx`. The sources contain no `sorry`, no `axiom`
-declarations and no `native_decide`. The development has 83 files and about 36 700 lines.
+declarations and no `native_decide`. The development has 84 files and about 37 300 lines.
 
 ## Layout
 
@@ -217,6 +233,8 @@ declarations and no `native_decide`. The development has 83 files and about 36 7
   * Neither `M` nor `ω`: `Kernel` (the `k` best assets per cell of scale and direction),
     `KernelScheme` (Theorem 5.13 on the kernel), `OnePassLower` (the lower bound for one pass),
     `ThreeSumGap` (the gap from 3SUM for `K ≥ 3`).
+  * No `ω` at all: `HellyGuess` (Helly's theorem for the guesses; the strongly polynomial forms of Theorems 5.6
+    and 5.13).
   * Symmetric key, dual certificate, adaptive guesses and the simple Main Theorem:
     `Practical`.
 * `SparseSharpe/Audit.lean`: `#print axioms` for all main statements.

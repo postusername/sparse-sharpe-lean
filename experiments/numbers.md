@@ -157,3 +157,6 @@
 | E47 3SUM gap: integers per list; U; M; largest leverage | 2..4; 2..60; 6, 9, 12; $3.3\cdot 10^{8}$ | 5.5 |
 | E47 3SUM gap, two-factor control on the NO instances: largest value of a triple with one asset of each list; instances in which it is above 1; instances in which two numbers of one list add up to a number of LC | 2.99969; 96; 13 | 5.5 |
 | E47 3SUM gap, controls on the NO instances (light A = 1; two factors; k = 4): instances with OPT above 1; largest OPT | light 98, 2.9994; twofactor 97, 3.0000; k4 91, 3.6002 | 5.5 |
+| E48 Helly bound (K = 1, 2, 3): instances; k; largest OPT_LO(k)/V; largest OPT_LS(k)/V_LS; largest OPT/((k+1)V) (LO; LS); V <= OPT in all instances | 300; 2..5; 2.506; 2.213; 0.418; 0.418; True | 5.5 |
+| E48: guesses of Theorem 5.13 with the best single asset (largest; median) and with Lemma 5.21 (largest); largest leverage | 34; 14; 4; $9.9\cdot 10^{9}$ | 5.5 |
+| E48 controls, V over one name and over at most K names: instances with OPT > (k+1)V (LO; LS); largest OPT/V (LO; LS) | single 94; 111; $1.1\cdot 10^{4}$; $1.2\cdot 10^{4}$; ksub 58; 68; $1.1\cdot 10^{4}$; $1.2\cdot 10^{4}$ | 5.5 |

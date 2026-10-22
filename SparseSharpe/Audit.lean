@@ -74,6 +74,7 @@ import SparseSharpe.Factor.OnePassLower
 import SparseSharpe.Factor.Kernel
 import SparseSharpe.Factor.KernelScheme
 import SparseSharpe.Factor.ThreeSumGap
+import SparseSharpe.Factor.HellyGuess
 
 set_option linter.style.header false
 
@@ -1323,3 +1324,19 @@ open SparseSharpe SparseSharpe.OneFactor
 #print axioms SparseSharpe.Factor.threesum_decide
 #print axioms SparseSharpe.Factor.threesum_decide_pad
 #print axioms SparseSharpe.Factor.threesum_instance
+
+/-! ### Оценка Хелли и сильно полиномиальные схемы без `ω` (сессия 29, `Factor/HellyGuess`) -/
+
+#print axioms SparseSharpe.Factor.dotp_combo
+#print axioms SparseSharpe.Factor.sq_combo_le
+#print axioms SparseSharpe.Factor.convex_sumsq_le
+#print axioms SparseSharpe.Factor.convex_clip_le
+#print axioms SparseSharpe.Factor.convex_sq_affine_le
+#print axioms SparseSharpe.Factor.objLO_le_helly
+#print axioms SparseSharpe.Factor.objLO_le_helly_free
+#print axioms SparseSharpe.Factor.le_two_pow_clog
+#print axioms SparseSharpe.Factor.exists_small_best
+#print axioms SparseSharpe.Factor.main_theorem_univ_sp
+#print axioms SparseSharpe.Factor.main_theorem_ls_sp
+#print axioms SparseSharpe.Factor.univ_instance_two_sp
+#print axioms SparseSharpe.Factor.ls_instance_sp
