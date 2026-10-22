@@ -140,12 +140,13 @@
 | E45 step, controls below 0.9 (no forced small positions; key x30; node on the lattice of T; one tuple of all rows of the optimum) | 280; 18; 0; 2 | 5.4 |
 | E45 step, one tuple of all rows: a small position of T with a negative weight in; these weights | 2 of 800; $-2.6\cdot 10^{-6}$, $-8.3\cdot 10^{-6}$ | 5.4 |
 | E45 adversary of the node of the proof: runs (M, k, K); smallest ratio over the bucket; smallest witness; largest leverage | 8 (M = [8], k = [3], K = [2, 3]); 0.942796; 0.911413; $8.1\cdot 10^{9}$ | 5.4 |
-| E46 crowded random instances (K = 1, 2, 3): instances; mean kernel size / mean M; smallest OPT(kernel)/OPT; instances whose optimum is not in the kernel | K=1: 120, 9.2/20.0, 1.000000, 0; K=2: 120, 11.1/20.0, 1.000000, 0; K=3: 120, 11.4/20.0, 1.000000, 0 | 5.5 |
-| E46 crowded random instances: eps values; largest leverage | [0.05, 0.1]; $1.0\cdot 10^{10}$ | 5.5 |
-| E46 crowded random instances, control nogrid: below 1 - 4 eps (K = 1, 2, 3); smallest ratio | 0; 0; 1; 0.546 | 5.5 |
-| E46 crowded random instances, control grid30: below 1 - 4 eps (K = 1, 2, 3); smallest ratio | 0; 0; 0; 1.000 | 5.5 |
-| E46 crowded random instances, control grid100: below 1 - 4 eps (K = 1, 2, 3); smallest ratio | 0; 0; 0; 1.000 | 5.5 |
-| E46 crowded random instances, control noscale: below 1 - 4 eps (K = 1, 2, 3); smallest ratio | 22; 0; 0; 0.040 | 5.5 |
+| E46 crowded random instances (families crowd and heavycrowd; K = 1, 2, 3): instances; mean kernel size / M; smallest OPT(kernel)/OPT; instances whose optimum is not in the kernel | K=1: 80, 7.88/24, 1.000000, 0; K=2: 80, 10.68/24, 1.000000, 0; K=3: 80, 11.16/24, 1.000000, 0 | 5.5 |
+| E46 instances of the hedge family of E45 (K = 1, 2, 3): instances; instances in which the kernel keeps every asset; M | K=1: 40, 40, 12; K=2: 40, 40, 12; K=3: 40, 40, 12 | 5.5 |
+| E46 random instances: eps values; largest leverage (crowded; hedge family) | [0.05, 0.1]; $1.1\cdot 10^{8}$; $1.0\cdot 10^{10}$ | 5.5 |
+| E46 random instances (crowded and hedge family), control nogrid: below 1 - 4 eps (K = 1, 2, 3); smallest ratio | 0; 0; 1; 0.546 | 5.5 |
+| E46 random instances (crowded and hedge family), control grid30: below 1 - 4 eps (K = 1, 2, 3); smallest ratio | 0; 0; 0; 1.000 | 5.5 |
+| E46 random instances (crowded and hedge family), control grid100: below 1 - 4 eps (K = 1, 2, 3); smallest ratio | 0; 0; 0; 1.000 | 5.5 |
+| E46 random instances (crowded and hedge family), control noscale: below 1 - 4 eps (K = 1, 2, 3); smallest ratio | 22; 0; 0; 0.040 | 5.5 |
 | E46 lower-bound instances K = 2, n = 4: M; omega; kernel keeps (of the first group); smallest OPT(kernel)/OPT; largest other pair / OPT (bound 2n^2/A^2 / OPT); controls nogrid, grid30, grid100 (smallest ratio); nogrid keeps at most (of the first group) | 5; $2.7\cdot 10^{2}$; 4 of 4; 1.0000; 0.2321 (0.3743); 0.0471, 1.0000, 1.0000; 2 | 5.5 |
 | E46 lower-bound instances K = 2, n = 8: M; omega; kernel keeps (of the first group); smallest OPT(kernel)/OPT; largest other pair / OPT (bound 2n^2/A^2 / OPT); controls nogrid, grid30, grid100 (smallest ratio); nogrid keeps at most (of the first group) | 9; $1.2\cdot 10^{3}$; 8 of 8; 1.0000; 0.2524 (0.3748); 0.0053, 1.0000, 1.0000; 2 | 5.5 |
 | E46 lower-bound instances K = 2, n = 16: M; omega; kernel keeps (of the first group); smallest OPT(kernel)/OPT; largest other pair / OPT (bound 2n^2/A^2 / OPT); controls nogrid, grid30, grid100 (smallest ratio); nogrid keeps at most (of the first group) | 17; $5.1\cdot 10^{3}$; 16 of 16; 1.0000; 0.2626 (0.3750); 0.0010, 1.0000, 1.0000; 2 | 5.5 |

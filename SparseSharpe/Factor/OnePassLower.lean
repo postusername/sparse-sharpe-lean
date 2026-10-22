@@ -368,6 +368,36 @@ theorem onepass_instance :
   · rw [Finset.card_pair (Option.some_ne_none h)]
   · rw [lb_pair_obj]; norm_num
 
+
+/-- **Подсчёт.** При `A² = 8n²/(1 − ε)`, `ε < 1`, у каждого актива примера
+`((1 − ε)·ω_i/(8(K + 1)))^{K/2} ≤ n^K`: схема хранит не меньше этой величины активов
+(в статье `K + 1` факторов здесь — это `K`). -/
+theorem lb_count {A ε : ℝ} (hε : ε < 1) (hA2 : A ^ 2 = 8 * (n : ℝ) ^ 2 / (1 - ε))
+    (h : Fin K → Fin n) (i : Option (Fin K → Fin n)) :
+    ((1 - ε) * (∑ j, ∑ j', lbB A h i j * (opI (Fin (K + 1)) j j' * lbB A h i j') / lbd i)
+      / (8 * (K + 1))) ^ ((K : ℝ) / 2) ≤ (n : ℝ) ^ K := by
+  have hom := lb_leverage_le A h i
+  set ω := ∑ j, ∑ j', lbB A h i j * (opI (Fin (K + 1)) j j' * lbB A h i j') / lbd i with hω
+  have hω0 : 0 ≤ ω := by
+    have e : ω = ∑ j, lbB A h i j * lbB A h i j := by
+      rw [hω]; simp only [lbd, div_one]; exact sum_opI_mul _ _
+    rw [e]; exact Finset.sum_nonneg fun j _ => mul_self_nonneg _
+  have h1ε : 0 < 1 - ε := by linarith
+  have hK : (0 : ℝ) < 8 * (K + 1) := by positivity
+  have hx : (1 - ε) * ω / (8 * (K + 1)) ≤ (n : ℝ) ^ 2 := by
+    rw [div_le_iff₀ hK]
+    have h2 : ω ≤ (K + 1) * (8 * (n : ℝ) ^ 2 / (1 - ε)) := by rw [← hA2]; exact hom
+    calc (1 - ε) * ω ≤ (1 - ε) * ((K + 1) * (8 * (n : ℝ) ^ 2 / (1 - ε))) :=
+          mul_le_mul_of_nonneg_left h2 h1ε.le
+      _ = (n : ℝ) ^ 2 * (8 * (K + 1)) := by field_simp
+  have hx0 : 0 ≤ (1 - ε) * ω / (8 * (K + 1)) := by positivity
+  calc ((1 - ε) * ω / (8 * (K + 1))) ^ ((K : ℝ) / 2)
+      ≤ ((n : ℝ) ^ 2) ^ ((K : ℝ) / 2) := Real.rpow_le_rpow hx0 hx (by positivity)
+    _ = (n : ℝ) ^ K := by
+      rw [← Real.rpow_natCast (n : ℝ) 2, ← Real.rpow_mul (by positivity)]
+      rw [show ((2 : ℕ) : ℝ) * ((K : ℝ) / 2) = (K : ℝ) by push_cast; ring]
+      exact Real.rpow_natCast _ K
+
 end OnePassLower
 
 end SparseSharpe.Factor

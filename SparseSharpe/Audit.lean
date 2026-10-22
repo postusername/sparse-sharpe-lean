@@ -1299,6 +1299,9 @@ open SparseSharpe SparseSharpe.OneFactor
 #print axioms SparseSharpe.Factor.kscore_ex
 #print axioms SparseSharpe.Factor.kerK_ex
 #print axioms SparseSharpe.Factor.kernel_instance
+#print axioms SparseSharpe.Factor.objLO_factor
+#print axioms SparseSharpe.Factor.exists_factor_root
+#print axioms SparseSharpe.Factor.lb_count
 
 /-! ### Разрыв от 3SUM при `K ≥ 3`: без `ω` время почти квадратично по `M` (сессия 28, `Factor/ThreeSumGap`) -/
 

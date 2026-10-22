@@ -615,16 +615,31 @@ def kernel46():
     """The kernel of Section 5.5 (Theorem 5.17, Lean kerK / kernel_value) and the instances of Proposition 5.19."""
     E = os.path.join(RES, 'E46')
     rnd = {K: [r for r in jl(os.path.join(E, 'rand_%d.jsonl' % K))] for K in (1, 2, 3)}
-    num('E46 crowded random instances (K = 1, 2, 3): instances; mean kernel size / mean M; smallest OPT(kernel)/OPT; '
-        'instances whose optimum is not in the kernel',
-        '; '.join('K=%d: %d, %.1f/%.1f, %.6f, %d' % (
-            K, len(R), sum(r['ker_size'] for r in R) / len(R), sum(r['M'] for r in R) / len(R),
-            min(r['ker'] for r in R), sum(not r['opt_in_ker'] for r in R)) for K, R in rnd.items()), '5.5')
-    num('E46 crowded random instances: eps values; largest leverage', '%s; %s' % (
-        sorted({r['eps'] for R in rnd.values() for r in R}), sci(max(r['omega'] for R in rnd.values() for r in R))),
+    crowd = {K: [r for r in R if r['fam'] != 'hedge'] for K, R in rnd.items()}
+    hedge = {K: [r for r in R if r['fam'] == 'hedge'] for K, R in rnd.items()}
+
+    def mean2(xs):
+        # exact mean, rounded half up to two decimals
+        import decimal
+        from fractions import Fraction
+        f = Fraction(sum(Fraction(x) for x in xs), len(xs))
+        return str((decimal.Decimal(f.numerator) / decimal.Decimal(f.denominator)).quantize(
+            decimal.Decimal('0.01'), rounding=decimal.ROUND_HALF_UP))
+    num('E46 crowded random instances (families crowd and heavycrowd; K = 1, 2, 3): instances; mean kernel size / M; '
+        'smallest OPT(kernel)/OPT; instances whose optimum is not in the kernel',
+        '; '.join('K=%d: %d, %s/%d, %.6f, %d' % (
+            K, len(R), mean2([r['ker_size'] for r in R]), R[0]['M'], min(r['ker'] for r in R),
+            sum(not r['opt_in_ker'] for r in R)) for K, R in crowd.items()), '5.5')
+    num('E46 instances of the hedge family of E45 (K = 1, 2, 3): instances; instances in which the kernel keeps every '
+        'asset; M', '; '.join('K=%d: %d, %d, %d' % (K, len(R), sum(r['ker_size'] == r['M'] for r in R), R[0]['M'])
+                              for K, R in hedge.items()), '5.5')
+    num('E46 random instances: eps values; largest leverage (crowded; hedge family)', '%s; %s; %s' % (
+        sorted({r['eps'] for R in rnd.values() for r in R}),
+        sci(max(r['omega'] for R in crowd.values() for r in R)), sci(max(r['omega'] for R in hedge.values() for r in R))),
         '5.5')
     for c in ('nogrid', 'grid30', 'grid100', 'noscale'):
-        num('E46 crowded random instances, control %s: below 1 - 4 eps (K = 1, 2, 3); smallest ratio' % c,
+        num('E46 random instances (crowded and hedge family), control %s: below 1 - 4 eps (K = 1, 2, 3); '
+            'smallest ratio' % c,
             '; '.join('%d' % sum(r[c] < 1 - 4 * r['eps'] for r in R) for R in rnd.values()) + '; %.3f' % min(
                 r[c] for R in rnd.values() for r in R), '5.5')
     for K in (2, 3):

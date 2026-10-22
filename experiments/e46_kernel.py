@@ -13,9 +13,9 @@ Controls (each must fail somewhere): 'nogrid' (cells without the angular grid), 
 x 100), 'noscale' (one scale class).
 
 Parts:
-  rand_<K>  (K = 1, 2, 3): 120 instances, k = 2, eps in {0.05, 0.1}; families 'crowd' and 'heavycrowd' (M = 24:
-            a few base rows, every asset a copy turned slightly, rescaled within 1 + eps, with its own target; in
-            'heavycrowd' some base rows are heavy hedges) and 'hedge' of e45 (M = 12).
+  rand_<K>  (K = 1, 2, 3): 120 instances, k = 2, eps in {0.05, 0.1}; families 'crowd' and 'heavycrowd' (40 each,
+            M = 24: a few base rows, every asset a copy turned slightly, rescaled within 1 + eps, with its own target;
+            in 'heavycrowd' some base rows are heavy hedges) and 'hedge' of e45 (40, M = 12, not crowded).
   lb_<K>    (K = 2, 3): the instances of Proposition 5.19: n^(K-1) assets with m = 0, d = 1 and rows A(1, g/n),
             g in {0..n-1}^(K-1), and one asset with m = 1 and row -A(1, h/n), for every h; k = 2, eps = 1/4,
             A^2 = 8 n^2/(1 - eps).  Reports whether the kernel keeps every asset of the first group and the

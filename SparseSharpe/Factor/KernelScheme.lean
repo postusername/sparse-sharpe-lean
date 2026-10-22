@@ -1,5 +1,6 @@
 import SparseSharpe.Factor.Kernel
 import SparseSharpe.Factor.UniversalScheme
+import SparseSharpe.Factor.RootExists
 
 set_option linter.style.header false
 
@@ -254,5 +255,44 @@ theorem kernel_instance :
   linarith
 
 end KernelScheme
+
+section FactorChange
+
+variable {ι : Type*} [DecidableEq ι] {κ κ' : Type*} [Fintype κ] [Fintype κ'] [DecidableEq κ']
+
+/-- **Замена переменных `Σ_f → I`.** Если `Σ_l F_{jl} F_{j'l} = (Σ_f)_{jj'}` (то есть
+`FFᵀ = Σ_f`), то цель с нагрузками `B` и ковариацией факторов `Σ_f` равна цели с нагрузками `BF`
+и `Σ_f = I`; так Теоремы 5.17–5.18, сформулированные при `Σ_f = I`, применяются к любой `Σ_f`. -/
+theorem objLO_factor (m d : ι → ℝ) (B : ι → κ → ℝ) (Sf : κ → κ → ℝ) (F : κ → κ' → ℝ)
+    (hF : ∀ j j', ∑ l, F j l * F j' l = Sf j j') (S : Finset ι) (w : ι → ℝ) :
+    objLO m d B Sf S w = objLO m d (fun i l => ∑ j, B i j * F j l) (opI κ') S w := by
+  have hV : ∀ i i', Vmat d B Sf i i'
+      = Vmat d (fun i l => ∑ j, B i j * F j l) (opI κ') i i' := by
+    intro i i'
+    simp only [Vmat]
+    rw [sum_opI_mul]
+    congr 1
+    have e1 : ∀ j j', B i j * (Sf j j' * B i' j') = ∑ l, B i j * F j l * (B i' j' * F j' l) := by
+      intro j j'
+      rw [← hF j j', Finset.sum_mul, Finset.mul_sum]
+      exact Finset.sum_congr rfl fun l _ => by ring
+    simp_rw [e1, Finset.sum_mul_sum]
+    calc ∑ j, ∑ j', ∑ l, B i j * F j l * (B i' j' * F j' l)
+        = ∑ j, ∑ l, ∑ j', B i j * F j l * (B i' j' * F j' l) :=
+          Finset.sum_congr rfl fun j _ => Finset.sum_comm
+      _ = ∑ l, ∑ j, ∑ j', B i j * F j l * (B i' j' * F j' l) := Finset.sum_comm
+  simp only [objLO, hV]
+
+omit [DecidableEq ι] in
+/-- Такое `F` есть у любой положительно полуопределённой `Σ_f`. -/
+theorem exists_factor_root (Sf : κ → κ → ℝ) (hSf : (Matrix.of Sf).PosSemidef) :
+    ∃ F : κ → κ → ℝ, ∀ j j', ∑ l, F j l * F j' l = Sf j j' := by
+  classical
+  obtain ⟨G, hG⟩ := exists_root_of_posSemidef (Matrix.of Sf) hSf
+  refine ⟨fun j l => G l j, fun j j' => ?_⟩
+  have := congrFun (congrFun hG j) j'
+  simpa [Matrix.mul_apply] using this
+
+end FactorChange
 
 end SparseSharpe.Factor
