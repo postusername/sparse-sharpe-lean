@@ -1,4 +1,4 @@
-# Experiments of Sections 5.4 and 7 of the paper.  `make data` downloads the public data (checked against data/SHA256SUMS);
+# Experiments of Sections 5.4-5.6 and 7 of the paper.  `make data` downloads the public data (checked against data/SHA256SUMS);
 # `make all` recomputes every experiment (several hours: the solver times recorded in results/ alone add up to about
 # 5 hours on one core); `make tables` rebuilds the tables, the numbers of the text and the data files of the figures
 # from the stored results in results/ (seconds).

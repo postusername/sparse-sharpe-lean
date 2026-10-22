@@ -11,8 +11,9 @@ the Sharpe ratio when the covariance matrix has the factor structure
 return a fully invested long-only portfolio whose Sharpe ratio is at least `√(1 − 2ε)` times the
 optimum. The main one picks this portfolio from an explicit family of candidate supports whose size
 is bounded by a polynomial in `M`, `k` and `1/ε` for fixed `K`, with no dependence on the leverages
-or on the magnitudes of the data, with and without short sales; another one has a family
-independent of `M` whose size is polynomial in `k`, `1/ε` and the leverage bound `ω`. For practice,
+or on the magnitudes of the data; with short sales, a family of the same kind gives a portfolio of
+gross exposure 1 whose Sharpe ratio is at least `√(1 − 17ε/8)` times the optimum. Another scheme
+has a family independent of `M` whose size is polynomial in `k`, `1/ε` and the leverage bound `ω`. For practice,
 the paper adds a dual certificate (the dual of the perspective relaxation), an optimality test, a
 bound for branch and bound, and a localized scheme whose grid is confined by the gap of the
 certificate.
@@ -38,8 +39,8 @@ support). So `⌈log₂(k + 1)⌉ + 1` guesses `Φ·2^j` replace the guesses `L�
 data, and the families of Theorems 5.6 and 5.13 have sizes polynomial in `M`, `k` and `1/ε` alone (fixed `K`): the
 leverages and the magnitudes of the data do not enter at all. The long-only version is the new Main Theorem of the paper;
 the former Main Theorem (a family independent of `M`, polynomial in `ω`) is Theorem 1.1. Theorem 1.1 can take the guesses
-`Φ·2^j` too (`main_theorem_clipped_helly`): its family stays independent of `M`, and only the time to compute `Φ` depends
-on `M`.
+`Φ·2^j` too (`main_theorem_clipped_helly`): its family stays independent of `M`, with fewer guesses when `ω` is large, but
+computing `Φ` by enumeration takes `O(M^{K+1})` quadratic programs, while the guesses `L·2^j` take time `O(M)`.
 
 | Paper (v0.29) | Declaration | File |
 |---|---|---|

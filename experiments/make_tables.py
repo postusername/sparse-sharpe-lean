@@ -1,11 +1,12 @@
-"""Tables and numbers of Section 7 (and Section 5.4) from the results of the experiments.
+"""Tables and numbers of Section 7 (and Sections 5.4-5.6) from the results of the experiments.
 
   python3 -I make_tables.py            -> tables/*.tex (the table bodies \\input by the paper) and numbers.md
-                                          (every number quoted in the text of Sections 5.4 and 7 and in the Introduction)
+                                          (every number quoted in the text of Sections 5.4-5.6 and 7 and in the Introduction)
 Inputs: results/E40 (real data), results/E41 (random instances M = 16), results/E35 and results/E36 (the stress
 regime at scale and the methods from the literature), results/E29, E30, E30b, E31, CHECK and E33 (the scheme, the size
-bounds, the checks and the relaxation), results/E43 and results/E44 (the knapsack embedding and the checks of the
-scheme without omega, quoted in Section 5.4).  No solver is run here; only the random instances of Section 7.3 are drawn
+bounds, the checks and the relaxation), results/E43, E44 and E45 (the knapsack embedding and the checks of the
+schemes without omega, quoted in Section 5.4), results/E46 and E47 (the kernel and the 3SUM gap, Section 5.5) and
+results/E48 (the Helly bound, Section 5.6).  No solver is run here; only the random instances of Section 7.3 are drawn
 again from their seeds, to count the signs of their loadings.
 """
 import collections
