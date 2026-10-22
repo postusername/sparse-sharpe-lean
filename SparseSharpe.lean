@@ -79,3 +79,4 @@ import SparseSharpe.Factor.UniversalScheme
 import SparseSharpe.Factor.OnePassLower
 import SparseSharpe.Factor.Kernel
 import SparseSharpe.Factor.KernelScheme
+import SparseSharpe.Factor.ThreeSumGap

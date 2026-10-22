@@ -30,15 +30,18 @@ checksums of the numerical experiments of Sections 5.4 and 7 of the paper; `make
 them and `make tables` rebuilds every table and figure of Section 7 and the numbers of the text (see
 [experiments/README.md](experiments/README.md)).
 
-## Version 0.28: neither `M` nor `ω` — a kernel and a lower bound for one pass
+## Version 0.28: neither `M` nor `ω` — a kernel and two lower bounds
 
-New files `Factor/OnePassLower`, `Factor/Kernel`, `Factor/KernelScheme`. The kernel keeps, in every cell of scale and
+New files `Factor/OnePassLower`, `Factor/Kernel`, `Factor/KernelScheme`, `Factor/ThreeSumGap`. The kernel keeps, in every cell of scale and
 direction, the `k` assets with the largest return per unit of factor risk; every long-only portfolio with at most `k`
 names is replaced by one inside the kernel with objective at least `1 − 4ε` times its own, and the kernel has at most
 `k(1 + 2K·L·(2G+1)^{K−1})` assets with `G ≈ (1+ε)√ω·√(2k)K/ε`. For one factor this is `k(2L+1)`, logarithmic in the data,
 so the scheme of Theorem 5.13 on the kernel has a family independent of both `M` and `ω`. For `K ≥ 2` a scheme that reads
 the assets once must keep `n^{K−1}` assets on explicit instances with `M = n^{K−1} + 1` and `ω ≤ 8Kn²/(1−ε)`, which the
-kernel matches up to the factor `L`.
+kernel matches up to the factor `L`. For `K ≥ 3` an instance of 3SUM' (are there `a + b = c` in three lists of integers?)
+becomes a problem with `k = 3` whose optimum is `3` if the answer is yes and at most `1` otherwise, with or without short
+sales; so under the 3SUM hypothesis no algorithm is subquadratic in `M` without depending on `ω` (the running-time
+conclusion is not formalized).
 
 | Paper (v0.28) | Declaration | File |
 |---|---|---|
@@ -47,6 +50,7 @@ kernel matches up to the factor `L`.
 | The kernel: value and size (Theorem 5.17) | `kernel_value`, `card_kerK_le`, `krho_le_sqrt`, `kdom`, `exchange_topK` | [Factor/Kernel.lean](SparseSharpe/Factor/Kernel.lean) |
 | The scheme on the kernel (Theorem 5.18) | `main_theorem_kernel`, `kerCandidates`, `kernel_instance` | [Factor/KernelScheme.lean](SparseSharpe/Factor/KernelScheme.lean) |
 | One pass needs `M` or `ω` (Proposition 5.19) | `onepass_lower`, `lb_mem_of_good`, `lb_obj_le`, `lb_pair_obj`, `lb_leverage_le`, `onepass_instance` | [Factor/OnePassLower.lean](SparseSharpe/Factor/OnePassLower.lean) |
+| A gap from 3SUM (Proposition 5.20) | `threesum_decide`, `threesum_decide_pad`, `ts_yes`, `ts_le_three`, `ts_no`, `objLO_padZero`, `threesum_instance` | [Factor/ThreeSumGap.lean](SparseSharpe/Factor/ThreeSumGap.lean) |
 
 ## Version 0.27: the scheme without the leverage bound for long-only portfolios with `K` factors
 
@@ -185,12 +189,12 @@ pinned to the tag `v4.35.0-rc2` in `lake-manifest.json`. With [elan](https://git
 ```
 lake exe cache get                       # download the prebuilt Mathlib (several GB)
 lake build                               # build the formalization
-lake env lean SparseSharpe/Audit.lean    # print the axioms of 1067 statements
+lake env lean SparseSharpe/Audit.lean    # print the axioms of 1085 statements
 ```
 
-Each of the 1067 statements depends only on `propext`, `Classical.choice` and `Quot.sound`
+Each of the 1085 statements depends only on `propext`, `Classical.choice` and `Quot.sound`
 (some on a subset), and none on `sorryAx`. The sources contain no `sorry`, no `axiom`
-declarations and no `native_decide`. The development has 82 files and about 36 300 lines.
+declarations and no `native_decide`. The development has 83 files and about 36 700 lines.
 
 ## Layout
 
@@ -210,7 +214,8 @@ declarations and no `native_decide`. The development has 82 files and about 36 3
     `ScaleFreeScheme` (one tuple, at most one small position), `UniversalScheme` (long-only, any
     fixed `K`); the one-factor scheme is `SparseSharpe/SchemeLO1`.
   * Neither `M` nor `ω`: `Kernel` (the `k` best assets per cell of scale and direction),
-    `KernelScheme` (Theorem 5.13 on the kernel), `OnePassLower` (the lower bound for one pass).
+    `KernelScheme` (Theorem 5.13 on the kernel), `OnePassLower` (the lower bound for one pass),
+    `ThreeSumGap` (the gap from 3SUM for `K ≥ 3`).
   * Symmetric key, dual certificate, adaptive guesses and the simple Main Theorem:
     `Practical`.
 * `SparseSharpe/Audit.lean`: `#print axioms` for all main statements.

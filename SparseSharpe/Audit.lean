@@ -73,6 +73,7 @@ import SparseSharpe.Factor.UniversalScheme
 import SparseSharpe.Factor.OnePassLower
 import SparseSharpe.Factor.Kernel
 import SparseSharpe.Factor.KernelScheme
+import SparseSharpe.Factor.ThreeSumGap
 
 set_option linter.style.header false
 
@@ -1298,3 +1299,24 @@ open SparseSharpe SparseSharpe.OneFactor
 #print axioms SparseSharpe.Factor.kscore_ex
 #print axioms SparseSharpe.Factor.kerK_ex
 #print axioms SparseSharpe.Factor.kernel_instance
+
+/-! ### Разрыв от 3SUM при `K ≥ 3`: без `ω` время почти квадратично по `M` (сессия 28, `Factor/ThreeSumGap`) -/
+
+#print axioms SparseSharpe.Factor.objLO_padZero
+#print axioms SparseSharpe.Factor.padZero
+#print axioms SparseSharpe.Factor.tsB
+#print axioms SparseSharpe.Factor.tsm
+#print axioms SparseSharpe.Factor.tsd
+#print axioms SparseSharpe.Factor.ts_dot_a
+#print axioms SparseSharpe.Factor.ts_dot_b
+#print axioms SparseSharpe.Factor.ts_dot_c
+#print axioms SparseSharpe.Factor.ts_phi
+#print axioms SparseSharpe.Factor.ts_wd
+#print axioms SparseSharpe.Factor.ts_yes
+#print axioms SparseSharpe.Factor.ts_le_three
+#print axioms SparseSharpe.Factor.sq_one_sub_le
+#print axioms SparseSharpe.Factor.ts_no
+#print axioms SparseSharpe.Factor.ts_no_one
+#print axioms SparseSharpe.Factor.threesum_decide
+#print axioms SparseSharpe.Factor.threesum_decide_pad
+#print axioms SparseSharpe.Factor.threesum_instance
