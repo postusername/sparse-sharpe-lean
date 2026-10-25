@@ -703,4 +703,393 @@ theorem clipped_instance_helly :
 
 end StronglyPoly
 
+section UnivPoly
+
+variable {ι κ : Type*} [Fintype ι] [Fintype κ] [DecidableEq ι] [DecidableEq κ]
+
+/-- `√2 ≤ 3/2`. -/
+lemma sqrt_two_le_three_halves : Real.sqrt 2 ≤ 3 / 2 := by
+  rw [show (3/2:ℝ) = Real.sqrt ((3/2) ^ 2) from (Real.sqrt_sq (by norm_num)).symm]
+  exact Real.sqrt_le_sqrt (by norm_num)
+
+/-- `√(4 + ε) ≤ 9/4` при `ε ≤ 1`. -/
+lemma sqrt_four_add_le {ε : ℝ} (hε1 : ε ≤ 1) : Real.sqrt (4 + ε) ≤ 9 / 4 := by
+  rw [show (9/4:ℝ) = Real.sqrt ((9/4) ^ 2) from (Real.sqrt_sq (by norm_num)).symm]
+  exact Real.sqrt_le_sqrt (by linarith)
+
+omit [DecidableEq κ] in
+/-- Множитель узлов: `2Z + 1 ≤ 77·k²K√K/√ε`. -/
+lemma two_univZ_succ_le [Nonempty κ] {k : ℕ} (hk1 : 1 ≤ k) {ε : ℝ} (hε : 0 < ε) (hε1 : ε ≤ 1) :
+    2 * (univZ κ k ε : ℝ) + 1
+      ≤ 77 * ((k : ℝ) ^ 2 * (Fintype.card κ : ℝ) * Real.sqrt (Fintype.card κ) / Real.sqrt ε) := by
+  have hK1 : (1:ℝ) ≤ (Fintype.card κ : ℝ) := by
+    exact_mod_cast (Fintype.card_pos : 0 < Fintype.card κ)
+  have hk : (1:ℝ) ≤ k := by exact_mod_cast hk1
+  have hsK : 1 ≤ Real.sqrt (Fintype.card κ : ℝ) := Real.one_le_sqrt.mpr hK1
+  have he0 : 0 < Real.sqrt ε := Real.sqrt_pos.mpr hε
+  have he1 : Real.sqrt ε ≤ 1 := Real.sqrt_le_one.mpr hε1
+  set u := (k : ℝ) ^ 2 * (Fintype.card κ : ℝ) * Real.sqrt (Fintype.card κ) / Real.sqrt ε with hu
+  have hu1 : 1 ≤ u := by
+    rw [hu, le_div_iff₀ he0]
+    have h1 : 1 ≤ (k : ℝ) ^ 2 := one_le_pow₀ hk
+    have h2 : 1 ≤ (k : ℝ) ^ 2 * (Fintype.card κ : ℝ) := one_le_mul_of_one_le_of_one_le h1 hK1
+    have h3 : 1 ≤ (k : ℝ) ^ 2 * (Fintype.card κ : ℝ) * Real.sqrt (Fintype.card κ) :=
+      one_le_mul_of_one_le_of_one_le h2 hsK
+    linarith
+  have hsq : Real.sqrt (2 * (Fintype.card κ : ℝ) / ε)
+      = Real.sqrt 2 * Real.sqrt (Fintype.card κ) / Real.sqrt ε := by
+    rw [Real.sqrt_div (by positivity), Real.sqrt_mul (by norm_num)]
+  have hkk : (k : ℝ) * (k + 1) ≤ 2 * (k : ℝ) ^ 2 := by nlinarith
+  have hmain : 12 * (k : ℝ) * (k + 1) * (Fintype.card κ : ℝ)
+        * Real.sqrt (2 * (Fintype.card κ : ℝ) / ε) ≤ 36 * u := by
+    rw [hsq]
+    calc 12 * (k : ℝ) * (k + 1) * (Fintype.card κ : ℝ)
+          * (Real.sqrt 2 * Real.sqrt (Fintype.card κ) / Real.sqrt ε)
+        = 12 * ((k : ℝ) * (k + 1)) * (Fintype.card κ : ℝ)
+          * (Real.sqrt 2 * Real.sqrt (Fintype.card κ) / Real.sqrt ε) := by ring
+      _ ≤ 12 * (2 * (k : ℝ) ^ 2) * (Fintype.card κ : ℝ)
+          * (3 / 2 * Real.sqrt (Fintype.card κ) / Real.sqrt ε) := by
+        gcongr
+        exact sqrt_two_le_three_halves
+      _ = 36 * u := by rw [hu]; ring
+  have hceil := Nat.ceil_lt_add_one (show 0 ≤ 12 * (k : ℝ) * (k + 1) * (Fintype.card κ : ℝ)
+      * Real.sqrt (2 * (Fintype.card κ : ℝ) / ε) by positivity)
+  have hZ : (univZ κ k ε : ℝ)
+      = (⌈12 * (k : ℝ) * (k + 1) * (Fintype.card κ : ℝ)
+          * Real.sqrt (2 * (Fintype.card κ : ℝ) / ε)⌉₊ : ℝ) + 1 := by
+    rw [univZ]; push_cast; ring
+  rw [hZ]
+  linarith
+
+omit [DecidableEq κ] in
+/-- Множитель ключа: `2Z_λ + 1 ≤ 59·k²√K√k/√ε` (как действительное число). -/
+lemma two_univZk_succ_le [Nonempty κ] {k : ℕ} (hk1 : 1 ≤ k) {ε : ℝ} (hε : 0 < ε) (hε1 : ε ≤ 1) :
+    2 * (univZk κ k ε : ℝ) + 1
+      ≤ 59 * ((k : ℝ) ^ 2 * Real.sqrt (Fintype.card κ) * Real.sqrt k / Real.sqrt ε) := by
+  have hK1 : (1:ℝ) ≤ (Fintype.card κ : ℝ) := by
+    exact_mod_cast (Fintype.card_pos : 0 < Fintype.card κ)
+  have hk : (1:ℝ) ≤ k := by exact_mod_cast hk1
+  have hsK : 1 ≤ Real.sqrt (Fintype.card κ : ℝ) := Real.one_le_sqrt.mpr hK1
+  have hsk : 1 ≤ Real.sqrt (k : ℝ) := Real.one_le_sqrt.mpr hk
+  have he0 : 0 < Real.sqrt ε := Real.sqrt_pos.mpr hε
+  have he1 : Real.sqrt ε ≤ 1 := Real.sqrt_le_one.mpr hε1
+  set v := (k : ℝ) ^ 2 * Real.sqrt (Fintype.card κ) * Real.sqrt k / Real.sqrt ε with hv
+  have hvk : (k : ℝ) ≤ v := by
+    rw [hv, le_div_iff₀ he0]
+    have h1 : (k : ℝ) ≤ (k : ℝ) ^ 2 := le_self_pow₀ hk (by norm_num)
+    have h2 : (k : ℝ) ^ 2 ≤ (k : ℝ) ^ 2 * Real.sqrt (Fintype.card κ) :=
+      le_mul_of_one_le_right (by positivity) hsK
+    have h3 : (k : ℝ) ^ 2 * Real.sqrt (Fintype.card κ)
+        ≤ (k : ℝ) ^ 2 * Real.sqrt (Fintype.card κ) * Real.sqrt k :=
+      le_mul_of_one_le_right (by positivity) hsk
+    have h4 : (k : ℝ) * Real.sqrt ε ≤ (k : ℝ) := mul_le_of_le_one_right (by positivity) he1
+    linarith
+  have hsq : Real.sqrt ((k : ℝ) * (4 + ε) / ε)
+      = Real.sqrt k * Real.sqrt (4 + ε) / Real.sqrt ε := by
+    rw [Real.sqrt_div (by positivity), Real.sqrt_mul (by positivity)]
+  have hmain : 12 * (k : ℝ) ^ 2 * Real.sqrt (Fintype.card κ)
+        * Real.sqrt ((k : ℝ) * (4 + ε) / ε) ≤ 27 * v := by
+    rw [hsq]
+    calc 12 * (k : ℝ) ^ 2 * Real.sqrt (Fintype.card κ)
+          * (Real.sqrt k * Real.sqrt (4 + ε) / Real.sqrt ε)
+        ≤ 12 * (k : ℝ) ^ 2 * Real.sqrt (Fintype.card κ)
+          * (Real.sqrt k * (9 / 4) / Real.sqrt ε) := by
+            gcongr
+            exact sqrt_four_add_le hε1
+      _ = 27 * v := by rw [hv]; ring
+  have hceil := Int.ceil_lt_add_one (12 * (k : ℝ) ^ 2 * Real.sqrt (Fintype.card κ)
+      * Real.sqrt ((k : ℝ) * (4 + ε) / ε))
+  have hZ : (univZk κ k ε : ℝ)
+      = (⌈12 * (k : ℝ) ^ 2 * Real.sqrt (Fintype.card κ)
+          * Real.sqrt ((k : ℝ) * (4 + ε) / ε)⌉ : ℝ) + k := by
+    rw [univZk]; push_cast; ring
+  rw [hZ]
+  linarith
+
+omit [DecidableEq κ] in
+lemma univZk_nonneg [Nonempty κ] (k : ℕ) (ε : ℝ) : (0:ℤ) ≤ univZk κ k ε := by
+  rw [univZk]
+  have : (0:ℤ) ≤ ⌈12 * (k : ℝ) ^ 2 * Real.sqrt (Fintype.card κ) * Real.sqrt (k * (4 + ε) / ε)⌉ :=
+    Int.ceil_nonneg (by positivity)
+  omega
+
+omit [DecidableEq κ] in
+lemma cast_toNat_two_univZk [Nonempty κ] (k : ℕ) (ε : ℝ) :
+    ((((2 * univZk κ k ε + 1).toNat : ℕ) : ℝ)) = 2 * (univZk κ k ε : ℝ) + 1 := by
+  have h0 := univZk_nonneg (κ := κ) k ε
+  have h1 : (((2 * univZk κ k ε + 1).toNat : ℕ) : ℤ) = 2 * univZk κ k ε + 1 :=
+    Int.toNat_of_nonneg (by omega)
+  have := congrArg (fun z : ℤ => (z : ℝ)) h1
+  push_cast at this
+  exact this
+
+omit [DecidableEq κ] in
+/-- `(2Z + 1)(2Z_λ + 1) ≤ 5000·K²·k⁴·√k/ε` для радиусов Определения 5.12 (`0 < ε ≤ 1`). -/
+lemma univZ_mul_univZk_le [Nonempty κ] {k : ℕ} (hk1 : 1 ≤ k) {ε : ℝ} (hε : 0 < ε) (hε1 : ε ≤ 1) :
+    (2 * (univZ κ k ε : ℝ) + 1) * ((((2 * univZk κ k ε + 1).toNat : ℕ) : ℝ))
+      ≤ 5000 * (Fintype.card κ : ℝ) ^ 2 * ((k : ℝ) ^ 4 * Real.sqrt k) / ε := by
+  rw [cast_toNat_two_univZk (κ := κ) k ε]
+  have h1 := two_univZ_succ_le (κ := κ) hk1 hε hε1
+  have h2 := two_univZk_succ_le (κ := κ) hk1 hε hε1
+  have h20 : 0 ≤ 2 * (univZk κ k ε : ℝ) + 1 := by
+    have : (0:ℝ) ≤ (univZk κ k ε : ℝ) := by exact_mod_cast univZk_nonneg (κ := κ) k ε
+    linarith
+  have hprod := mul_le_mul h1 h2 h20 (by positivity)
+  refine le_trans hprod ?_
+  have hK0 : 0 ≤ (Fintype.card κ : ℝ) := by positivity
+  have hsK := Real.mul_self_sqrt hK0
+  have hse := Real.mul_self_sqrt hε.le
+  have hX : 77 * ((k : ℝ) ^ 2 * (Fintype.card κ : ℝ) * Real.sqrt (Fintype.card κ) / Real.sqrt ε)
+        * (59 * ((k : ℝ) ^ 2 * Real.sqrt (Fintype.card κ) * Real.sqrt k / Real.sqrt ε))
+      = 4543 * (Fintype.card κ : ℝ) * (Real.sqrt (Fintype.card κ) * Real.sqrt (Fintype.card κ))
+        * ((k : ℝ) ^ 4 * Real.sqrt k) / (Real.sqrt ε * Real.sqrt ε) := by ring
+  rw [hX, hsK, hse]
+  have : 0 ≤ (Fintype.card κ : ℝ) ^ 2 * ((k : ℝ) ^ 4 * Real.sqrt k) / ε := by positivity
+  have e1 : 4543 * (Fintype.card κ : ℝ) * (Fintype.card κ : ℝ) * ((k : ℝ) ^ 4 * Real.sqrt k) / ε
+      = 4543 * ((Fintype.card κ : ℝ) ^ 2 * ((k : ℝ) ^ 4 * Real.sqrt k) / ε) := by ring
+  have e2 : 5000 * (Fintype.card κ : ℝ) ^ 2 * ((k : ℝ) ^ 4 * Real.sqrt k) / ε
+      = 5000 * ((Fintype.card κ : ℝ) ^ 2 * ((k : ℝ) ^ 4 * Real.sqrt k) / ε) := by ring
+  rw [e1, e2]
+  linarith
+
+omit [DecidableEq κ] in
+/-- `B + 1 ≤ (2Z_λ+1)^K·15k²/ε` для числа ключей коробки Определения 5.12. -/
+lemma univBoxBound_succ_le [Nonempty κ] {k : ℕ} (hk1 : 1 ≤ k) {ε : ℝ} (hε : 0 < ε)
+    (hε1 : ε ≤ 1) :
+    ((univBoxBound κ k ε : ℕ) : ℝ) + 1
+      ≤ ((((2 * univZk κ k ε + 1).toNat : ℕ) : ℝ)) ^ Fintype.card κ * (15 * (k : ℝ) ^ 2 / ε) := by
+  have hk : (1:ℝ) ≤ k := by exact_mod_cast hk1
+  have hA1 : 1 ≤ ((((2 * univZk κ k ε + 1).toNat : ℕ) : ℝ)) := by
+    rw [cast_toNat_two_univZk (κ := κ) k ε]
+    have : (0:ℝ) ≤ (univZk κ k ε : ℝ) := by exact_mod_cast univZk_nonneg (κ := κ) k ε
+    linarith
+  have hq0 : (0:ℤ) ≤ univZq k ε := by
+    rw [univZq]; exact Int.ceil_nonneg (by positivity)
+  have hqc : (((univZq k ε + 1).toNat : ℕ) : ℝ) = (univZq k ε : ℝ) + 1 := by
+    have h1 : (((univZq k ε + 1).toNat : ℕ) : ℤ) = univZq k ε + 1 := Int.toNat_of_nonneg (by omega)
+    have := congrArg (fun z : ℤ => (z : ℝ)) h1
+    push_cast at this
+    exact this
+  have hq : (univZq k ε : ℝ) < (4 + ε) * k / ε + 1 := by
+    rw [univZq]; exact Int.ceil_lt_add_one _
+  have hkε : (k : ℝ) ≤ (k : ℝ) / ε := le_div_self (by positivity) hε hε1
+  have hkε1 : (1 : ℝ) ≤ (k : ℝ) / ε := le_trans hk hkε
+  have hsplit : (4 + ε) * k / ε = 4 * ((k : ℝ) / ε) + k := by field_simp
+  have h1 : (univZq k ε : ℝ) + 1 ≤ 7 * ((k : ℝ) / ε) := by
+    rw [hsplit] at hq; linarith
+  have h2 : (k : ℝ) + 1 ≤ 2 * k := by linarith
+  have hq1 : (0:ℝ) ≤ (univZq k ε : ℝ) + 1 := by
+    have : (0:ℝ) ≤ (univZq k ε : ℝ) := by exact_mod_cast hq0
+    linarith
+  have hqk : ((univZq k ε : ℝ) + 1) * ((k : ℝ) + 1) ≤ 14 * (k : ℝ) ^ 2 / ε := by
+    have := mul_le_mul h1 h2 (by positivity) (by positivity)
+    have e : 7 * ((k : ℝ) / ε) * (2 * k) = 14 * (k : ℝ) ^ 2 / ε := by field_simp; ring
+    linarith
+  have hBB : ((univBoxBound κ k ε : ℕ) : ℝ)
+      = ((((2 * univZk κ k ε + 1).toNat : ℕ) : ℝ)) ^ Fintype.card κ
+        * (((univZq k ε : ℝ) + 1) * ((k : ℝ) + 1)) := by
+    rw [univBoxBound]; push_cast; rw [hqc]
+  rw [hBB]
+  set A := ((((2 * univZk κ k ε + 1).toNat : ℕ) : ℝ)) ^ Fintype.card κ with hA
+  have hAK : 1 ≤ A := one_le_pow₀ hA1
+  have hk2 : (1:ℝ) ≤ (k : ℝ) ^ 2 / ε := by
+    have : (1:ℝ) ≤ (k : ℝ) ^ 2 := one_le_pow₀ hk
+    exact le_trans this (le_div_self (by positivity) hε hε1)
+  have h3 := mul_le_mul_of_nonneg_left hqk (by positivity : (0:ℝ) ≤ A)
+  have h4 : 1 ≤ A * ((k : ℝ) ^ 2 / ε) := one_le_mul_of_one_le_of_one_le hAK hk2
+  have e : A * (15 * (k : ℝ) ^ 2 / ε) = A * (14 * (k : ℝ) ^ 2 / ε) + A * ((k : ℝ) ^ 2 / ε) := by
+    ring
+  rw [e]
+  linarith
+
+/-- **Полиномиальная оценка размера семейства Определения 5.12.** При `0 < ε ≤ 1`
+`|C_K| ≤ (J + 1)(M + K)^{3K+1}(5000K²k⁴√k/ε)^K·15k²/ε` — без величин данных, кроме числа `J`
+догадок. -/
+theorem card_univCandidates_poly [Nonempty κ] (m d : ι → ℝ) (B : ι → κ → ℝ) (G : κ → κ → ℝ)
+    {k : ℕ} (hk1 : 1 ≤ k) {ε : ℝ} (hε : 0 < ε) (hε1 : ε ≤ 1) (L : ℝ) (J : ℕ) (La : List ι) :
+    ((univCandidates m d B G k ε L J La).card : ℝ)
+      ≤ ((J : ℝ) + 1) * ((Fintype.card ι : ℝ) + Fintype.card κ) ^ (3 * Fintype.card κ + 1)
+        * (5000 * (Fintype.card κ : ℝ) ^ 2 * ((k : ℝ) ^ 4 * Real.sqrt k) / ε) ^ Fintype.card κ
+        * (15 * (k : ℝ) ^ 2 / ε) := by
+  have hcard := card_univCandidates_le m d B G k ε L J La
+  have hK1 : (1:ℝ) ≤ (Fintype.card κ : ℝ) := by
+    exact_mod_cast (Fintype.card_pos : 0 < Fintype.card κ)
+  have hcast : ((univCandidates m d B G k ε L J La).card : ℝ)
+      ≤ ((J : ℝ) + 1) * (((Fintype.card ι : ℝ) + Fintype.card κ) ^ Fintype.card κ
+        * (((Fintype.card ι : ℝ) + Fintype.card κ) ^ Fintype.card κ
+          * (((Fintype.card ι : ℝ) + 1) ^ (Fintype.card κ + 1)
+            * ((2 * (univZ κ k ε : ℝ) + 1) ^ Fintype.card κ
+              * ((univBoxBound κ k ε : ℝ) + 1))))) := by
+    have := (Nat.cast_le (α := ℝ)).mpr hcard
+    push_cast at this
+    exact this
+  refine le_trans hcast ?_
+  set A : ℝ := ((((2 * univZk κ k ε + 1).toNat : ℕ) : ℝ)) with hAdef
+  set K := Fintype.card κ with hKdef
+  set Mr : ℝ := (Fintype.card ι : ℝ) with hMr
+  set Kr : ℝ := (Fintype.card κ : ℝ) with hKr
+  have hM1 : (Mr + 1) ^ (K + 1) ≤ (Mr + Kr) ^ (K + 1) :=
+    pow_le_pow_left₀ (by positivity) (by linarith) _
+  have hBox : ((univBoxBound κ k ε : ℕ) : ℝ) + 1 ≤ A ^ K * (15 * (k : ℝ) ^ 2 / ε) :=
+    univBoxBound_succ_le (κ := κ) hk1 hε hε1
+  have hZA : (2 * (univZ κ k ε : ℝ) + 1) * A
+      ≤ 5000 * Kr ^ 2 * ((k : ℝ) ^ 4 * Real.sqrt k) / ε :=
+    univZ_mul_univZk_le (κ := κ) hk1 hε hε1
+  have hZ0 : 0 ≤ 2 * (univZ κ k ε : ℝ) + 1 := by positivity
+  have hA0 : 0 ≤ A := by positivity
+  have hpow : (2 * (univZ κ k ε : ℝ) + 1) ^ K * A ^ K
+      ≤ (5000 * Kr ^ 2 * ((k : ℝ) ^ 4 * Real.sqrt k) / ε) ^ K := by
+    rw [← mul_pow]
+    exact pow_le_pow_left₀ (mul_nonneg hZ0 hA0) hZA K
+  have h1 : (2 * (univZ κ k ε : ℝ) + 1) ^ K * ((univBoxBound κ k ε : ℝ) + 1)
+      ≤ (5000 * Kr ^ 2 * ((k : ℝ) ^ 4 * Real.sqrt k) / ε) ^ K * (15 * (k : ℝ) ^ 2 / ε) := by
+    calc (2 * (univZ κ k ε : ℝ) + 1) ^ K * ((univBoxBound κ k ε : ℝ) + 1)
+        ≤ (2 * (univZ κ k ε : ℝ) + 1) ^ K * (A ^ K * (15 * (k : ℝ) ^ 2 / ε)) :=
+          mul_le_mul_of_nonneg_left hBox (by positivity)
+      _ = (2 * (univZ κ k ε : ℝ) + 1) ^ K * A ^ K * (15 * (k : ℝ) ^ 2 / ε) := by ring
+      _ ≤ _ := mul_le_mul_of_nonneg_right hpow (by positivity)
+  have h3 : (Mr + 1) ^ (K + 1) * ((2 * (univZ κ k ε : ℝ) + 1) ^ K
+        * ((univBoxBound κ k ε : ℝ) + 1))
+      ≤ (Mr + Kr) ^ (K + 1) * ((5000 * Kr ^ 2 * ((k : ℝ) ^ 4 * Real.sqrt k) / ε) ^ K
+        * (15 * (k : ℝ) ^ 2 / ε)) :=
+    mul_le_mul hM1 h1 (by positivity) (by positivity)
+  have h4 := mul_le_mul_of_nonneg_left h3 (by positivity : (0:ℝ) ≤ (Mr + Kr) ^ K)
+  have h5 := mul_le_mul_of_nonneg_left h4 (by positivity : (0:ℝ) ≤ (Mr + Kr) ^ K)
+  have h6 := mul_le_mul_of_nonneg_left h5 (by positivity : (0:ℝ) ≤ (J : ℝ) + 1)
+  refine le_trans h6 (le_of_eq ?_)
+  rw [show 3 * K + 1 = K + K + (K + 1) by ring, pow_add, pow_add]
+  ring
+
+end UnivPoly
+
+section DeltaForm
+
+variable {ι κ : Type*} [Fintype ι] [Fintype κ] [DecidableEq ι] [DecidableEq κ]
+variable {m d : ι → ℝ} {B : ι → κ → ℝ} {Sf P G : κ → κ → ℝ}
+
+/-- `ε = δ − δ²/2` даёт `√(1 − 2ε) = 1 − δ`. -/
+lemma sqrt_one_sub_two_eps_delta {δ : ℝ} (hδ1 : δ ≤ 1) :
+    Real.sqrt (1 - 2 * (δ - δ ^ 2 / 2)) = 1 - δ := by
+  have : 1 - 2 * (δ - δ ^ 2 / 2) = (1 - δ) ^ 2 := by ring
+  rw [this, Real.sqrt_sq (by linarith)]
+
+/-- **Main Theorem в форме `1 − δ`.** Семейство Определения 5.12 с `ε = δ − δ²/2` и догадками
+`Φ·2^j`, `j ≤ J = ⌈log₂(k + 1)⌉`: размер не больше
+`(J + 1)(M + K)^{3K+1}(10000K²k⁴√k/δ)^K·30k²/δ`, у каждого члена не больше `k` имён, лучшая пара
+существует, и для любой лучшей пары полностью инвестированный портфель имеет коэффициент Шарпа
+не меньше `1 − δ` от коэффициента Шарпа любого long-only портфеля с не более чем `k` именами. -/
+theorem main_theorem_univ_delta [Nonempty κ] (hd : ∀ i, 0 < d i)
+    (hG : ∀ j j', ∑ l, G l j * G l j' = P j j')
+    (hPS : ∀ j j', ∑ l, P j l * Sf l j' = if j = j' then 1 else 0)
+    {k : ℕ} (hk1 : 1 ≤ k) {δ V : ℝ} (hδ : 0 < δ) (hδ1 : δ < 1) (hV0 : 0 < V)
+    (hVatt : ∃ T : Finset ι, T.card ≤ min k (Fintype.card κ + 1) ∧ ∃ u : ι → ℝ,
+      (∀ i ∈ T, 0 ≤ u i) ∧ objLO m d B Sf T u = V)
+    (hVub : ∀ T : Finset ι, T.card ≤ min k (Fintype.card κ + 1) → ∀ u : ι → ℝ,
+      (∀ i ∈ T, 0 ≤ u i) → objLO m d B Sf T u ≤ V)
+    {J : ℕ} (hJ : J = Nat.clog 2 (k + 1))
+    {La : List ι} (hnd : La.Nodup) (hall : ∀ i, i ∈ La) :
+    ((univCandidates m d B G k (δ - δ ^ 2 / 2) V J La).card : ℝ)
+        ≤ ((J : ℝ) + 1) * ((Fintype.card ι : ℝ) + Fintype.card κ) ^ (3 * Fintype.card κ + 1)
+          * (10000 * (Fintype.card κ : ℝ) ^ 2 * ((k : ℝ) ^ 4 * Real.sqrt k) / δ) ^ Fintype.card κ
+          * (30 * (k : ℝ) ^ 2 / δ)
+    ∧ (∀ W ∈ univCandidates m d B G k (δ - δ ^ 2 / 2) V J La, W.card ≤ k)
+    ∧ (∃ R₀ ∈ univCandidates m d B G k (δ - δ ^ 2 / 2) V J La, ∃ w₀ : ι → ℝ,
+        (∀ i ∈ R₀, 0 ≤ w₀ i) ∧
+        ∀ R ∈ univCandidates m d B G k (δ - δ ^ 2 / 2) V J La, ∀ w : ι → ℝ,
+          (∀ i ∈ R, 0 ≤ w i) → objLO m d B Sf R w ≤ objLO m d B Sf R₀ w₀)
+    ∧ ∀ R₀ ∈ univCandidates m d B G k (δ - δ ^ 2 / 2) V J La, ∀ w₀ : ι → ℝ,
+        (∀ i ∈ R₀, 0 ≤ w₀ i) →
+        (∀ R ∈ univCandidates m d B G k (δ - δ ^ 2 / 2) V J La, ∀ w : ι → ℝ,
+          (∀ i ∈ R, 0 ≤ w i) → objLO m d B Sf R w ≤ objLO m d B Sf R₀ w₀) →
+        R₀.card ≤ k
+        ∧ (∀ i ∈ R₀, 0 ≤ (∑ j ∈ R₀, w₀ j)⁻¹ * w₀ i)
+        ∧ ∑ i ∈ R₀, (∑ j ∈ R₀, w₀ j)⁻¹ * w₀ i = 1
+        ∧ ∀ S' : Finset ι, S'.card ≤ k → ∀ u : ι → ℝ, (∀ i ∈ S', 0 ≤ u i) →
+            0 < pRet m S' u →
+            (1 - δ) * sharpe m d B Sf S' u
+              ≤ sharpe m d B Sf R₀ (fun i => (∑ j ∈ R₀, w₀ j)⁻¹ * w₀ i) := by
+  have hεeq : δ - δ ^ 2 / 2 = δ * (1 - δ / 2) := by ring
+  have hε : 0 < δ - δ ^ 2 / 2 := by rw [hεeq]; exact mul_pos hδ (by linarith)
+  have hsq : 0 < (1 - δ) ^ 2 := pow_pos (by linarith) 2
+  have hε1 : 2 * (δ - δ ^ 2 / 2) < 1 := by
+    have : 1 - 2 * (δ - δ ^ 2 / 2) = (1 - δ) ^ 2 := by ring
+    linarith
+  have hδδ : δ ^ 2 ≤ δ := by
+    have := mul_le_mul_of_nonneg_left hδ1.le hδ.le
+    nlinarith
+  have hεδ : δ / 2 ≤ δ - δ ^ 2 / 2 := by linarith
+  have hεle : δ - δ ^ 2 / 2 ≤ 1 := by linarith
+  obtain ⟨-, h2, h3, h4⟩ := main_theorem_univ_sp (m := m) (d := d) (B := B) (Sf := Sf)
+    (P := P) (G := G) hd hG hPS hk1 hε hε1 hV0 hVatt hVub hJ hnd hall
+  refine ⟨?_, h2, h3, fun R₀ hR₀ w₀ hw₀ hbest => ?_⟩
+  · refine le_trans (card_univCandidates_poly (κ := κ) m d B G hk1 hε hεle V J La) ?_
+    have hinv : 1 / (δ - δ ^ 2 / 2) ≤ 2 / δ := by
+      rw [div_le_div_iff₀ hε hδ]; linarith
+    have hA : 5000 * (Fintype.card κ : ℝ) ^ 2 * ((k : ℝ) ^ 4 * Real.sqrt k) / (δ - δ ^ 2 / 2)
+        ≤ 10000 * (Fintype.card κ : ℝ) ^ 2 * ((k : ℝ) ^ 4 * Real.sqrt k) / δ := by
+      have := mul_le_mul_of_nonneg_left hinv
+        (by positivity : (0:ℝ) ≤ 5000 * (Fintype.card κ : ℝ) ^ 2 * ((k : ℝ) ^ 4 * Real.sqrt k))
+      calc _ = 5000 * (Fintype.card κ : ℝ) ^ 2 * ((k : ℝ) ^ 4 * Real.sqrt k)
+            * (1 / (δ - δ ^ 2 / 2)) := by ring
+        _ ≤ 5000 * (Fintype.card κ : ℝ) ^ 2 * ((k : ℝ) ^ 4 * Real.sqrt k) * (2 / δ) := this
+        _ = _ := by ring
+    have hB : 15 * (k : ℝ) ^ 2 / (δ - δ ^ 2 / 2) ≤ 30 * (k : ℝ) ^ 2 / δ := by
+      have := mul_le_mul_of_nonneg_left hinv (by positivity : (0:ℝ) ≤ 15 * (k : ℝ) ^ 2)
+      calc _ = 15 * (k : ℝ) ^ 2 * (1 / (δ - δ ^ 2 / 2)) := by ring
+        _ ≤ 15 * (k : ℝ) ^ 2 * (2 / δ) := this
+        _ = _ := by ring
+    have hA0 : 0 ≤ 5000 * (Fintype.card κ : ℝ) ^ 2 * ((k : ℝ) ^ 4 * Real.sqrt k)
+        / (δ - δ ^ 2 / 2) := by positivity
+    have hApow := pow_le_pow_left₀ hA0 hA (Fintype.card κ)
+    have hpre : (0:ℝ) ≤ ((J : ℝ) + 1)
+        * ((Fintype.card ι : ℝ) + Fintype.card κ) ^ (3 * Fintype.card κ + 1) := by positivity
+    have h1 := mul_le_mul hApow hB (by positivity) (by positivity)
+    have h2 := mul_le_mul_of_nonneg_left h1 hpre
+    calc _ = ((J : ℝ) + 1) * ((Fintype.card ι : ℝ) + Fintype.card κ) ^ (3 * Fintype.card κ + 1)
+          * ((5000 * (Fintype.card κ : ℝ) ^ 2 * ((k : ℝ) ^ 4 * Real.sqrt k)
+            / (δ - δ ^ 2 / 2)) ^ Fintype.card κ * (15 * (k : ℝ) ^ 2 / (δ - δ ^ 2 / 2))) := by ring
+      _ ≤ _ := h2
+      _ = _ := by ring
+  · obtain ⟨hcard, -, hx0, hx1, hsh⟩ := h4 R₀ hR₀ w₀ hw₀ hbest
+    refine ⟨hcard, hx0, hx1, fun S' hS' u hu hru => ?_⟩
+    have := hsh S' hS' u hu hru
+    rwa [sqrt_one_sub_two_eps_delta hδ1.le] at this
+
+/-- **Пример (Main Theorem в форме `1 − δ`).** Данные `univ_instance_two` (`K = 2`, `k = 2`,
+`m = d = 1`, `B_i = (1, 0)`, `Σ_f = I`) с `δ = 1/5`: `Φ = 2/3`, `J = ⌈log₂ 3⌉`; полностью
+инвестированный портфель лучшей пары имеет коэффициент Шарпа не меньше `4/5` от коэффициента
+Шарпа оптимального портфеля `(1/3, 1/3)`. -/
+theorem univ_instance_two_delta :
+    ∃ R₀ ∈ univCandidates twoOnes twoOnes twoBK k2I 2 (1 / 5 - (1 / 5) ^ 2 / 2) (2 / 3)
+        (Nat.clog 2 (2 + 1)) [0, 1],
+      ∃ x : Fin 2 → ℝ, (∀ i ∈ R₀, 0 ≤ x i) ∧ ∑ i ∈ R₀, x i = 1 ∧
+        (1 - 1 / 5) * sharpe twoOnes twoOnes twoBK k2I Finset.univ (fun _ => 1 / 3)
+          ≤ sharpe twoOnes twoOnes twoBK k2I R₀ x := by
+  have hd : ∀ i, 0 < twoOnes i := fun _ => one_pos
+  have hG : ∀ j j' : Fin 2, ∑ l : Fin 2, k2I l j * k2I l j' = k2I j j' := by
+    intro j j'; fin_cases j <;> fin_cases j' <;> simp [k2I]
+  have hPS : ∀ j j' : Fin 2, ∑ l : Fin 2, k2I j l * k2I l j' = if j = j' then 1 else 0 := by
+    intro j j'; fin_cases j <;> fin_cases j' <;> simp [k2I]
+  have hobj : objLO twoOnes twoOnes twoBK k2I Finset.univ (fun _ => 1 / 3) = 2 / 3 := by
+    simp [objLO, Vmat, twoOnes, twoBK, k2I, Fin.sum_univ_two]; norm_num
+  obtain ⟨-, -, -, hub, -⟩ := univ_instance_two_small
+  have hVatt : ∃ T : Finset (Fin 2), T.card ≤ min 2 (Fintype.card (Fin 2) + 1) ∧
+      ∃ u : Fin 2 → ℝ, (∀ i ∈ T, 0 ≤ u i) ∧ objLO twoOnes twoOnes twoBK k2I T u = 2 / 3 :=
+    ⟨Finset.univ, by simp, fun _ => 1 / 3, fun _ _ => by norm_num, hobj⟩
+  have hVub : ∀ T : Finset (Fin 2), T.card ≤ min 2 (Fintype.card (Fin 2) + 1) →
+      ∀ u : Fin 2 → ℝ, (∀ i ∈ T, 0 ≤ u i) → objLO twoOnes twoOnes twoBK k2I T u ≤ 2 / 3 :=
+    fun T hT u hu => hub T (le_trans hT (min_le_left _ _)) u hu
+  have hnd : ([0, 1] : List (Fin 2)).Nodup := by decide
+  have hall : ∀ i : Fin 2, i ∈ ([0, 1] : List (Fin 2)) := by decide
+  obtain ⟨_, _, ⟨R₀, hR₀, w₀, hw₀, hbest⟩, hall4⟩ := main_theorem_univ_delta (m := twoOnes)
+    (d := twoOnes) (B := twoBK) (Sf := k2I) (P := k2I) (G := k2I) hd hG hPS (k := 2)
+    (by norm_num) (δ := 1 / 5) (by norm_num) (by norm_num) (by norm_num : (0:ℝ) < 2 / 3)
+    hVatt hVub rfl hnd hall
+  obtain ⟨_, hx0, hx1, hsh⟩ := hall4 R₀ hR₀ w₀ hw₀ hbest
+  refine ⟨R₀, hR₀, _, hx0, hx1, ?_⟩
+  exact hsh Finset.univ (by simp) (fun _ => 1 / 3) (fun _ _ => by norm_num)
+    (by simp [pRet, twoOnes])
+
+end DeltaForm
+
 end SparseSharpe.Factor

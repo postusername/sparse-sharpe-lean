@@ -1345,3 +1345,15 @@ open SparseSharpe SparseSharpe.OneFactor
 #print axioms SparseSharpe.Factor.univ_instance_two_sp
 #print axioms SparseSharpe.Factor.ls_instance_sp
 #print axioms SparseSharpe.Factor.clipped_instance_helly
+#print axioms SparseSharpe.Factor.sqrt_two_le_three_halves
+#print axioms SparseSharpe.Factor.sqrt_four_add_le
+#print axioms SparseSharpe.Factor.two_univZ_succ_le
+#print axioms SparseSharpe.Factor.two_univZk_succ_le
+#print axioms SparseSharpe.Factor.univZk_nonneg
+#print axioms SparseSharpe.Factor.cast_toNat_two_univZk
+#print axioms SparseSharpe.Factor.univZ_mul_univZk_le
+#print axioms SparseSharpe.Factor.univBoxBound_succ_le
+#print axioms SparseSharpe.Factor.card_univCandidates_poly
+#print axioms SparseSharpe.Factor.sqrt_one_sub_two_eps_delta
+#print axioms SparseSharpe.Factor.main_theorem_univ_delta
+#print axioms SparseSharpe.Factor.univ_instance_two_delta
