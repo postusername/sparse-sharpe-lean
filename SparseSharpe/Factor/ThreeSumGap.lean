@@ -21,7 +21,7 @@ set_option linter.style.header false
   решает 3SUM' (`threesum_decide`). Факторы с нулевыми нагрузками ничего не меняют
   (`objLO_padZero`), так что то же при любом числе факторов `K ≥ 3` (`threesum_decide_pad`).
 
-Вывод о времени (при гипотезе 3SUM алгоритм с временем `O(M^{2−δ})` невозможен) — вне Lean.
+Вывод о времени (алгоритм за `T(M)` решает 3SUM за `T(3n) + O(n)`) — вне Lean.
 -/
 
 namespace SparseSharpe.Factor

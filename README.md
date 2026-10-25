@@ -30,6 +30,14 @@ checksums of the numerical experiments of Sections 5.4–5.6 and 7 of the paper;
 them and `make tables` rebuilds every table and figure of Section 7 and the numbers of the text (see
 [experiments/README.md](experiments/README.md)).
 
+## Version 0.30: 3SUM-hardness instead of a conditional lower bound
+
+No new Lean statements. Alman and Vassilevska Williams (arXiv:2610.06783, 2026) refuted the 3SUM hypothesis with a
+deterministic algorithm of time `O(n^{1.9992})` for integers of polynomial size. Proposition 5.20 (`threesum_decide`,
+`threesum_decide_pad`) is an unconditional reduction and stays as it is, but the paper now reads it as 3SUM-hardness: for
+`K ≥ 3` and `k = 3`, an algorithm that approximates the optimum within `1 − ε`, `ε < 2/3`, in time `T(M)` solves 3SUM in
+time `T(3n) + O(n)`, so a near-linear scheme without `ω` would give a near-linear algorithm for 3SUM.
+
 ## Version 0.29: no `ω` at all — Helly's theorem for the guesses
 
 New file `Factor/HellyGuess`. With `Φ` the best value of a support with at most `min(k, K + 1)` names,
@@ -62,8 +70,9 @@ depend on `M` and depends on the data only through logarithms (the theorems are 
 reduces any `Σ_f` to it). For `K ≥ 2` and `k = 2` a scheme that reads the assets once must keep `n^{K−1}` assets on explicit
 instances with `M = n^{K−1} + 1` and `ω ≤ 8Kn²/(1−ε)` (`lb_count`), which the kernel matches up to the factor `N_σ`. For `K ≥ 3` an instance of 3SUM' (are there `a + b = c` in three lists of integers?)
 becomes a problem with `k = 3` whose optimum is `3` if the answer is yes and at most `1` otherwise, with or without short
-sales; so under the 3SUM hypothesis no algorithm is subquadratic in `M` without depending on `ω` (the running-time
-conclusion is not formalized).
+sales; so an algorithm that approximates the optimum in time `T(M)` solves 3SUM in time `T(3n) + O(n)` (the
+running-time conclusion is not formalized). The 3SUM hypothesis itself was refuted by Alman and Vassilevska Williams
+(arXiv:2610.06783, 2026), so since version 0.30 the paper states this as 3SUM-hardness, not as a lower bound.
 
 | Paper (v0.28) | Declaration | File |
 |---|---|---|
