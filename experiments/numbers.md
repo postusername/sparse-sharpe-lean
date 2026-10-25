@@ -17,11 +17,12 @@ where: A = paper A (leverage-free approximation), B = paper B (the certificate a
 | test passes (dual point of greedy with exchanges) | 27 of 56 | B 6.2 |
 | largest certificate gap 1 - F_h/G* | 1.23% | B 6.2, Introduction |
 | largest number of B&B nodes | 109 | B 6.2, Introduction |
-| largest time, k=5 (s) | 1.2 | B 6.2 |
-| largest time, k=10 (s) | 2.5 | B 6.2 |
-| largest time, k=20 (s) | 6.5 | B 6.2 |
-| largest time, k=50 (s) | 39.8 | B 6.2, Introduction |
-| share of the exchanges in the largest time | 75% | B 6.2 |
+| largest time of the procedure, k=5 (s) | 1.0 | B 6.2 |
+| largest time of the procedure, k=10 (s) | 1.9 | B 6.2 |
+| largest time of the procedure, k=20 (s) | 4.9 | B 6.2 |
+| largest time of the procedure, k=50 (s) | 30.6 | B 6.2, Introduction |
+| largest time of the procedure, k <= 20 (s) | 4.9 | B 6.2 |
+| share of greedy selection with exchanges in the largest time of the procedure | 98% | B 6.2 |
 | largest number of supports (log10, at most k names) | 101.6 | B 6.2 |
 | greedy with exchanges not optimal in | Russell-K10 k=20: B&B improves the SR by 0.007%; Russell-K10 k=50: B&B improves the SR by 0.014% | B 6.2 |
 | test passes with one factor | 15 of 17 | B 6.2 |
@@ -106,6 +107,10 @@ where: A = paper A (leverage-free approximation), B = paper B (the certificate a
 | stress at scale, M=2000: total time (greedy with exchanges + relaxation + B&B), median and largest over K and k | 1.78 s, 47.7 s | B 6.4 |
 | stress at scale: largest total time (M, K) | 47.7 s (M=2000, K=3) | B 6.4, Introduction, Conclusion |
 | stress at scale: largest median total time per (M, K) | 3.41 s (M=2000, K=3) | B 6.4, Introduction |
+| MIQP Gurobi (perspective), M=50: instances solved; median and largest time (s) | 27 of 27; 0.07, 1.0 | B 6.4 |
+| MIQP SCIP (perspective), M=2000: solved, time range of the solved (s); at the time limit, its gap; aborted (exit code -6) | 5 of 9, 2.4..159; 1, 3.7%; 3 | B 6.4 |
+| localized nodes where the certificate fails (coordinatewise bound): K=1 values; K=2 and K=3 median and largest | 26/27; $3.9\cdot 10^{4}$, $4.9\cdot 10^{5}$; $2.6\cdot 10^{7}$, $2.4\cdot 10^{9}$ | B 6.4, Conclusion |
+| stress at scale: nu = 1 + k omega (min..max) | 29.2..191.0 | B 6.4 |
 | MIQP persp_gurobi, M=50: branch and bound faster in | 22 of 27 | B 6.4 |
 | MIQP persp_scip, M=50: branch and bound faster in | 27 of 27 | B 6.4 |
 | MIQP persp_scip, M=200: branch and bound faster in | 27 of 27 | B 6.4 |
@@ -117,6 +122,7 @@ where: A = paper A (leverage-free approximation), B = paper B (the certificate a
 | coarsening by c: worst F_best/F* over the 4 instances, c = 1, 3, 10, 30, 100, 300, 1000, 3000 | 1.000000, 0.999997, 0.993704, 0.987333, 0.653424, 0.653424, 0.653424, 0.653424 | A D.6 |
 | coarsening by c>=100: largest loss per instance (min..max); below 1-2eps = 0.9 in | 4.2%..34.7%; 2 of 4 | A D.6 |
 | checks: defect identity, largest error; cases of the guarantee at one node and violations | 5.8e-11; 299 + 200 cases, 0 violations | A D.6 |
+| checks: the estimates at a node, largest ratios of the two sides | a/(ν‖Gδ‖²) <= 1.0000 ; D/(ν²‖Gδ‖²) <= 1.0000 ; (F−obj)/((ν−1)a) <= 1.0000 | A D.6 |
 | node ratio loss/bound: pairs; median per displacement; largest | 4500; 0.104, 0.0834, 0.0521; 0.9996 | A D.6 |
 | relaxation: instances with a vertex, of the plan; |T|<=k+K; F_LO(T)>=G* up to the tolerance | 71 of 74; 71; 71 | B 6.6 |
 | relaxation: largest (G*-F_LO(T))/G*; F_LO(T) > G* by more than 0.1% in | 3.0e-06; 28 | B 6.6 |

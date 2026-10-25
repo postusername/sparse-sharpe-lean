@@ -89,6 +89,13 @@ def real_optima():
 
 
 # ------------------------------------------------------------------------- real data, B Table 6.2 and the text
+def proc_time(x):
+    """The time of the procedure of paper B on a real instance: greedy selection with exchanges, the relaxation and
+    branch and bound (t_total of e40_realdata.py also contains a separate run of greedy selection without exchanges,
+    made only to report its fraction)."""
+    return x['t_swap'] + x['t_relax'] + x['bnb_time']
+
+
 def real_instances():
     R = [r for r in jl(os.path.join(RES, 'E40', 'instances.jsonl')) if r.get('binding')]
     allr = jl(os.path.join(RES, 'E40', 'instances.jsonl'))
@@ -109,7 +116,7 @@ def real_instances():
             lines.append('%s & %d & %d & %s\\\\' % (label, K, nlo, ' & '.join(cells)))
         times = []
         for k in (5, 10, 20, 50):
-            ts = [x['t_total'] for x in R if x['universe'] == uni and x['k'] == k]
+            ts = [proc_time(x) for x in R if x['universe'] == uni and x['k'] == k]
             times.append(('%.1f' % max(ts) if max(ts) < 10 else '%.0f' % max(ts)) if ts else '---')
         lines.append('& \\multicolumn{2}{r}{time, s} & %s\\\\' % ' & '.join(times))
         lines.append('\\midrule')
@@ -123,9 +130,11 @@ def real_instances():
     num('largest certificate gap 1 - F_h/G*', '%.2f%%' % (100 * max(gaps)), 'B 6.2, Introduction')
     num('largest number of B&B nodes', max(r['bnb_nodes'] for r in R), 'B 6.2, Introduction')
     for kk in (5, 10, 20, 50):
-        ts = [r['t_total'] for r in R if r['k'] == kk]
-        num('largest time, k=%d (s)' % kk, '%.1f' % max(ts), 'B 6.2' + (', Introduction' if kk == 50 else ''))
-    num('share of the exchanges in the largest time', '%.0f%%' % (100 * max(R, key=lambda r: r['t_total'])['t_swap'] / max(r['t_total'] for r in R)), 'B 6.2')
+        ts = [proc_time(r) for r in R if r['k'] == kk]
+        num('largest time of the procedure, k=%d (s)' % kk, '%.1f' % max(ts), 'B 6.2' + (', Introduction' if kk == 50 else ''))
+    num('largest time of the procedure, k <= 20 (s)', '%.1f' % max(proc_time(r) for r in R if r['k'] <= 20), 'B 6.2')
+    top = max(R, key=proc_time)
+    num('share of greedy selection with exchanges in the largest time of the procedure', '%.0f%%' % (100 * top['t_swap'] / proc_time(top)), 'B 6.2')
     num('largest number of supports (log10, at most k names)', '%.1f' % max(log10_at_most(r['M'], r['k']) for r in R), 'B 6.2')
     nopt = [r for r in R if not r['greedy_swap_opt']]
     num('greedy with exchanges not optimal in', '; '.join('%s k=%d: B&B improves the SR by %.3f%%' % (
@@ -420,6 +429,36 @@ def scale():
     num('stress at scale: largest total time (M, K)', '%.1f s (M=%d, K=%d)' % (tmax[0], tmax[1][0], tmax[1][1]), 'B 6.4, Introduction, Conclusion')
     tmed = max((statistics.median(v), key) for key, v in tot.items())
     num('stress at scale: largest median total time per (M, K)', '%.2f s (M=%d, K=%d)' % (tmed[0], tmed[1][0], tmed[1][1]), 'B 6.4, Introduction')
+    miqp = collections.defaultdict(list)
+    for p in sorted(glob.glob(os.path.join(RES, 'E35', 'miqp_*.jsonl'))):
+        for r in jl(p):
+            for f in ('persp_gurobi', 'persp_scip', 'bigM_scip'):
+                if isinstance(r.get(f), dict):
+                    miqp[(f, r['M'])].append(r[f])
+    g = [o['time'] for o in miqp[('persp_gurobi', 50)] if 'error' not in o]
+    num('MIQP Gurobi (perspective), M=50: instances solved; median and largest time (s)', '%d of %d; %.2f, %.1f' % (
+        sum(o.get('status') == 'optimal' for o in miqp[('persp_gurobi', 50)]), len(miqp[('persp_gurobi', 50)]),
+        statistics.median(g), max(g)), 'B 6.4')
+    L2 = miqp[('persp_scip', 2000)]
+    sol = [o['time'] for o in L2 if o.get('status') == 'optimal']
+    tl = [o for o in L2 if o.get('status') == 'timelimit']
+    num('MIQP SCIP (perspective), M=2000: solved, time range of the solved (s); at the time limit, its gap; aborted (exit code -6)',
+        '%d of %d, %.1f..%.0f; %d, %.1f%%; %d' % (len(sol), len(L2), min(sol), max(sol), len(tl),
+                                                  100 * max(o['gap'] for o in tl) if tl else 0.0,
+                                                  sum('exit code -6' in o.get('error', '') for o in L2)), 'B 6.4')
+    loc = collections.defaultdict(list)
+    nus = []
+    for p in sorted(glob.glob(os.path.join(RES, 'E35', '[0-9]*_*_*.jsonl'))):
+        for x in jl(p):
+            if x.get('skip'):
+                continue
+            nus.append(1 + x['k'] * x['omega'])
+            if x['loc_cube'] > 0:
+                loc[x['K']].append(x['loc_cube'])
+    num('localized nodes where the certificate fails (coordinatewise bound): K=1 values; K=2 and K=3 median and largest',
+        '%s; %s, %s; %s, %s' % ('/'.join(str(v) for v in sorted(set(loc[1]))), sci(statistics.median(loc[2])), sci(max(loc[2])),
+                                sci(statistics.median(loc[3])), sci(max(loc[3]))), 'B 6.4, Conclusion')
+    num('stress at scale: nu = 1 + k omega (min..max)', '%.1f..%.1f' % (min(nus), max(nus)), 'B 6.4')
     for f in ('persp_gurobi', 'persp_scip', 'bigM_scip'):
         for M in (50, 200, 1000, 2000):
             n = w = 0
@@ -491,6 +530,8 @@ def checks():
     n3b = [int(x) for x in re.findall(r'(\d+) cases, violations (\d+)', log)[1]]
     num('checks: defect identity, largest error; cases of the guarantee at one node and violations', '%.1e; %d + %d cases, %d violations' % (
         t1, n3[0], n3b[0], n3[1] + n3b[1]), 'A D.6')
+    t2 = re.search(r'T2 node bounds: (.*)', log).group(1).strip()
+    num('checks: the estimates at a node, largest ratios of the two sides', t2, 'A D.6')
     rows = list(csv_rows(os.path.join(RES, 'E33', 'node_ratio.csv')))
     by = collections.defaultdict(list)
     for r in rows:
