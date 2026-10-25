@@ -1,13 +1,15 @@
-"""Tables and numbers of Section 7 (and Sections 5.4-5.6) from the results of the experiments.
+"""Tables and numbers of the two papers from the results of the experiments: paper A (leverage-free approximation;
+Section 7 and Appendices D.6 and G) and paper B (the certificate and computation; Section 6 and Appendix B).
 
-  python3 -I make_tables.py            -> tables/*.tex (the table bodies \\input by the paper) and numbers.md
-                                          (every number quoted in the text of Sections 5.4-5.6 and 7 and in the Introduction)
+  python3 -I make_tables.py            -> tables/*.tex (the table bodies \\input by the papers) and numbers.md
+                                          (every number quoted in the text of these sections and in the Introductions;
+                                          the column 'where' names the paper and the section)
 Inputs: results/E40 (real data), results/E41 (random instances M = 16), results/E35 and results/E36 (the stress
 regime at scale and the methods from the literature), results/E29, E30, E30b, E31, CHECK and E33 (the scheme, the size
 bounds, the checks and the relaxation), results/E43, E44 and E45 (the knapsack embedding and the checks of the
-schemes without omega, quoted in Section 5.4), results/E46 and E47 (the kernel and the 3SUM gap, Section 5.5) and
-results/E48 (the Helly bound, Section 5.6).  No solver is run here; only the random instances of Section 7.3 are drawn
-again from their seeds, to count the signs of their loadings.
+schemes without omega, paper A Section 7 and Appendix G), results/E46 and E47 (the kernel and the 3SUM gap, paper A
+Appendix G) and results/E48 (the Helly bound, paper A Appendix G).  No solver is run here; only the random instances
+of paper B Section 6.3 are drawn again from their seeds, to count the signs of their loadings.
 """
 import collections
 import glob
@@ -58,7 +60,7 @@ def log10_at_most(n, k):
     return (mx + math.log(sum(math.exp(t - mx) for t in terms))) / math.log(10)
 
 
-# ------------------------------------------------------------------------------------------- real data, Table 7.1
+# ------------------------------------------------------------------------------------- real data, B Table 6.1
 def real_optima():
     D = json.load(open(os.path.join(RES, 'E40', 'optima.json')))
     lines = []
@@ -69,24 +71,24 @@ def real_optima():
                                                                  'yes' if r['test'] else 'no'))
     write('optima.tex', lines)
     rows = D['rows']
-    num('optima: max |w(t0) - w*|', '%.1e' % max(r['clip_err'] for r in rows), '7.1')
+    num('optima: max |w(t0) - w*|', '%.1e' % max(r['clip_err'] for r in rows), 'B 6.1')
     r0 = [r for r in rows if r['model'] == 'FF49-K1' and r['k'] == 3][0]
-    num('FF49-K1 k=3: t0 per month', '%.4f' % r0['t0'][0], '7.1')
-    num('FF49-K1 k=3: industries above the cut-off besides the held ones', '%d: %s' % (len(r0['above_cutoff']), ', '.join(r0['above_cutoff'])), '7.1')
+    num('FF49-K1 k=3: t0 per month', '%.4f' % r0['t0'][0], 'B 6.1')
+    num('FF49-K1 k=3: industries above the cut-off besides the held ones', '%d: %s' % (len(r0['above_cutoff']), ', '.join(r0['above_cutoff'])), 'B 6.1')
     tr = r0['above_cutoff_treynor']
-    num('FF49-K1 k=3: Treynor ratios (above cut-off and held)', ', '.join('%s %.4f' % kv for kv in sorted(tr.items(), key=lambda kv: -kv[1])), '7.1')
-    num('optima: test passes', '%d of %d' % (sum(r['test'] for r in rows), len(rows)), '7.1')
+    num('FF49-K1 k=3: Treynor ratios (above cut-off and held)', ', '.join('%s %.4f' % kv for kv in sorted(tr.items(), key=lambda kv: -kv[1])), 'B 6.1')
+    num('optima: test passes', '%d of %d' % (sum(r['test'] for r in rows), len(rows)), 'B 6.1')
     fail = [r for r in rows if not r['test']]
     num('optima: test fails in', ', '.join('%s k=%d (gap %.2e, nodes %d, greedy+exch optimal %s)' % (
-        r['model'], r['k'], r['cert_gap'], r['bnb_nodes'], r['greedy_swap_opt']) for r in fail), '7.1')
+        r['model'], r['k'], r['cert_gap'], r['bnb_nodes'], r['greedy_swap_opt']) for r in fail), 'B 6.1')
     one = [r for r in rows if 'treynor' in r]
-    num('prefix hypothesis (Prop 3.3) holds in', '%d of %d one-factor instances' % (sum(r['prefix_hypothesis'] for r in one), len(one)), '7.1')
-    num('Treynor prefix: largest loss of SR', '%.1f%%' % (100 * (1 - min(r['treynor'] for r in one))), '7.1')
+    num('prefix hypothesis (B Prop 3.5) holds in', '%d of %d one-factor instances' % (sum(r['prefix_hypothesis'] for r in one), len(one)), 'B 6.1')
+    num('Treynor prefix: largest loss of SR', '%.1f%%' % (100 * (1 - min(r['treynor'] for r in one))), 'B 6.1')
     vt = D['text']['voltarget']
-    num('FF49-K1 k=5, volatility target 10%: risky fraction, expected excess return', '%.1f%%, %.1f%%' % (100 * vt['fraction'], 100 * vt['ret']), '7.1')
+    num('FF49-K1 k=5, volatility target 10%: risky fraction, expected excess return', '%.1f%%, %.1f%%' % (100 * vt['fraction'], 100 * vt['ret']), 'B 6.1')
 
 
-# ------------------------------------------------------------------------------- real data, Table 7.2 and the text
+# ------------------------------------------------------------------------- real data, B Table 6.2 and the text
 def real_instances():
     R = [r for r in jl(os.path.join(RES, 'E40', 'instances.jsonl')) if r.get('binding')]
     allr = jl(os.path.join(RES, 'E40', 'instances.jsonl'))
@@ -115,22 +117,22 @@ def real_instances():
     lines.append('\\multicolumn{3}{@{}l}{$\\log_{10}$ supports} & %s\\\\' % sup)
     write('large.tex', lines)
     n = len(R)
-    num('binding real instances', n, '7.2')
-    num('test passes (dual point of greedy with exchanges)', '%d of %d' % (sum(r['test'] for r in R), n), '7.2')
+    num('binding real instances', n, 'B 6.2')
+    num('test passes (dual point of greedy with exchanges)', '%d of %d' % (sum(r['test'] for r in R), n), 'B 6.2')
     gaps = [r['gap'] for r in R if not r['test']]
-    num('largest certificate gap 1 - F_h/G*', '%.2f%%' % (100 * max(gaps)), '7.2, Introduction')
-    num('largest number of B&B nodes', max(r['bnb_nodes'] for r in R), '7.2, Introduction')
+    num('largest certificate gap 1 - F_h/G*', '%.2f%%' % (100 * max(gaps)), 'B 6.2, Introduction')
+    num('largest number of B&B nodes', max(r['bnb_nodes'] for r in R), 'B 6.2, Introduction')
     for kk in (5, 10, 20, 50):
         ts = [r['t_total'] for r in R if r['k'] == kk]
-        num('largest time, k=%d (s)' % kk, '%.1f' % max(ts), '7.2')
-    num('share of the exchanges in the largest time', '%.0f%%' % (100 * max(R, key=lambda r: r['t_total'])['t_swap'] / max(r['t_total'] for r in R)), '7.2')
-    num('largest number of supports (log10, at most k names)', '%.1f' % max(log10_at_most(r['M'], r['k']) for r in R), '7.2')
+        num('largest time, k=%d (s)' % kk, '%.1f' % max(ts), 'B 6.2' + (', Introduction' if kk == 50 else ''))
+    num('share of the exchanges in the largest time', '%.0f%%' % (100 * max(R, key=lambda r: r['t_total'])['t_swap'] / max(r['t_total'] for r in R)), 'B 6.2')
+    num('largest number of supports (log10, at most k names)', '%.1f' % max(log10_at_most(r['M'], r['k']) for r in R), 'B 6.2')
     nopt = [r for r in R if not r['greedy_swap_opt']]
     num('greedy with exchanges not optimal in', '; '.join('%s k=%d: B&B improves the SR by %.3f%%' % (
-        r['model'], r['k'], 100 * (math.sqrt(r['bnb'] / r['Fh']) - 1)) for r in nopt) or 'none', '7.2')
+        r['model'], r['k'], 100 * (math.sqrt(r['bnb'] / r['Fh']) - 1)) for r in nopt) or 'none', 'B 6.2')
     for Ks, lab in (((1,), 'one factor'), ((5, 10), 'five or ten factors')):
         sub = [r for r in R if r['K'] in Ks]
-        num('test passes with %s' % lab, '%d of %d' % (sum(r['test'] for r in sub), len(sub)), '7.2')
+        num('test passes with %s' % lab, '%d of %d' % (sum(r['test'] for r in sub), len(sub)), 'B 6.2')
     groups = (('industries', ('FF49',)), ('OR-Library', tuple('port%d' % i for i in range(1, 6))),
               ('S&P 500', ('SP500',)), ('Russell 3000', ('Russell',)))
     for lab, us in groups:
@@ -139,12 +141,12 @@ def real_instances():
         for key in ('top_sr', 'top_score0', 'truncation', 'treynor_naive'):
             v = [math.sqrt(r[key] / r['bnb']) for r in sub if key in r]
             vals.append('%.3f' % min(v) if v else '---')
-        num('screening worst fractions (top SR, top m/sqrt d, truncation, Treynor) on %s' % lab, ', '.join(vals), '7.2')
-    num('greedy without exchanges: worst fraction', '%.3f' % min(math.sqrt(r['Fg'] / r['bnb']) for r in R), '7.2')
-    num('greedy with exchanges: worst fraction (rounded down)', '%.4f' % (math.floor(1e4 * min(math.sqrt(r['Fh'] / r['bnb']) for r in R)) / 1e4), '7.2')
+        num('screening worst fractions (top SR, top m/sqrt d, truncation, Treynor) on %s' % lab, ', '.join(vals), 'B 6.2')
+    num('greedy without exchanges: worst fraction', '%.3f' % min(math.sqrt(r['Fg'] / r['bnb']) for r in R), 'B 6.2')
+    num('greedy with exchanges: worst fraction (rounded down)', '%.4f' % (math.floor(1e4 * min(math.sqrt(r['Fh'] / r['bnb']) for r in R)) / 1e4), 'B 6.2')
     worst = min(min(math.sqrt(r[key] / r['bnb']) for key in ('top_sr', 'top_score0', 'truncation', 'treynor_naive') if key in r) for r in R)
-    num('screening rules: largest loss of SR (Introduction)', '%.1f%%' % (100 * (1 - worst)), 'Introduction')
-    num('largest in-sample annualized SR on the S&P 500 and the Russell 3000', '%.2f' % max(r['sr_opt_annual'] for r in R if r['universe'] in ('SP500', 'Russell')), '7.7')
+    num('screening rules: largest loss of SR', '%.1f%%' % (100 * (1 - worst)), 'B Introduction')
+    num('largest in-sample annualized SR on the S&P 500 and the Russell 3000', '%.2f' % max(r['sr_opt_annual'] for r in R if r['universe'] in ('SP500', 'Russell')), 'B 6.6')
 
 
 # ---------------------------------------------------------------------------------- random instances, M = 16 (E41)
@@ -159,7 +161,7 @@ def e41():
             data[(x['structure'], x['returns'])].append(x)
     opt_ok = lambda v, x: v >= x['opt'] * (1 - 1e-9)
     loss = lambda v, x: 100 * (1 - math.sqrt(max(v, 0.0) / x['opt']))
-    # Table 7.3: the stress regime, per (K, k)
+    # B Table 6.3: the stress regime, per (K, k)
     lines = []
     st = data[('stress', 'unrelated')]
     for K in (1, 2, 3, 5):
@@ -181,20 +183,20 @@ def e41():
     cal = data[('calibrated', 'factor')]
     num('calibrated: relaxation tight per row (min..max of 100)', '%d..%d' % (
         min(sum(x['relgap'] < 1e-9 for x in cal if x['K'] == K and x['k'] == k) for K in (1, 2, 3, 5) for k in (3, 5)),
-        max(sum(x['relgap'] < 1e-9 for x in cal if x['K'] == K and x['k'] == k) for K in (1, 2, 3, 5) for k in (3, 5))), '7.3')
+        max(sum(x['relgap'] < 1e-9 for x in cal if x['K'] == K and x['k'] == k) for K in (1, 2, 3, 5) for k in (3, 5))), 'B 6.3')
     num('calibrated: greedy with exchanges optimal / certificate 0.9', '%d / %d of %d' % (
-        sum(opt_ok(x['Fh'], x) for x in cal), sum(x['cert'] for x in cal), len(cal)), '7.3')
-    num('calibrated: largest number of B&B nodes', max(x['bnb_nodes'] for x in cal), '7.3')
+        sum(opt_ok(x['Fh'], x) for x in cal), sum(x['cert'] for x in cal), len(cal)), 'B 6.3')
+    num('calibrated: largest number of B&B nodes', max(x['bnb_nodes'] for x in cal), 'B 6.3')
     s2 = [x for x in st if x['K'] >= 2]
-    num('stress K>=2: relaxation with a gap in', '%d of %d' % (sum(x['relgap'] >= 1e-9 for x in s2), len(s2)), '7.3')
-    num('stress: largest relative gap (G* - OPT)/OPT', '%.0f%%' % (100 * max(x['relgap'] for x in st)), '7.3')
+    num('stress K>=2: relaxation with a gap in', '%d of %d' % (sum(x['relgap'] >= 1e-9 for x in s2), len(s2)), 'B 6.3')
+    num('stress: largest relative gap (G* - OPT)/OPT', '%.0f%%' % (100 * max(x['relgap'] for x in st)), 'B 6.3')
     rows2 = [[x for x in s2 if x['K'] == K and x['k'] == k] for K in (2, 3, 5) for k in (3, 5)]
-    num('stress K>=2: greedy optimal per row (min..max of 100)', '%d..%d' % (min(sum(opt_ok(x['Fg'], x) for x in L) for L in rows2), max(sum(opt_ok(x['Fg'], x) for x in L) for L in rows2)), '7.3')
-    num('stress K>=2: largest loss of greedy', '%.0f%%' % max(loss(x['Fg'], x) for x in s2), '7.3')
-    num('stress K>=2: mean loss of screening by SR per row (min..max)', '%.0f%%..%.0f%%' % (min(statistics.mean(loss(x['Fsr'], x) for x in L) for L in rows2), max(statistics.mean(loss(x['Fsr'], x) for x in L) for L in rows2)), '7.3')
-    num('stress K>=2: certificate below 0.9 in up to (per row of 100)', max(100 - sum(x['cert'] for x in L) for L in rows2), '7.3')
-    num('stress: B&B optimal in all / largest nodes', '%d of %d / %d' % (sum(abs(x['bnb'] - x['opt']) <= 1e-8 * x['opt'] for x in st), len(st), max(x['bnb_nodes'] for x in st)), '7.3')
-    # the regimes (Table 7.4)
+    num('stress K>=2: greedy optimal per row (min..max of 100)', '%d..%d' % (min(sum(opt_ok(x['Fg'], x) for x in L) for L in rows2), max(sum(opt_ok(x['Fg'], x) for x in L) for L in rows2)), 'B 6.3')
+    num('stress K>=2: largest loss of greedy', '%.0f%%' % max(loss(x['Fg'], x) for x in s2), 'B 6.3')
+    num('stress K>=2: mean loss of screening by SR per row (min..max)', '%.0f%%..%.0f%%' % (min(statistics.mean(loss(x['Fsr'], x) for x in L) for L in rows2), max(statistics.mean(loss(x['Fsr'], x) for x in L) for L in rows2)), 'B 6.3')
+    num('stress K>=2: certificate below 0.9 in up to (per row of 100)', max(100 - sum(x['cert'] for x in L) for L in rows2), 'B 6.3')
+    num('stress: B&B optimal in all / largest nodes', '%d of %d / %d' % (sum(abs(x['bnb'] - x['opt']) <= 1e-8 * x['opt'] for x in st), len(st), max(x['bnb_nodes'] for x in st)), 'B 6.3')
+    # the regimes (B Table 6.4)
     lines = []
     lab = {'calibrated': ('market factor', 'U(0.2,0.8)'), 'stress': ('Gaussian', 'U(0.5,0.95)'),
            'calibrated-highR2': ('market factor', 'U(0.5,0.95)'), 'stress-lowR2': ('Gaussian', 'U(0.2,0.8)'),
@@ -210,20 +212,20 @@ def e41():
             sci(max(x['relgap'] for x in L))))
         num('regime %s/%s: tight, exch optimal, cert, of n; cert fails for k=3, K>=2' % key, '%d, %d, %d of %d; %d of %d' % (
             sum(x['relgap'] < 1e-9 for x in L), sum(opt_ok(x['Fh'], x) for x in L), sum(x['cert'] for x in L), len(L),
-            sum(not x['cert'] for x in k3), len(k3)), '7.3')
+            sum(not x['cert'] for x in k3), len(k3)), 'B 6.3')
     write('regimes.tex', lines)
     # methods from the literature on M = 16
     for key in (('calibrated', 'factor'), ('stress', 'unrelated')):
         L = data[key]
         num('M=16 %s/%s: optimal (pga, oscar, greedy+exch, oa) of n' % key, '%d, %d, %d, %d of %d' % (
             sum(opt_ok(x['pga'], x) for x in L), sum(opt_ok(x['oscar'], x) for x in L), sum(opt_ok(x['Fh'], x) for x in L),
-            sum(abs(x['oa'] - x['opt']) <= 1e-7 * x['opt'] for x in L), len(L)), '7.3')
-        num('M=16 %s/%s: worst loss (pga, oscar), %%' % key, '%.0f, %.0f' % (max(loss(x['pga'], x) for x in L), max(loss(x['oscar'], x) for x in L)), '7.3')
+            sum(abs(x['oa'] - x['opt']) <= 1e-7 * x['opt'] for x in L), len(L)), 'B 6.3')
+        num('M=16 %s/%s: worst loss (pga, oscar), %%' % key, '%.0f, %.0f' % (max(loss(x['pga'], x) for x in L), max(loss(x['oscar'], x) for x in L)), 'B 6.3')
         num('M=16 %s/%s: median bound/OPT (G*, SDP, SDP with Y>=0)' % key, '%.3f, %.2f, %.3f' % (
             statistics.median(x['G'] / x['opt'] for x in L), statistics.median(x['sdp'] / x['opt'] for x in L),
-            statistics.median(x['sdp_nonneg'] / x['opt'] for x in L)), '7.3')
-        num('M=16 %s/%s: SDP with Y>=0 below G* in' % key, '%d of %d' % (sum(x['sdp_nonneg'] < x['G'] * (1 - 1e-7) for x in L), len(L)), '7.3')
-        num('M=16 %s/%s: OA largest time (s)' % key, '%.2f' % max(x['oa_time'] for x in L), '7.3')
+            statistics.median(x['sdp_nonneg'] / x['opt'] for x in L)), 'B 6.3')
+        num('M=16 %s/%s: SDP with Y>=0 below G* in' % key, '%d of %d' % (sum(x['sdp_nonneg'] < x['G'] * (1 - 1e-7) for x in L), len(L)), 'B 6.3')
+        num('M=16 %s/%s: OA largest time (s)' % key, '%.2f' % max(x['oa_time'] for x in L), 'B 6.3')
 
 
 # ------------------------------------------------------------------- methods from the literature (E36, E41)
@@ -251,7 +253,7 @@ def literature():
         num('literature M=16: OA with the relaxation med/max s; faster than B&B in; relaxation med/max s',
             '%.3f/%.2f; %d of %d; %.3f/%.3f' % (statistics.median(t_sum), max(t_sum),
                                                 sum(a < x['bnb_time'] for a, x in zip(t_sum, L)), len(L),
-                                                statistics.median(x['t_relax'] for x in L), max(x['t_relax'] for x in L)), '7.5')
+                                                statistics.median(x['t_relax'] for x in L), max(x['t_relax'] for x in L)), 'B 6.5')
     for M in (50, 200, 1000, 2000):
         L = []
         for p in sorted(glob.glob(os.path.join(RES, 'E36', '%d_*_*.jsonl' % M))):
@@ -269,7 +271,7 @@ def literature():
         num('literature M=%d: OA with the relaxation med/max s; faster than B&B in; relaxation med/max s' % M,
             '%.2f/%.1f; %d of %d; %.2f/%.2f' % (statistics.median(t_sum), max(t_sum),
                                                 sum(a < r['bnb_time'] for a, r in zip(t_sum, R)), len(R),
-                                                statistics.median(t_rel), max(t_rel)), '7.5')
+                                                statistics.median(t_rel), max(t_rel)), 'B 6.5' + (', Introduction' if M == 2000 else ''))
         rows.append(dict(M=M, n=len(L),
                          pga=[x['pga']['value'] / x['opt'] for x in L],
                          oscar=[max(x['oscar']['value'], sig[('E35', M, x['K'], x['k'], x['it'])]) / x['opt'] for x in L],
@@ -285,19 +287,19 @@ def literature():
             sum(r['oa_ok']), statistics.median(r['oa_t']), max(r['oa_t']), statistics.median(r['bnb_t']), max(r['bnb_t'])))
         num('literature M=%d: n, optimal pga/oscar/exch, OA solved, OA med/max s, B&B med/max s' % r['M'], '%d; %d, %d, %d; %d; %.2f/%.1f; %.2f/%.1f' % (
             r['n'], ok(r['pga']), ok(r['oscar']), ok(r['exch']), sum(r['oa_ok']), statistics.median(r['oa_t']), max(r['oa_t']),
-            statistics.median(r['bnb_t']), max(r['bnb_t'])), '7.5')
-        num('literature M=%d: worst loss pga, oscar, exch (%%)' % r['M'], '%.0f, %.0f, %.0f' % (worst(r['pga']), worst(r['oscar']), worst(r['exch'])), '7.5')
-        num('literature M=%d: median SR fraction pga, oscar' % r['M'], '%.3f, %.3f' % (statistics.median(math.sqrt(max(q, 0)) for q in r['pga']), statistics.median(math.sqrt(max(q, 0)) for q in r['oscar'])), '7.5')
+            statistics.median(r['bnb_t']), max(r['bnb_t'])), 'B 6.5')
+        num('literature M=%d: worst loss pga, oscar, exch (%%)' % r['M'], '%.0f, %.0f, %.0f' % (worst(r['pga']), worst(r['oscar']), worst(r['exch'])), 'B 6.5')
+        num('literature M=%d: median SR fraction pga, oscar' % r['M'], '%.3f, %.3f' % (statistics.median(math.sqrt(max(q, 0)) for q in r['pga']), statistics.median(math.sqrt(max(q, 0)) for q in r['oscar'])), 'B 6.5')
     write('literature.tex', lines)
     num('literature: selection of Bae et al. optimal in, of the stress instances; median SR fraction (min..max over M)', '%d of %d; %.3f..%.3f' % (
         sum(sum(1 for q in r['oscar'] if q >= 1 - 1e-9) for r in rows), sum(r['n'] for r in rows),
         min(statistics.median(math.sqrt(max(q, 0)) for q in r['oscar']) for r in rows),
-        max(statistics.median(math.sqrt(max(q, 0)) for q in r['oscar']) for r in rows)), '7.5')
+        max(statistics.median(math.sqrt(max(q, 0)) for q in r['oscar']) for r in rows)), 'B 6.5')
     # the calibrated regime, M = 16
     L = e41[('calibrated', 'factor')]
     num('literature M=16 calibrated: optimal pga, oscar (best of the two rules), of n', '%d, %d of %d' % (
         sum(x['pga'] >= x['opt'] * (1 - 1e-9) for x in L),
-        sum(max(x['oscar'], sig[('E41', x['structure'], x['returns'], x['K'], x['k'], x['it'])]) >= x['opt'] * (1 - 1e-9) for x in L), len(L)), '7.5')
+        sum(max(x['oscar'], sig[('E41', x['structure'], x['returns'], x['K'], x['k'], x['it'])]) >= x['opt'] * (1 - 1e-9) for x in L), len(L)), 'B 6.5')
     # the SDP bound (M = 16: E41; M = 50: E36)
     for key in (('calibrated', 'factor'), ('stress', 'unrelated')):
         L = e41[key]
@@ -306,7 +308,7 @@ def literature():
             statistics.median(x['G'] / x['opt'] for x in L), statistics.median(x['sdp'] / x['opt'] for x in L),
             statistics.median(x['sdp_nonneg'] / x['opt'] for x in L), len(below), len(L),
             '%.2f%%..%.1f%%' % (100 * min(1 - x['sdp_nonneg'] / x['G'] for x in below), 100 * max(1 - x['sdp_nonneg'] / x['G'] for x in below)) if below else '-',
-            sorted(set((x['K'], x['k']) for x in below))), '7.5')
+            sorted(set((x['K'], x['k']) for x in below))), 'B 6.5')
     L = []
     for p in sorted(glob.glob(os.path.join(RES, 'E36', '50_*_*.jsonl'))):
         L += [x for x in jl(p) if not x.get('skip') and 'sdp' in x]
@@ -315,7 +317,7 @@ def literature():
             statistics.median(x['G'] / x['opt'] for x in L), statistics.median(x['sdp']['ratio'] for x in L),
             statistics.median(x['sdp_nonneg']['ratio'] for x in L), sum(x['sdp_nonneg']['value'] < x['G'] * (1 - 5e-4) for x in L), len(L),
             statistics.median(x['sdp']['time'] for x in L), max(x['sdp']['time'] for x in L),
-            statistics.median(x['sdp_nonneg']['time'] for x in L), max(x['sdp_nonneg']['time'] for x in L)), '7.5')
+            statistics.median(x['sdp_nonneg']['time'] for x in L), max(x['sdp_nonneg']['time'] for x in L)), 'B 6.5')
 
 
 # ------------------------------------------------------------------------------- formal size bounds (E31)
@@ -338,18 +340,18 @@ def e31():
                                                                          r['supports'], r['explicit'], r['poly']))
     write('bounds.tex', lines)
     below = [x for x in rows if x['explicit'] < x['supports']]
-    num('size bound below the number of supports (at most k names)', '%d of %d' % (len(below), len(rows)), '7.6, Introduction')
+    num('size bound below the number of supports (at most k names)', '%d of %d' % (len(below), len(rows)), 'A D.6')
     for K in sorted(set(x['K'] for x in rows)):
         sub = [x for x in rows if x['K'] == K]
-        num('  ... with K=%d' % K, '%d of %d' % (sum(x['explicit'] < x['supports'] for x in sub), len(sub)), '7.6')
+        num('  ... with K=%d' % K, '%d of %d' % (sum(x['explicit'] < x['supports'] for x in sub), len(sub)), 'A D.6')
     top = max(rows, key=lambda x: x['explicit'])
-    num('largest explicit bound (log10) over all instances', '%.1f (%s, k=%d)' % (top['explicit'], top['model'], top['k']), '7.6, Introduction')
+    num('largest explicit bound (log10) over all instances', '%.1f (%s, k=%d)' % (top['explicit'], top['model'], top['k']), 'A D.6')
     E40 = [r for r in jl(os.path.join(RES, 'E40', 'instances.jsonl')) if r.get('binding')]
     bind = {(r['model'], r['k']) for r in E40}
     sub = [x for x in rows if (x['model'], x['k']) in bind]
     if sub:
         t2 = max(sub, key=lambda x: x['explicit'])
-        num('largest explicit bound (log10) over the binding instances of Section 7.2', '%.1f (%s, k=%d) of %d instances' % (t2['explicit'], t2['model'], t2['k'], len(sub)), '7.6')
+        num('largest explicit bound (log10) over the binding instances of B Section 6.2', '%.1f (%s, k=%d) of %d instances' % (t2['explicit'], t2['model'], t2['k'], len(sub)), 'A D.6')
 
 
 # ------------------------------------------------------------------------------------- the scheme itself (E30)
@@ -381,14 +383,14 @@ def e30():
             100 * r['merged'] / max(1, r['generated']), r['ratio']))
     write('own.tex', lines)
     sel = [[x for x in R if x['model'] == n and x['k'] == k][0] for n, k in OWN]
-    num('scheme itself: worst best/ref over the 11 instances', '%.6f' % min(x['ratio'] for x in sel), '7.6')
-    num('scheme itself: table sizes (min..max)', '%d..%d' % (min(x['table'] for x in sel), max(x['table'] for x in sel)), '7.6')
-    num('scheme itself: formal bound / table size (min..max)', '%.0f..%.1e' % (min(x['table_bound'] / x['table'] for x in sel), max(x['table_bound'] / x['table'] for x in sel)), '7.6')
-    num('scheme itself: merged shares (min..max)', '%.1f%%..%.1f%%' % (min(100 * x['merged'] / x['generated'] for x in sel), max(100 * x['merged'] / x['generated'] for x in sel)), '7.6')
+    num('scheme itself: worst best/ref over the 11 instances', '%.6f' % min(x['ratio'] for x in sel), 'A D.6')
+    num('scheme itself: table sizes (min..max)', '%d..%d' % (min(x['table'] for x in sel), max(x['table'] for x in sel)), 'A D.6')
+    num('scheme itself: formal bound / table size (min..max)', '%.0f..%.1e' % (min(x['table_bound'] / x['table'] for x in sel), max(x['table_bound'] / x['table'] for x in sel)), 'A D.6')
+    num('scheme itself: merged shares (min..max)', '%.1f%%..%.1f%%' % (min(100 * x['merged'] / x['generated'] for x in sel), max(100 * x['merged'] / x['generated'] for x in sel)), 'A D.6')
     for x in R:
         if 'family_size' in x:
             # family_size counts the distinct sets of all tables, the empty set included
-            num('scheme itself: family over all nodes, %s k=%d: distinct nonempty supports, ratio' % (OWN_LABEL.get(x['model'], x['model']), x['k']), '%d (of %d supports), %.6f' % (x['family_size'] - 1, x['subsets'], x['family_ratio']), '7.6')
+            num('scheme itself: family over all nodes, %s k=%d: distinct nonempty supports, ratio' % (OWN_LABEL.get(x['model'], x['model']), x['k']), '%d (of %d supports), %.6f' % (x['family_size'] - 1, x['subsets'], x['family_ratio']), 'A D.6')
 
 
 
@@ -403,7 +405,21 @@ def scale():
                 top = (x['bnb_time'], '%d_%d_%d' % (x['M'], x['K'], x['k']), x['bnb_nodes'])
         meds['%d_%d_%d' % (L[0]['M'], L[0]['K'], L[0]['k'])] = statistics.median(x['bnb_time'] for x in L)
     num('stress at scale: B&B median time per configuration (min..max); largest time (configuration, nodes)', '%.3f..%.2f s; %.1f s (%s, %d nodes)' % (
-        min(meds.values()), max(meds.values()), top[0], top[1], top[2]), '7.4, Introduction')
+        min(meds.values()), max(meds.values()), top[0], top[1], top[2]), 'B 6.4')
+    # the total time: greedy selection with exchanges, the relaxation and branch and bound
+    tot = collections.defaultdict(list)
+    for p in sorted(glob.glob(os.path.join(RES, 'E35', '[0-9]*_*_*.jsonl'))):
+        for x in jl(p):
+            if not x.get('skip'):
+                tot[(x['M'], x['K'])].append(x['t_greedy'] + x['t_relax'] + x['bnb_time'])
+    for M in (50, 200, 1000, 2000):
+        num('stress at scale, M=%d: total time (greedy with exchanges + relaxation + B&B), median and largest over K and k' % M,
+            '%.2f s, %.1f s' % (statistics.median(sum((tot[(M, K)] for K in (1, 2, 3)), [])),
+                                max(max(tot[(M, K)]) for K in (1, 2, 3))), 'B 6.4')
+    tmax = max((max(v), key) for key, v in tot.items())
+    num('stress at scale: largest total time (M, K)', '%.1f s (M=%d, K=%d)' % (tmax[0], tmax[1][0], tmax[1][1]), 'B 6.4, Introduction, Conclusion')
+    tmed = max((statistics.median(v), key) for key, v in tot.items())
+    num('stress at scale: largest median total time per (M, K)', '%.2f s (M=%d, K=%d)' % (tmed[0], tmed[1][0], tmed[1][1]), 'B 6.4, Introduction')
     for f in ('persp_gurobi', 'persp_scip', 'bigM_scip'):
         for M in (50, 200, 1000, 2000):
             n = w = 0
@@ -415,10 +431,10 @@ def scale():
                     n += 1
                     w += ref[(r['M'], r['K'], r['k'], r['it'])] < (o['time'] if 'error' not in o else float('inf'))
             if n:
-                num('MIQP %s, M=%d: branch and bound faster in' % (f, M), '%d of %d' % (w, n), '7.4')
+                num('MIQP %s, M=%d: branch and bound faster in' % (f, M), '%d of %d' % (w, n), 'B 6.4')
 
 
-# ------------------------------------------------------------------- the signs of the random loadings (Section 7.3)
+# --------------------------------------------------------------- the signs of the random loadings (B Section 6.3)
 def signs():
     sys.path.insert(0, HERE)
     import numpy as np
@@ -444,7 +460,7 @@ def signs():
                     byK[K >= 2] += bool(B.min() < 0 < B.max())
                     nK[K >= 2] += 1
     num('market-factor instances with loadings of both signs: K>=2; K=1; with a negative market beta', '%d of %d; %d of %d; %d of %d' % (
-        byK[True], nK[True], byK[False], nK[False], neg, tot), '7.3')
+        byK[True], nK[True], byK[False], nK[False], neg, tot), 'B 6.3')
 
 
 # ------------------------------------------------------------------------- coarsening of the constants (E30b)
@@ -461,10 +477,10 @@ def e30b():
             R[cur][int(a.group(1))] = float(a.group(2))
     cs = sorted(next(iter(R.values())))
     num('coarsening by c: worst F_best/F* over the %d instances, c = %s' % (len(R), ', '.join(map(str, cs))),
-        ', '.join('%.6f' % min(v[c] for v in R.values()) for c in cs), '7.6, Conclusion')
+        ', '.join('%.6f' % min(v[c] for v in R.values()) for c in cs), 'A D.6')
     big = [min(v[c] for c in cs if c >= 100) for v in R.values()]
     num('coarsening by c>=100: largest loss per instance (min..max); below 1-2eps = 0.9 in',
-        '%.1f%%..%.1f%%; %d of %d' % (100 * (1 - max(big)), 100 * (1 - min(big)), sum(b < 0.9 for b in big), len(big)), '7.6')
+        '%.1f%%..%.1f%%; %d of %d' % (100 * (1 - max(big)), 100 * (1 - min(big)), sum(b < 0.9 for b in big), len(big)), 'A D.6')
 
 
 # ------------------------------------------------------------------ the checks of the estimates (CHECK, E33)
@@ -474,13 +490,13 @@ def checks():
     n3 = [int(x) for x in re.findall(r'(\d+) cases, violations (\d+)', log)[0]]
     n3b = [int(x) for x in re.findall(r'(\d+) cases, violations (\d+)', log)[1]]
     num('checks: defect identity, largest error; cases of the guarantee at one node and violations', '%.1e; %d + %d cases, %d violations' % (
-        t1, n3[0], n3b[0], n3[1] + n3b[1]), '7.6')
+        t1, n3[0], n3b[0], n3[1] + n3b[1]), 'A D.6')
     rows = list(csv_rows(os.path.join(RES, 'E33', 'node_ratio.csv')))
     by = collections.defaultdict(list)
     for r in rows:
         by[float(r['shift_sd'])].append(float(r['ratio_to_bound']))
     num('node ratio loss/bound: pairs; median per displacement; largest', '%d; %s; %.4f' % (
-        len(rows), ', '.join('%.3g' % statistics.median(by[s]) for s in sorted(by)), max(max(v) for v in by.values())), '7.6')
+        len(rows), ', '.join('%.3g' % statistics.median(by[s]) for s in sorted(by)), max(max(v) for v in by.values())), 'A D.6')
 
 
 def csv_rows(path):
@@ -495,21 +511,21 @@ def e29():
     log = open(os.path.join(RES, 'E29', 'e29.log')).read()
     err = len(re.findall(r'^ERROR ', log, re.M))
     num('relaxation: instances with a vertex, of the plan; |T|<=k+K; F_LO(T)>=G* up to the tolerance', '%d of %d; %d; %d' % (
-        len(R), len(R) + err, sum(x['ok_size'] for x in R), sum(x['ok_value'] for x in R)), '7.7')
+        len(R), len(R) + err, sum(x['ok_size'] for x in R), sum(x['ok_value'] for x in R)), 'B 6.6')
     num('relaxation: largest (G*-F_LO(T))/G*; F_LO(T) > G* by more than 0.1% in', '%.1e; %d' % (
-        max((x['Gstar'] - x['F_T']) / x['Gstar'] for x in R), sum(x['F_T'] > x['Gstar'] * 1.001 for x in R)), '7.7')
+        max((x['Gstar'] - x['F_T']) / x['Gstar'] for x in R), sum(x['F_T'] > x['Gstar'] * 1.001 for x in R)), 'B 6.6')
     kn = [x for x in R if x.get('OPTk') is not None]
     num('relaxation: OPT(k) known in; OPT(k) <= G* in; largest gap', '%d; %d; %.2f%%' % (
-        len(kn), sum(x['OPTk'] <= x['Gstar'] * (1 + 1e-6) for x in kn), 100 * max((x['Gstar'] - x['OPTk']) / x['OPTk'] for x in kn)), '7.7')
+        len(kn), sum(x['OPTk'] <= x['Gstar'] * (1 + 1e-6) for x in kn), 100 * max((x['Gstar'] - x['OPTk']) / x['OPTk'] for x in kn)), 'B 6.6')
     fr = [x for x in R if x['f'] > 0]
     num('relaxation: instances with fractional multipliers; f min..max; largest |T| - k', '%d; %d..%d; %d' % (
-        len(fr), min(x['f'] for x in fr), max(x['f'] for x in fr), max(x['size_T'] - x['k'] for x in R)), '7.7')
+        len(fr), min(x['f'] for x in fr), max(x['f'] for x in fr), max(x['size_T'] - x['k'] for x in R)), 'B 6.6')
     fb = open(os.path.join(RES, 'E29', 'e29_floor_bound.log')).read()
     g = lambda pat: re.search(pat, fb).groups()
     num('rounding: loss/bound min, max, median; loss/G* max; below 0.1% in', '%s, %s, %s; %s; %s' % (
-        g(r'loss / \(min\(s,f-s\) omega sigma\): min (\S+) max (\S+) median (\S+)') + g(r'loss / G\* +: min \S+ max (\S+); below 0.1%: (\d+)')), '7.7, Conclusion')
+        g(r'loss / \(min\(s,f-s\) omega sigma\): min (\S+) max (\S+) median (\S+)') + g(r'loss / G\* +: min \S+ max (\S+); below 0.1%: (\d+)')), 'B 6.6, Conclusion')
     num('rounding: floor((K+1)/2) omega sigma / G* min, max; informative in', '%s, %s; %s of %s' % (
-        g(r'floor\(\(K\+1\)/2\) omega sigma / G\*: min (\S+) max (\S+)') + g(r'informative \(floor bound < 1\) +: (\d+) of (\d+)')), '7.7')
+        g(r'floor\(\(K\+1\)/2\) omega sigma / G\*: min (\S+) max (\S+)') + g(r'informative \(floor bound < 1\) +: (\d+) of (\d+)')), 'B 6.6')
     F = [x for x in R if x.get('f', 0) >= 2 and 'bound_K' in x]
     cK = lambda x: (x['K'] + 1) // 2
     inf = lambda x: cK(x) * x['om_I'] * x['sigma'] < x['Gstar']
@@ -517,72 +533,72 @@ def e29():
     hi = [x for x in F if cK(x) * x['om_I'] >= x['k']]
     num('rounding: informative with floor((K+1)/2) omega_I < k; with >= k; sigma k/G* over the informative of the latter', '%d of %d; %d of %d; %.2f..%.2f' % (
         sum(inf(x) for x in lo), len(lo), sum(inf(x) for x in hi), len(hi),
-        min(x['sigma'] * x['k'] / x['Gstar'] for x in hi if inf(x)), max(x['sigma'] * x['k'] / x['Gstar'] for x in hi if inf(x))), '7.7')
+        min(x['sigma'] * x['k'] / x['Gstar'] for x in hi if inf(x)), max(x['sigma'] * x['k'] / x['Gstar'] for x in hi if inf(x))), 'B 6.6')
     num('relaxation: instances without a support (non-binding, see results/E40)', ', '.join(
-        '%s K=%s k=%s' % a for a in re.findall(r'^ERROR (\S+) (\d+) (\d+)', log, re.M)), '7.7')
+        '%s K=%s k=%s' % a for a in re.findall(r'^ERROR (\S+) (\d+) (\d+)', log, re.M)), 'B 6.6')
 
 
 
-# ------------------------------------------------------------------------------------------- Section 5.4: E43; E44 (Remark 5.15)
+# ----------------------------------------------------------------- A Section 7: E43; E44 (A Remark F.1, not quoted)
 def scalefree():
-    """The knapsack embedding (E43, quoted in Section 5.4) and the checks of the one-tuple scheme of Remark 5.15
-    (E44, Lean main_theorem_sf; not quoted in the paper)."""
+    """The knapsack embedding (E43, quoted in paper A Section 7) and the checks of the one-tuple scheme of paper A
+    Remark F.1 (E44, Lean main_theorem_sf; not quoted)."""
     log = open(os.path.join(RES, 'E43', 'testB.log')).read()
     gaps = [(int(m), float(g)) for m, g in re.findall(r'm = +(\d+): largest relative gap (\S+)', log)]
     num('E43: largest relative gap (V_yes - V_no)/V_yes, m = %d .. %d' % (gaps[0][0], gaps[-1][0]),
-        ', '.join('%s' % sci(g) for _, g in gaps), '5.4')
+        ', '.join('%s' % sci(g) for _, g in gaps), 'A 7')
     num('E43: gap ratio per two bits (min..max)',
         '%.1f..%.1f' % (min(gaps[i][1] / gaps[i + 1][1] for i in range(len(gaps) - 1)),
-                        max(gaps[i][1] / gaps[i + 1][1] for i in range(len(gaps) - 1))), '5.4')
+                        max(gaps[i][1] / gaps[i + 1][1] for i in range(len(gaps) - 1))), 'A 7')
     E = os.path.join(RES, 'E44')
     one = [r for f in sorted(glob.glob(os.path.join(E, 'onestep_*.jsonl'))) for r in jl(f)]
     num('E44 one step: instances (M, K); the table keeps the optimum in',
         '%d (M = %s, K = %s); %d' % (len(one), sorted({r['M'] for r in one}), sorted({r['K'] for r in one}),
-                                     sum(r['one'] >= 1 - 1e-9 for r in one)), 'not quoted (Rem. 5.15)')
+                                     sum(r['one'] >= 1 - 1e-9 for r in one)), 'not quoted (A, Remark F.1)')
     num('E44 one step: instances with 0 / 1 / >= 2 tight rows of T',
         '%d / %d / %d' % (sum(r['tight'] == 0 for r in one), sum(r['tight'] == 1 for r in one),
-                          sum(r['tight'] >= 2 for r in one)), 'not quoted (Rem. 5.15)')
-    num('E44 one step: largest Cramer coefficient of an active row', '%.6f' % max(r['maxCramer'] for r in one), 'not quoted (Rem. 5.15)')
+                          sum(r['tight'] >= 2 for r in one)), 'not quoted (A, Remark F.1)')
+    num('E44 one step: largest Cramer coefficient of an active row', '%.6f' % max(r['maxCramer'] for r in one), 'not quoted (A, Remark F.1)')
     num('E44 one step: controls below 0.9 (node x10, key x30, G-node, T not of maximal volume)',
-        ', '.join('%d' % sum(r[c] < 0.9 for r in one) for c in ('node10', 'key30', 'gnode', 'wrongT')), 'not quoted (Rem. 5.15)')
+        ', '.join('%d' % sum(r[c] < 0.9 for r in one) for c in ('node10', 'key30', 'gnode', 'wrongT')), 'not quoted (A, Remark F.1)')
     lem = [r for f in sorted(glob.glob(os.path.join(E, 'lemmas_*.jsonl'))) for r in jl(f)]
     num('E44 lemmas: instances; largest ratio of lemma 1, lemma 3; lemma 3 in G-coordinates above 1 in',
         '%d; %.2f, %.2f; %d' % (len(lem), max(r['lemma1'] for r in lem), max(r['lemma3'] for r in lem),
-                                sum(r['lemma3_G'] > 1 for r in lem)), 'not quoted (Rem. 5.15)')
+                                sum(r['lemma3_G'] > 1 for r in lem)), 'not quoted (A, Remark F.1)')
     num('E44 lemmas: smallest slack of the step (instances without a sign failure); sign failures (instances, '
         'tight rows of T)',
         '%.3f; %d (%s)' % (min(r['lemma5_slack'] for r in lem if 'lemma5_slack' in r),
                            sum(r['sign_fail'] > 0 for r in lem),
                            ', '.join('%s t=%d: %d' % (r['part'], r['t'], r['tight']) for r in lem if r['sign_fail'])),
-        'not quoted (Rem. 5.15)')
+        'not quoted (A, Remark F.1)')
     dd = [r for f in sorted(glob.glob(os.path.join(E, 'def510_*.jsonl'))) for r in jl(f)]
     inc, out = [r for r in dd if r['in_class']], [r for r in dd if not r['in_class']]
-    num('E44 one-tuple scheme (Remark 5.15): instances; in the class of main_theorem_sf (at most one small position); outside it',
-        '%d; %d; %d' % (len(dd), len(inc), len(out)), 'not quoted (Rem. 5.15)')
+    num('E44 one-tuple scheme (A Remark F.1): instances; in the class of main_theorem_sf (at most one small position); outside it',
+        '%d; %d; %d' % (len(dd), len(inc), len(out)), 'not quoted (A, Remark F.1)')
     num('E44 one-tuple scheme, node of the proof: optimum found in the class; worst ratio in the class',
-        '%d of %d; %.4f' % (sum(r['rule'] >= 1 - 1e-9 for r in inc), len(inc), min(r['rule'] for r in inc)), 'not quoted (Rem. 5.15)')
+        '%d of %d; %.4f' % (sum(r['rule'] >= 1 - 1e-9 for r in inc), len(inc), min(r['rule'] for r in inc)), 'not quoted (A, Remark F.1)')
     num('E44 one-tuple scheme, node of the proof outside the class: optimum found; worst ratio',
-        '%d of %d; %.4f' % (sum(r['rule'] >= 1 - 1e-9 for r in out), len(out), min(r['rule'] for r in out)), 'not quoted (Rem. 5.15)')
+        '%d of %d; %.4f' % (sum(r['rule'] >= 1 - 1e-9 for r in out), len(out), min(r['rule'] for r in out)), 'not quoted (A, Remark F.1)')
     num('E44 one-tuple scheme, controls below 0.9 (T of non-maximal volume; anchor rows as T without the filter)',
         '%d of %d; %d of %d' % (sum(r['wrongT'] < 0.9 for r in dd if 'wrongT' in r), sum('wrongT' in r for r in dd),
-                                sum(r['anchorT'] < 0.9 for r in dd), len(dd)), 'not quoted (Rem. 5.15)')
+                                sum(r['anchorT'] < 0.9 for r in dd), len(dd)), 'not quoted (A, Remark F.1)')
     num('E44 one-tuple scheme, the table keeping the largest score sum instead: below the optimum in',
         '%d of %d' % (sum(r['maxscore'] < 1 - 1e-9 for r in dd if 'maxscore' in r), sum('maxscore' in r for r in dd)),
-        'not quoted (Rem. 5.15)')
+        'not quoted (A, Remark F.1)')
     ad = [r for f in sorted(glob.glob(os.path.join(E, 'advdef_*.jsonl'))) for r in jl(f)]
     num('E44 adversary of the node of the proof (one-tuple scheme): runs; smallest ratio; smallest in the class; '
         'largest omega',
         '%d; %.4f; %.4f; %s' % (len(ad), min(r['rule'] for r in ad), min(r['rule'] for r in ad if r['in_class']),
-                                sci(max(r['omega'] for r in ad))), 'not quoted (Rem. 5.15)')
+                                sci(max(r['omega'] for r in ad))), 'not quoted (A, Remark F.1)')
     adv = [r for f in sorted(glob.glob(os.path.join(E, 'advstep_*.jsonl'))) for r in jl(f)]
     num('E44 adversary of the step: runs; smallest best-corner ratio; largest omega; largest number of tight rows',
         '%d; %.4f; %s; %d' % (len(adv), min(r['ratio'] for r in adv), sci(max(r['omega'] for r in adv)),
-                              max(r['tight'] for r in adv)), 'not quoted (Rem. 5.15)')
+                              max(r['tight'] for r in adv)), 'not quoted (A, Remark F.1)')
 
 
-# ------------------------------------------------------------------------------------------- Section 5.4: E45
+# --------------------------------------------------------------------------------------- A Appendix G: E45
 def universal():
-    """The step of the scheme without omega for K factors (Theorem 5.13, e45_universal.py)."""
+    """The step of the scheme without omega for K factors (paper A Theorem 4.4, e45_universal.py)."""
     E = os.path.join(RES, 'E45')
     st = [r for f in sorted(glob.glob(os.path.join(E, 'step_*.jsonl'))) for r in jl(f)]
     num('E45 step: instances (M, k, K); with two or more small positions (outside the class of the one-tuple '
@@ -590,30 +606,30 @@ def universal():
         '%d (M = %s, k = %s, K = %s); %d; %d; %s' % (
             len(st), sorted({r['M'] for r in st}), sorted({r['k'] for r in st}), sorted({r['K'] for r in st}),
             sum(not r['in_class'] for r in st), sum(r['tight'] > 0 for r in st),
-            ' / '.join('%d' % sum(r['Jp'] == j for r in st) for j in range(4))), '5.4')
-    num('E45 step: largest leverage', sci(max(r['omega'] for r in st)), '5.4')
+            ' / '.join('%d' % sum(r['Jp'] == j for r in st) for j in range(4))), 'A G')
+    num('E45 step: largest leverage', sci(max(r['omega'] for r in st)), 'A G')
     num('E45 step, node of the proof: smallest ratio over the bucket of the large positions; smallest witness; '
         'smallest ratio of the set kept by the table',
         '%.6f; %.6f; %.6f' % (min(r['worst'] for r in st), min(r['cert'] for r in st),
-                              min(r['dp'] for r in st)), '5.4')
+                              min(r['dp'] for r in st)), 'A G')
     num('E45 step, controls below 0.9 (no forced small positions; key x30; node on the lattice of T; one tuple of '
         'all rows of the optimum)',
         '%d; %d; %d; %d' % (sum(r['noJ'] < 0.9 for r in st), sum(r['key30'] < 0.9 for r in st),
-                            sum(r['gridT'] < 0.9 for r in st), sum(r['Tall'] < 0.9 for r in st)), '5.4')
+                            sum(r['gridT'] < 0.9 for r in st), sum(r['Tall'] < 0.9 for r in st)), 'A G')
     num('E45 step, one tuple of all rows: a small position of T with a negative weight in; these weights',
         '%d of %d; %s' % (sum(r['Tall_minT'] < 0 for r in st), len(st),
-                          ', '.join(sci(r['Tall_minT']) for r in st if r['Tall_minT'] < 0)), '5.4')
+                          ', '.join(sci(r['Tall_minT']) for r in st if r['Tall_minT'] < 0)), 'A G')
     ad = [r for f in sorted(glob.glob(os.path.join(E, 'adv_*.jsonl'))) for r in jl(f)]
     num('E45 adversary of the node of the proof: runs (M, k, K); smallest ratio over the bucket; smallest witness; '
         'largest leverage',
         '%d (M = %s, k = %s, K = %s); %.6f; %.6f; %s' % (
             len(ad), sorted({r['M'] for r in ad}), sorted({r['k'] for r in ad}), sorted({r['K'] for r in ad}),
-            min(r['worst'] for r in ad), min(r['cert'] for r in ad), sci(max(r['omega'] for r in ad))), '5.4')
+            min(r['worst'] for r in ad), min(r['cert'] for r in ad), sci(max(r['omega'] for r in ad))), 'A G')
 
 
-# ------------------------------------------------------------------------------------------- Section 5.5: E46
+# --------------------------------------------------------------------------------------- A Appendix G: E46
 def kernel46():
-    """The kernel of Section 5.5 (Theorem 5.17, Lean kerK / kernel_value) and the instances of Proposition 5.19."""
+    """The kernel (paper A Theorem C.2, Lean kerK / kernel_value) and the instances of paper A Proposition 7.1."""
     E = os.path.join(RES, 'E46')
     rnd = {K: [r for r in jl(os.path.join(E, 'rand_%d.jsonl' % K))] for K in (1, 2, 3)}
     crowd = {K: [r for r in R if r['fam'] != 'hedge'] for K, R in rnd.items()}
@@ -630,19 +646,19 @@ def kernel46():
         'smallest OPT(kernel)/OPT; instances whose optimum is not in the kernel',
         '; '.join('K=%d: %d, %s/%d, %.6f, %d' % (
             K, len(R), mean2([r['ker_size'] for r in R]), R[0]['M'], min(r['ker'] for r in R),
-            sum(not r['opt_in_ker'] for r in R)) for K, R in crowd.items()), '5.5')
+            sum(not r['opt_in_ker'] for r in R)) for K, R in crowd.items()), 'A G')
     num('E46 instances of the hedge family of E45 (K = 1, 2, 3): instances; instances in which the kernel keeps every '
         'asset; M', '; '.join('K=%d: %d, %d, %d' % (K, len(R), sum(r['ker_size'] == r['M'] for r in R), R[0]['M'])
-                              for K, R in hedge.items()), '5.5')
+                              for K, R in hedge.items()), 'A G')
     num('E46 random instances: eps values; largest leverage (crowded; hedge family)', '%s; %s; %s' % (
         sorted({r['eps'] for R in rnd.values() for r in R}),
         sci(max(r['omega'] for R in crowd.values() for r in R)), sci(max(r['omega'] for R in hedge.values() for r in R))),
-        '5.5')
+        'A G')
     for c in ('nogrid', 'grid30', 'grid100', 'noscale'):
         num('E46 random instances (crowded and hedge family), control %s: below 1 - 4 eps (K = 1, 2, 3); '
             'smallest ratio' % c,
             '; '.join('%d' % sum(r[c] < 1 - 4 * r['eps'] for r in R) for R in rnd.values()) + '; %.3f' % min(
-                r[c] for R in rnd.values() for r in R), '5.5')
+                r[c] for R in rnd.values() for r in R), 'A G')
     for K in (2, 3):
         L = jl(os.path.join(E, 'lb_%d.jsonl' % K))
         for n in sorted({r['n'] for r in L}):
@@ -655,36 +671,36 @@ def kernel46():
                     R[0]['M'], sci(R[0]['omega']), min(r['ker_alice'] for r in R), na, min(r['ker'] for r in R),
                     max(r['others'] / r['opt'] for r in R), max(r['bound'] / r['opt'] for r in R),
                     min(r['nogrid'] for r in R), min(r['grid30'] for r in R), min(r['grid100'] for r in R),
-                    max(r['nogrid_alice'] for r in R)), '5.5')
+                    max(r['nogrid_alice'] for r in R)), 'A G')
 
 
 def threesum47():
-    """The 3SUM gap of Section 5.5 (Proposition 5.20, Lean ts_yes / ts_no / threesum_decide), with controls."""
+    """The 3SUM gap (paper A Proposition 7.2, Lean ts_yes / ts_no / threesum_decide), with controls."""
     R = jl(os.path.join(RES, 'E47', 'gap.jsonl'))
     Y = [r for r in R if r['yes']]
     N = [r for r in R if not r['yes']]
     num('E47 3SUM gap (K = 3, k = 3): YES instances; smallest OPT_LO(3); smallest OPT_LS(3)',
-        '%d; %.6f; %.6f' % (len(Y), min(r['lo'] for r in Y), min(r['ls'] for r in Y)), '5.5')
+        '%d; %.6f; %.6f' % (len(Y), min(r['lo'] for r in Y), min(r['ls'] for r in Y)), 'A G')
     num('E47 3SUM gap: NO instances; largest OPT_LO(3); largest OPT_LO(3)/bound; largest OPT_LS(3)/bound; '
         'largest bound (2(1+3U)^2+9)/A^2',
         '%d; %.4f; %.4f; %.4f; %.4f' % (len(N), max(r['lo'] for r in N), max(r['lo'] / r['bound'] for r in N),
-                                        max(r['ls'] / r['bound'] for r in N), max(r['bound'] for r in N)), '5.5')
+                                        max(r['ls'] / r['bound'] for r in N), max(r['bound'] for r in N)), 'A G')
     num('E47 3SUM gap: integers per list; U; M; largest leverage',
         '%d..%d; %d..%d; %s; %s' % (min(r['n'] for r in R), max(r['n'] for r in R), min(r['U'] for r in R),
                                     max(r['U'] for r in R), ', '.join(str(m) for m in sorted({r['M'] for r in R})),
-                                    sci(max(r['omega'] for r in R))), '5.5')
+                                    sci(max(r['omega'] for r in R))), 'A G')
     num('E47 3SUM gap, two-factor control on the NO instances: largest value of a triple with one asset of each list; '
         'instances in which it is above 1; instances in which two numbers of one list add up to a number of LC',
         '%.5f; %d; %d' % (max(r['twofactor_cross'] for r in N), sum(r['twofactor_cross'] > 1 for r in N),
-                          sum(r['same_sum'] for r in N)), '5.5')
+                          sum(r['same_sum'] for r in N)), 'A G')
     num('E47 3SUM gap, controls on the NO instances (light A = 1; two factors; k = 4): instances with OPT above 1; '
         'largest OPT',
         '; '.join('%s %d, %.4f' % (c, sum(r[c] > 1 for r in N), max(r[c] for r in N))
-                  for c in ('light', 'twofactor', 'k4')), '5.5')
+                  for c in ('light', 'twofactor', 'k4')), 'A G')
 
 
 def helly48():
-    """The Helly bound of Section 5.6 (Lemma 5.21, Lean objLO_le_helly / objLO_le_helly_free), with controls."""
+    """The Helly bound (paper A Lemma 5.1, Lean objLO_le_helly / objLO_le_helly_free), with controls."""
     R = [r for K in (1, 2, 3) for r in jl(os.path.join(RES, 'E48', 'rand_%d.jsonl' % K))]
     num('E48 Helly bound (K = 1, 2, 3): instances; k; largest OPT_LO(k)/V; largest OPT_LS(k)/V_LS; largest '
         'OPT/((k+1)V) (LO; LS); V <= OPT in all instances',
@@ -693,19 +709,19 @@ def helly48():
             max(r['lo_opt'] / r['lo_V'] for r in R), max(r['ls_opt'] / r['ls_V'] for r in R),
             max(r['lo_opt'] / r['lo_V'] / (r['k'] + 1) for r in R),
             max(r['ls_opt'] / r['ls_V'] / (r['k'] + 1) for r in R),
-            all(r['lo_V'] <= r['lo_opt'] + 1e-9 and r['ls_V'] <= r['ls_opt'] + 1e-9 for r in R)), '5.6')
+            all(r['lo_V'] <= r['lo_opt'] + 1e-9 and r['ls_V'] <= r['ls_opt'] + 1e-9 for r in R)), 'A G')
     # for k = K + 1, V = OPT(k) by definition: the lemma is tested on the instances with k > K + 1
     N = [r for r in R if r['k'] > r['K'] + 1]
     num('E48, instances with k > K + 1: number; with OPT > V (LO; LS); largest OPT/V (LO; LS)',
         '%d; %d; %d; %.3f; %.3f' % (
             len(N), sum(r['lo_opt'] > r['lo_V'] * (1 + 1e-9) for r in N),
             sum(r['ls_opt'] > r['ls_V'] * (1 + 1e-9) for r in N),
-            max(r['lo_opt'] / r['lo_V'] for r in N), max(r['ls_opt'] / r['ls_V'] for r in N)), '5.6')
+            max(r['lo_opt'] / r['lo_V'] for r in N), max(r['ls_opt'] / r['ls_V'] for r in N)), 'A G')
     Jd = sorted(r['J_data'] for r in R if 'J_data' in r)
-    num('E48: guesses of Theorem 5.13 with the best single asset (largest; median) and with Lemma 5.21 '
+    num('E48: guesses of A Theorem 4.4 with the best single asset (largest; median) and with A Lemma 5.1 '
         '(largest); largest leverage',
         '%d; %d; %d; %s' % (Jd[-1], Jd[len(Jd) // 2], max(r['J_helly'] for r in R),
-                            sci(max(r['omega'] for r in R))), '5.6')
+                            sci(max(r['omega'] for r in R))), 'A G')
 
     def ratio(r, tag, c):
         return r[tag + '_opt'] / r[tag + '_' + c] if r[tag + '_' + c] > 0 else float('inf')
@@ -715,7 +731,7 @@ def helly48():
                                          sum(ratio(r, 'ls', c) > r['k'] + 1 for r in R),
                                          sci(max(ratio(r, 'lo', c) for r in R)),
                                          sci(max(ratio(r, 'ls', c) for r in R)))
-                  for c in ('single', 'ksub')), '5.6')
+                  for c in ('single', 'ksub')), 'A G')
 
 
 if __name__ == '__main__':
@@ -736,7 +752,9 @@ if __name__ == '__main__':
     threesum47()
     helly48()
     with open(os.path.join(HERE, 'numbers.md'), 'w') as f:
-        f.write('# Numbers quoted in the text (generated by make_tables.py)\n\n| quantity | value | where |\n|---|---|---|\n')
+        f.write('# Numbers quoted in the text (generated by make_tables.py)\n\n'
+                'where: A = paper A (leverage-free approximation), B = paper B (the certificate and computation), '
+                'followed by the section or appendix\n\n| quantity | value | where |\n|---|---|---|\n')
         for k, v, w in NUM:
             f.write('| %s | %s | %s |\n' % (k, v, w))
     for k, v, w in NUM:

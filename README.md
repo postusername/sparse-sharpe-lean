@@ -1,34 +1,71 @@
 # SparseSharpe: Lean 4 formalization
 
-Machine-checked proofs for the paper
+Machine-checked proofs for two papers:
 
-> Andrey Pavlov, *Approximability of sparse tangency portfolios under a factor model: a
-> classification* (manuscript, 2026).
+> Andrey Pavlov, *Leverage-free approximation of sparse tangency portfolios under a factor model*
+> (manuscript, 2026), called paper A below;
+>
+> Andrey Pavlov, *Certifying sparse tangency portfolios under a factor model* (manuscript, 2026),
+> called paper B below.
 
-The paper studies the choice of at most `k` of `M` assets with long-only weights that maximize
-the Sharpe ratio when the covariance matrix has the factor structure
-`V = diag(d) + B Σ_f Bᵀ` with a fixed number `K` of factors. It gives approximation schemes that
-return a fully invested long-only portfolio whose Sharpe ratio is at least `√(1 − 2ε)` times the
-optimum. The main one picks this portfolio from an explicit family of candidate supports whose size
-is bounded by a polynomial in `M`, `k` and `1/ε` for fixed `K`, with no dependence on the leverages
-or on the magnitudes of the data; with short sales, a family of the same kind gives a portfolio of
-gross exposure 1 whose Sharpe ratio is at least `√(1 − 17ε/8)` times the optimum. Another scheme
-has a family independent of `M` whose size is polynomial in `k`, `1/ε` and the leverage bound `ω`. For practice,
-the paper adds a dual certificate (the dual of the perspective relaxation), an optimality test, a
-bound for branch and bound, and a localized scheme whose grid is confined by the gap of the
-certificate.
+Both study the choice of at most `k` of `M` assets with long-only weights that maximize the Sharpe
+ratio when the covariance matrix has the factor structure `V = diag(d) + B Σ_f Bᵀ` with a fixed
+number `K` of factors. Until version 0.30 they were one paper, *Approximability of sparse tangency
+portfolios under a factor model: a classification*.
 
-Every theorem, proposition, lemma and corollary of the paper is proved here. In the PDF, each
+* Paper A gives approximation schemes. The main one returns a fully invested long-only portfolio
+  whose Sharpe ratio is at least `1 − δ` times the optimum, picked from an explicit family of
+  candidate supports of size at most `(⌈log₂(k+1)⌉+1)(M+K)^{3K+1}(10⁴K²k^{9/2}/δ)^K·30k²/δ`: no
+  leverage and no other magnitude of the data enters. With short sales, a family of the same kind
+  gives a portfolio of gross exposure 1 whose Sharpe ratio is at least `√(1 − 17ε/8)` times the
+  optimum. Another scheme has a family independent of `M` whose size is polynomial in `k`, `1/ε`
+  and the leverage bound `ω`. Paper A also proves NP-hardness with an explicit gap, a kernel for
+  one factor, a lower bound for schemes that read the assets once, and a reduction from 3SUM.
+* Paper B studies the dual certificate: the dual bound (the dual of the perspective relaxation),
+  an optimality test, a bound for branch and bound, the gap of the relaxation, a support with at
+  most `k + K` names that reaches its value, a rounding to exactly `k` names, and a localized
+  scheme whose grid is confined by the gap of the certificate; and it reports the experiments.
+
+Every theorem, proposition, lemma and corollary of both papers is proved here. In the PDFs, each
 numbered result has a superscript **L** that links to its Lean statement in this repository.
-Appendix C of the paper lists all results with their declarations, and also the declarations
-that their proofs use. `lake build` checks all proofs; `lake env lean SparseSharpe/Audit.lean`
-prints the axioms of every declaration of the paper (only `propext`, `Classical.choice` and
-`Quot.sound`).
+Appendix I of paper A and Appendix D of paper B list the results with their declarations, and also
+the declarations that their proofs use. `lake build` checks all proofs; `lake env lean
+SparseSharpe/Audit.lean` prints the axioms of every declaration of the papers (only `propext`,
+`Classical.choice` and `Quot.sound`).
 
 The directory [experiments](experiments/) contains the scripts, the stored results and the data
-checksums of the numerical experiments of Sections 5.4–5.6 and 7 of the paper; `make all` there recomputes
-them and `make tables` rebuilds every table and figure of Section 7 and the numbers of the text (see
+checksums of the numerical experiments of paper B (Section 6 and Appendix B) and of the numerical
+checks of paper A (Section 7 and Appendices D.6 and G); `make all` there recomputes them and
+`make tables` rebuilds every table and figure of these sections and the numbers of the text (see
 [experiments/README.md](experiments/README.md)).
+
+## Version 0.31: two papers; the Main Theorem in the form `1 − δ`
+
+The joint paper v0.30 is split into papers A and B (numbering of the results in both: see the
+README of each paper's source). New Lean statements, in `Factor/HellyGuess`: the Main Theorem of
+paper A in the form `1 − δ` with the simple size bound above (`main_theorem_univ_delta`, with
+`ε = δ − δ²/2`, `√(1 − 2ε) = 1 − δ` and `1/ε ≤ 2/δ`), the polynomial bound on the constants of the
+family (`card_univCandidates_poly`: `2Z + 1 ≤ 77k²K√K/√ε`, `2Z_λ + 1 ≤ 59k²√K√k/√ε`, their product
+at most `5000K²k^{9/2}/ε`, the number of keys of the box plus one at most `(2Z_λ + 1)^K·15k²/ε`) and an
+explicit instance with two factors and
+`δ = 1/5` (`univ_instance_two_delta`). Paper A has a new section on running times (not formalized),
+whose exact evaluation of a candidate rests on `isGreatest_phi_selfconsistent`. Paper B states the
+smoothness and growth of the dual function as a lemma of its own (`QLO_smooth`, `QLO_sub_ge_of_min`)
+and the certificate in the form `1 − 2ε` (`certificate_sharpe_eps`). The experiments report in
+addition the total time of greedy selection with exchanges, the relaxation and branch and bound
+(paper B, Table 6.5).
+
+| Paper | Declaration | File |
+|---|---|---|
+| A, Main Theorem (`1 − δ`, size polynomial in `M`, `k`, `1/δ`) | `main_theorem_univ_delta`, `sqrt_one_sub_two_eps_delta`, `univ_instance_two_delta` | [Factor/HellyGuess.lean](SparseSharpe/Factor/HellyGuess.lean) |
+| A, Theorem 5.3 (the same with the constants of Definition 4.3) | `main_theorem_univ_sp` | [Factor/HellyGuess.lean](SparseSharpe/Factor/HellyGuess.lean) |
+| A, Lemma 5.4 (a polynomial bound) | `card_univCandidates_poly`, `two_univZ_succ_le`, `two_univZk_succ_le`, `univZ_mul_univZk_le`, `univBoxBound_succ_le` | [Factor/HellyGuess.lean](SparseSharpe/Factor/HellyGuess.lean) |
+| A, Lemma 6.1 (the exact value of a support) | `isGreatest_phi_selfconsistent`, `exists_optimal_selfconsistent` | [Factor/Reduction.lean](SparseSharpe/Factor/Reduction.lean), [Factor/Guarantee.lean](SparseSharpe/Factor/Guarantee.lean) |
+| B, Lemma 2.7 (smoothness and growth) | `QLO_smooth`, `QLO_sub_ge_of_min` | [Factor/ClippedNode.lean](SparseSharpe/Factor/ClippedNode.lean), [Factor/Localize.lean](SparseSharpe/Factor/Localize.lean) |
+| B, Corollary 3.2 (certificate) | `certificate_sharpe`, `certificate_sharpe_eps` | [Factor/Practical.lean](SparseSharpe/Factor/Practical.lean) |
+
+The sections below describe the earlier versions with the numbering of the joint paper of that
+version.
 
 ## Version 0.30: 3SUM-hardness instead of a conditional lower bound
 
@@ -222,12 +259,12 @@ pinned to the tag `v4.35.0-rc2` in `lake-manifest.json`. With [elan](https://git
 ```
 lake exe cache get                       # download the prebuilt Mathlib (several GB)
 lake build                               # build the formalization
-lake env lean SparseSharpe/Audit.lean    # print the axioms of 1106 statements
+lake env lean SparseSharpe/Audit.lean    # print the axioms of 1118 statements
 ```
 
-Each of the 1106 statements depends only on `propext`, `Classical.choice` and `Quot.sound`
+Each of the 1118 statements depends only on `propext`, `Classical.choice` and `Quot.sound`
 (some on a subset), and none on `sorryAx`. The sources contain no `sorry`, no `axiom`
-declarations and no `native_decide`. The development has 84 files and about 37 400 lines.
+declarations and no `native_decide`. The development has 84 files and about 37 800 lines.
 
 ## Layout
 
@@ -249,8 +286,9 @@ declarations and no `native_decide`. The development has 84 files and about 37 4
   * Neither `M` nor `ω`: `Kernel` (the `k` best assets per cell of scale and direction),
     `KernelScheme` (Theorem 5.13 on the kernel), `OnePassLower` (the lower bound for one pass),
     `ThreeSumGap` (the gap from 3SUM for `K ≥ 3`).
-  * No `ω` at all: `HellyGuess` (Helly's theorem for the guesses; the strongly polynomial forms of Theorems 5.6
-    and 5.13; Theorem 1.1 with these guesses).
+  * No `ω` at all: `HellyGuess` (Helly's theorem for the guesses; the strongly polynomial forms of the schemes
+    with and without short sales; the Main Theorem of paper A in the form `1 − δ` with its polynomial size bound; the
+    scheme independent of `M` with these guesses).
   * Symmetric key, dual certificate, adaptive guesses and the simple Main Theorem of the first
     edition: `Practical`.
 * `SparseSharpe/Audit.lean`: `#print axioms` for all main statements.
@@ -271,5 +309,5 @@ declarations and no `native_decide`. The development has 84 files and about 37 4
 
 ## Version
 
-The links in the paper point to a fixed commit of this repository. Later commits may shift
+The links in the papers point to a fixed commit of this repository. Later commits may shift
 line numbers, so a link opens the version that the paper describes.

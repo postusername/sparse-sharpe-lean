@@ -1,19 +1,23 @@
-# Experiments of the paper
+# Experiments of the papers
 
-This directory contains the scripts, the stored results and the data checksums of Sections 5.4–5.6 and 7 of the paper
-*Approximability of sparse tangency portfolios under a factor model: a classification*. The Lean formalization is in
-the rest of the repository.
+This directory contains the scripts, the stored results and the data checksums of the experiments of two papers:
+paper B, *Certifying sparse tangency portfolios under a factor model* (Section 6 and Appendix B), and paper A,
+*Leverage-free approximation of sparse tangency portfolios under a factor model* (the numerical checks of Section 7 and
+Appendices D.6 and G). Until version 0.30 they were one paper, *Approximability of sparse tangency portfolios under a
+factor model: a classification*, whose Sections 5.4–5.6 and 7 these were. The Lean formalization is in the rest of the
+repository.
 
     make data      # download the public data into data/ and check them against data/SHA256SUMS
     make all       # recompute every experiment (several hours; the recorded solver times add up to
                    # about 5 hours on one core) and rebuild the tables
     make tables    # rebuild the tables, the numbers of the text and the figure data from results/ (seconds)
 
-`make tables` writes `tables/*.tex` (the bodies of the tables of Section 7, which the paper reads with `\tabinput`),
-`tables/random.json` (the data of Figure 7.1, read by `tools/make_figures.py` of the paper source),
-`tables/e35_table.md` and `numbers.md`. `numbers.md` lists the numbers quoted in the text of Sections 5.4–5.6 and 7 and in the
-Introduction, with their values from the stored results; the per-configuration numbers of Section 7.4 are in
-`tables/e35_table.md`, and the one-step checks of Section 7.4 in `results/E34/e34.log`.
+`make tables` writes `tables/*.tex` (the bodies of the tables of paper B, Section 6, and of paper A, Appendix D.6, which
+the papers read with `\tabinput`), `tables/random.json` (the data of Figure 6.1 of paper B, read by
+`tools/make_figures.py` of the paper source), `tables/e35_table.md` and `numbers.md`. `numbers.md` lists the numbers
+quoted in the text of these sections and in the Introductions, with their values from the stored results and, in the
+column `where`, the paper (A or B) and the section; the per-configuration numbers of Section 6.4 of paper B are in
+`tables/e35_table.md`, and the one-step checks of Appendix B of paper B in `results/E34/e34.log`.
 
 ## Environment
 
@@ -38,25 +42,28 @@ The data files are not stored in the repository; `make data` downloads them.
 
 | paper | script | results | table body |
 |---|---|---|---|
-| Table 7.1 and the text of Section 7.1 | `e40_realdata.py optima` | `results/E40/optima.json`, `optima.log` | `tables/optima.tex` |
-| Table 7.2, "The certificate at scale", "What the guarantee buys" | `e40_realdata.py instances` | `results/E40/instances.jsonl` | `tables/large.tex` |
-| Table 7.3, Table 7.4, Figure 7.1 (random instances, seven regimes) | `e41_random.py <regime>` | `results/E41/regime_*.jsonl` | `tables/random.tex`, `tables/regimes.tex`, `tables/random.json` |
-| Section 7.4, "One-step checks" | `e34_localized.py` | `results/E34/e34.log` | — |
-| Table 7.5 and the rest of Section 7.4 (stress regime at scale) | `e35_driver.sh` → `e35_scale.py` | `results/E35/<M>_<K>_<k>.jsonl` | `tables/e35_table.tex` (`e35_table.py`) |
-| Section 7.4, mixed-integer solvers | `e35b_driver.sh` → `e35_miqp.py` | `results/E35/miqp_*.jsonl` | `tables/e35_table.md` |
-| Section 7.4, check of the localized nodes | `e35_loccheck.py` | `results/E35/e35_loccheck.log` | — |
-| Table 7.6 and Section 7.5, methods from the literature | `e36_driver.sh` → `e36_baselines.py`; `e36_oscar_signed.py`; `e41_random.py` | `results/E36/`, `results/E41/` | `tables/literature.tex` |
-| Table 7.7 and Section 7.6, the scheme itself | `e30_additive_dp.py` | `results/E30/` | `tables/own.tex` |
-| Section 7.6, coarsening of the constants | `e30b_stress.py` | `results/E30b/` | — |
-| Section 7.6, formal size bounds (Table 7.8, Figure 7.2) | `e31_size_bounds.py` | `results/E31/` | `tables/bounds.tex` |
-| Section 7.6, checks of the estimates, Figure 7.3 | `check_clipped_dp.py`, `e33_node_ratio.py` | `results/CHECK/`, `results/E33/node_ratio.csv` | — |
-| Section 7.7, the relaxation, the certificate with `k+K` names and the rounding | `e29_dual_rounding.py`, `e29_floor_bound.py` | `results/E29/` | — |
-| Section 5.4, the embedding of two-dimensional knapsack (work plan v0.26, C2): no cliff, the gap between YES and NO instances falls like 4^(−m) | `e43_knap2d.py A`, `e43_knap2d.py B` (`make e43`) | `results/E43/testA.log`, `testB.log` | — |
-| Section 5.4, the scheme without ω for K factors (Theorem 5.13): the step at the node of the proof on 800 instances, every set of the bucket of the large positions, the witness of the proof, controls (no forced small positions, key ×30, the node on the lattice of the witness tuple, one tuple of all rows) and an adversary | `e45_universal.py <part>` (`make e45`) | `results/E45/` | — |
-| Section 5.5, the kernel (Theorem 5.17) on 240 crowded random instances and 120 instances of the hedge family of E45 (K = 1, 2, 3) and on the instances of Proposition 5.19, with controls (one scale class, no angular grid, the grid ×30 and ×100) | `e46_kernel.py <part>` (`make e46`) | `results/E46/` | — |
-| Section 5.5, the 3SUM gap (Proposition 5.20) on 200 random YES and NO instances (K = 3, k = 3), with controls (A = 1, two factors, k = 4) | `e47_threesum.py gap` (`make e47`) | `results/E47/` | — |
-| Section 5.6, the Helly bound V ≤ OPT(k) ≤ (k+1)V (Lemma 5.21) on 300 random instances (K = 1, 2, 3), long-only and long-short, with controls (V over one name, over at most K names) | `e48_helly.py rand_<K>` (`make e48`) | `results/E48/` | — |
-| Remark 5.15, the scheme with one maximum-volume K-tuple on the instances with at most one small position (Lean `main_theorem_sf`, work plan v0.26, C1): its step at the node of the proof with controls and an adversary (`def510_*`, `advdef_*`); a coarser variant: one-step checks of its lemmas with controls, the adversary of the step, the whole scheme on small instances; not quoted in the paper | `e44_scalefree.py <part>` (`make e44`) | `results/E44/` | — |
+| B: Table 6.1 and the text of Section 6.1 | `e40_realdata.py optima` | `results/E40/optima.json`, `optima.log` | `tables/optima.tex` |
+| B: Table 6.2, "The certificate at scale", "What the guarantee buys" (Section 6.2) | `e40_realdata.py instances` | `results/E40/instances.jsonl` | `tables/large.tex` |
+| B: Table 6.3, Table 6.4, Figure 6.1 (random instances, seven regimes; Section 6.3) | `e41_random.py <regime>` | `results/E41/regime_*.jsonl` | `tables/random.tex`, `tables/regimes.tex`, `tables/random.json` |
+| B: Appendix B, "Numerical checks" (one-step checks of the localized scheme) | `e34_localized.py` | `results/E34/e34.log` | — |
+| B: Table 6.5 and the rest of Section 6.4 (stress regime at scale; the table shows the total time of greedy selection with exchanges, the relaxation and branch and bound) | `e35_driver.sh` → `e35_scale.py` | `results/E35/<M>_<K>_<k>.jsonl` | `tables/e35_table.tex` (`e35_table.py`) |
+| B: Section 6.4, mixed-integer solvers | `e35b_driver.sh` → `e35_miqp.py` | `results/E35/miqp_*.jsonl` | `tables/e35_table.md` |
+| B: Section 6.4, check of the localized nodes | `e35_loccheck.py` | `results/E35/e35_loccheck.log` | — |
+| B: Table 6.6 and Section 6.5, methods from the literature | `e36_driver.sh` → `e36_baselines.py`; `e36_oscar_signed.py`; `e41_random.py` | `results/E36/`, `results/E41/` | `tables/literature.tex` |
+| A: Table D1 and Appendix D.6, the scheme itself | `e30_additive_dp.py` | `results/E30/` | `tables/own.tex` |
+| A: Appendix D.6, coarsening of the constants | `e30b_stress.py` | `results/E30b/` | — |
+| A: Appendix D.6, formal size bounds (Table D2, Figure D3) | `e31_size_bounds.py` | `results/E31/` | `tables/bounds.tex` |
+| A: Appendix D.6, checks of the estimates, Figure D4 | `check_clipped_dp.py`, `e33_node_ratio.py` | `results/CHECK/`, `results/E33/node_ratio.csv` | — |
+| B: Section 6.6, the relaxation, the certificate with `k+K` names and the rounding | `e29_dual_rounding.py`, `e29_floor_bound.py` | `results/E29/` | — |
+| A: Section 7, the embedding of two-dimensional knapsack (work plan v0.26, C2): no cliff, the gap between YES and NO instances falls like 4^(−m) | `e43_knap2d.py A`, `e43_knap2d.py B` (`make e43`) | `results/E43/testA.log`, `testB.log` | — |
+| A: Appendix G, the scheme without ω for K factors (Theorem 4.4): the step at the node of the proof on 800 instances, every set of the bucket of the large positions, the witness of the proof, controls (no forced small positions, key ×30, the node on the lattice of the witness tuple, one tuple of all rows) and an adversary | `e45_universal.py <part>` (`make e45`) | `results/E45/` | — |
+| A: Appendix G, the kernel (Theorem C.2) on 240 crowded random instances and 120 instances of the hedge family of E45 (K = 1, 2, 3) and on the instances of Proposition 7.1, with controls (one scale class, no angular grid, the grid ×30 and ×100) | `e46_kernel.py <part>` (`make e46`) | `results/E46/` | — |
+| A: Appendix G, the 3SUM gap (Proposition 7.2) on 200 random YES and NO instances (K = 3, k = 3), with controls (A = 1, two factors, k = 4) | `e47_threesum.py gap` (`make e47`) | `results/E47/` | — |
+| A: Appendix G, the Helly bound V ≤ OPT(k) ≤ (k+1)V (Lemma 5.1) on 300 random instances (K = 1, 2, 3), long-only and long-short, with controls (V over one name, over at most K names) | `e48_helly.py rand_<K>` (`make e48`) | `results/E48/` | — |
+| A: Remark F.1, the scheme with one maximum-volume K-tuple on the instances with at most one small position (Lean `main_theorem_sf`, work plan v0.26, C1): its step at the node of the proof with controls and an adversary (`def510_*`, `advdef_*`); a coarser variant: one-step checks of its lemmas with controls, the adversary of the step, the whole scheme on small instances; not quoted in the papers | `e44_scalefree.py <part>` (`make e44`) | `results/E44/` | — |
+
+The docstrings of the scripts were written for versions of the joint paper and keep its numbering of sections and
+results; the table above gives the current place of every experiment in papers A and B.
 
 Libraries: `data_real.py` (data and factor models), `e34_localized.py` (the long-only value `F_LO` by nonnegative
 least squares, scores, the dual bound `g_k`, the relaxation `G*_k`, greedy selection with exchanges, the localized

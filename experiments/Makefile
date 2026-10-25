@@ -1,4 +1,4 @@
-# Experiments of Sections 5.4-5.6 and 7 of the paper.  `make data` downloads the public data (checked against data/SHA256SUMS);
+# Experiments of paper B (Section 6, Appendix B) and the numerical checks of paper A (Section 7, Appendices D.6, G).  `make data` downloads the public data (checked against data/SHA256SUMS);
 # `make all` recomputes every experiment (several hours: the solver times recorded in results/ alone add up to about
 # 5 hours on one core); `make tables` rebuilds the tables, the numbers of the text and the data files of the figures
 # from the stored results in results/ (seconds).
@@ -11,18 +11,18 @@ all: data e40 e41 e34 e35 e35b e35loc e36 e29 e30 e30b e31 e33 check e43 e44 e45
 data:
 	$(PY) -c "import sys; sys.path.insert(0, '.'); import data_real as D; D.load_ff_monthly(); [D.load_port(i) for i in range(1, 6)]; D.load_indtrack(6); D.load_indtrack(8); print('data ok')"
 
-# Sections 7.1-7.2: real data (Tables 7.1, 7.2, the certificate at scale, the screening rules); about 5 minutes
+# B, Sections 6.1-6.2: real data (Tables 6.1, 6.2, the certificate at scale, the screening rules); about 5 minutes
 e40:
 	mkdir -p results/E40
 	$(PY) e40_realdata.py optima > results/E40/optima.log
 	$(PY) e40_realdata.py instances > results/E40/instances.jsonl
 
-# Section 7.3: random instances with M = 16 in seven regimes (Tables 7.3, 7.4, Figure 7.1); about 5 minutes on 4 cores
+# B, Section 6.3: random instances with M = 16 in seven regimes (Tables 6.3, 6.4, Figure 6.1); about 5 minutes on 4 cores
 e41:
 	mkdir -p results/E41
 	for r in 0 1 2 3 4 5 6; do echo $$r; done | xargs -P 4 -I{} sh -c '$(PY) e41_random.py {} 100 > results/E41/regime_{}.jsonl'
 
-# Section 7.4: one-step checks of the localized scheme (1 minute), the stress regime at scale, the MIQP baseline,
+# B, Section 6.4 and Appendix B: one-step checks of the localized scheme (1 minute), the stress regime at scale, the MIQP baseline,
 # the check of the localized nodes
 e34:
 	mkdir -p results/E34
@@ -35,7 +35,7 @@ e35loc: e35
 	mkdir -p results/E35
 	$(PY) e35_loccheck.py > results/E35/e35_loccheck.log
 
-# Section 7.5 (methods from the literature) on the instances of E35 and E41; about 2 hours on 3 cores
+# B, Section 6.5 (methods from the literature) on the instances of E35 and E41; about 2 hours on 3 cores
 e36: e35
 	./e36_driver.sh
 	$(PY) e36_oscar_signed.py > results/E36/oscar_signed.jsonl
@@ -67,27 +67,27 @@ e45:
 	mkdir -p results/E45
 	for p in $(E45PARTS); do echo $$p; done | xargs -P 4 -I{} sh -c '$(PY) e45_universal.py {} > results/E45/{}.jsonl'
 
-# Section 5.5: the kernel (top k per cell) on crowded random instances and on the instances of the one-pass lower
+# A, Appendix G: the kernel (top k per cell) on crowded random instances and on the instances of the one-pass lower
 # bound, with controls (e46_kernel.py; about a minute per part)
 E46PARTS = rand_1 rand_2 rand_3 lb_2 lb_3
 e46:
 	mkdir -p results/E46
 	for p in $(E46PARTS); do echo $$p; done | xargs -P 4 -I{} sh -c '$(PY) e46_kernel.py {} > results/E46/{}.jsonl'
 
-# Section 5.5: the 3SUM gap for K = 3, k = 3 on random YES and NO instances, with controls (e47_threesum.py; under
+# A, Appendix G: the 3SUM gap for K = 3, k = 3 on random YES and NO instances, with controls (e47_threesum.py; under
 # a minute)
 e47:
 	mkdir -p results/E47
 	$(PY) e47_threesum.py gap > results/E47/gap.jsonl
 
-# Section 5.6: the Helly bound V <= OPT(k) <= (k+1)V on random instances, with controls (e48_helly.py; a minute
+# A, Appendix G: the Helly bound V <= OPT(k) <= (k+1)V on random instances, with controls (e48_helly.py; a minute
 # per part)
 E48PARTS = rand_1 rand_2 rand_3
 e48:
 	mkdir -p results/E48
 	for p in $(E48PARTS); do echo $$p; done | xargs -P 3 -I{} sh -c '$(PY) e48_helly.py {} > results/E48/{}.jsonl'
 
-# Sections 7.6-7.7: the scheme itself, size bounds, checks of the estimates, the relaxation and the rounding
+# A, Appendix D.6 (the scheme itself, size bounds, checks of the estimates) and B, Section 6.6 (the relaxation and the rounding)
 e30:
 	mkdir -p results/E30
 	$(PY) e30_additive_dp.py > results/E30/e30.log
@@ -112,4 +112,4 @@ tables:
 	mkdir -p tables
 	$(PY) e35_table.py > tables/e35_table.md
 	$(PY) make_tables.py > tables/make_tables.log
-	@echo "tables/ written; copy tables/*.tex and tables/random.json into the paper (see README.md)"
+	@echo "tables/ written; copy tables/*.tex and tables/random.json into the papers (see README.md)"
